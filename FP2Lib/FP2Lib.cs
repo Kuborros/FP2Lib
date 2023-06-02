@@ -14,12 +14,14 @@ namespace FP2Lib
 
 
         public static ConfigEntry<bool> configSaveRedirect;
+        public static ConfigEntry<bool> configSaveFancy;
         public static ConfigEntry<int> configSaveProfile;
 
 
         private void Awake()
         {
             configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, "Enable save file redirection.");
+            configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, "Makes JSON files more human-readable.");
             configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, "Select save redirection profile.");
 
 

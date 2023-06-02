@@ -19,6 +19,32 @@ namespace FP2Lib.Saves
             else return Application.persistentDataPath;
         }
 
+        static string fancifyJson(Object obj)
+        {
+            if (FP2Lib.configSaveFancy.Value)
+            {
+                return JsonUtility.ToJson(obj, true);
+            }
+            else return JsonUtility.ToJson(obj, false);
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(FPSaveManager), "SaveToFile", MethodType.Normal)]
+        static IEnumerable<CodeInstruction> PatchJsonStyle(IEnumerable<CodeInstruction> instructions, ILGenerator il)
+        {
+            List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+
+            for (var i = 1; i < codes.Count; i++)
+            {
+                FileLog.Log(codes[i].opcode.Name);
+                if (codes[i].opcode == OpCodes.Call && codes[i - 1].opcode == OpCodes.Ldloc_0 && codes[i - 2].opcode == OpCodes.Stfld)
+                {
+                    codes[i] = Transpilers.EmitDelegate(fancifyJson);
+                }
+            }
+            return codes;
+        }
+
 
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPSaveManager),"SaveToFile",MethodType.Normal)]
