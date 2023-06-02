@@ -11,7 +11,7 @@ namespace FP2Lib.Saves
 
         static string getSavesPath()
         {
-            if (FP2Lib.configSaveRedirect.Value)
+            if (FP2Lib.configSaveRedirect.Value && FP2Lib.configSaveProfile.Value != 0)
             {
                 Directory.CreateDirectory("Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString());
                 return "Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString();
