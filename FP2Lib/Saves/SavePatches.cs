@@ -36,7 +36,6 @@ namespace FP2Lib.Saves
 
             for (var i = 1; i < codes.Count; i++)
             {
-                FileLog.Log(codes[i].opcode.Name);
                 if (codes[i].opcode == OpCodes.Call && codes[i - 1].opcode == OpCodes.Ldloc_0 && codes[i - 2].opcode == OpCodes.Stfld)
                 {
                     codes[i] = Transpilers.EmitDelegate(fancifyJson);
@@ -54,7 +53,6 @@ namespace FP2Lib.Saves
 
             for (var i = 1; i < codes.Count; i++)
             {
-                FileLog.Log(codes[i].opcode.Name);
                 if (codes[i].opcode == OpCodes.Call && codes[i - 1].opcode == OpCodes.Ldc_I4_0 && codes[i - 2].opcode == OpCodes.Dup)
                 {
                     codes[i] = Transpilers.EmitDelegate(getSavesPath);
