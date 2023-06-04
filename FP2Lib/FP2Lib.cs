@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using FP2Lib.NPC;
+using FP2Lib.Player;
 using FP2Lib.Saves;
 using HarmonyLib;
 
@@ -21,8 +22,9 @@ namespace FP2Lib
             configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, "Enable save file redirection.");
             configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, "Makes JSON files more human-readable.");
             configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, "Select save redirection profile.");
-            NPCHandler.InitialiseHandler();
 
+            NPCHandler.InitialiseHandler();
+            //PlayerHandler.InitialiseHandler();
 
             setupHarmonyPatches();
         }
@@ -30,12 +32,12 @@ namespace FP2Lib
         private void setupHarmonyPatches()
         {
 
-            Harmony npcPatches = new Harmony("000.kuborro.libraries.fp2.fp2lib.npc");
+            Harmony npcPatches = new("000.kuborro.libraries.fp2.fp2lib.npc");
             npcPatches.PatchAll(typeof(NPCPatches));
 
-            //Harmony playerPatches = new Harmony("000.kuborro.libraries.fp2.fp2lib.player");
+            //Harmony playerPatches = new("000.kuborro.libraries.fp2.fp2lib.player");
 
-            Harmony savePatches = new Harmony("000.kuborro.libraries.fp2.fp2lib.saves");
+            Harmony savePatches = new("000.kuborro.libraries.fp2.fp2lib.saves");
             savePatches.PatchAll(typeof(SavePatches));
 
         }
