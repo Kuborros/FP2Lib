@@ -1,4 +1,4 @@
-﻿using FP2Lib.Player.Patches.Character;
+﻿using FP2Lib.Player;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace FP2Lib.Player.Patches
                 if (___digitFrames[5] == null)
                 {
                     ___digitFrames = ___digitFrames.Take(5).ToArray();
-                    foreach (PlayableChara character in FP2Lib.Player.Patches.PlayableChars.Values)
+                    foreach (PlayableChara character in PlayerHandler.PlayableChars.Values)
                     {
                         ___digitFrames = ___digitFrames.AddToArray(character.profilePic);
                     }

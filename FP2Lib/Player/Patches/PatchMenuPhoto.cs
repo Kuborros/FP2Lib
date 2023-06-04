@@ -9,7 +9,7 @@ namespace FP2Lib.Player.Patches
         static void PatchMenuPhotoStart(ref MenuPhotoPose[] ___poseList)
         {
             MenuPhotoPose poses = new MenuPhotoPose();
-            for (int i = 1; i <= FP2Lib.Player.Patches.PlayableChars.Count; i++)
+            for (int i = 1; i <= PlayerHandler.PlayableChars.Count; i++)
                 ___poseList = ___poseList.AddToArray(poses);
         }
     }

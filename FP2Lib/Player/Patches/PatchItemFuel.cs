@@ -16,7 +16,7 @@ namespace FP2Lib.Player.Patches
         [HarmonyPatch(typeof(ItemFuel), "Start", MethodType.Normal)]
         static void PatchStart(ref Sprite[] ___iconSprite)
         {
-            for (int i = 1; i <= FP2Lib.Player.Patches.PlayableChars.Count; i++) 
+            for (int i = 1; i <= PlayerHandler.PlayableChars.Count; i++) 
             {
                 ___iconSprite = ___iconSprite.AddToArray(___iconSprite[1]);
             }

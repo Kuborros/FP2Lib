@@ -1,8 +1,5 @@
-﻿using FP2Lib.Player.Patches.Character;
-using HarmonyLib;
-using System;
-using System.Linq;
-using UnityEngine;
+﻿using HarmonyLib;
+
 
 namespace FP2Lib.Player.Patches
 {
@@ -13,7 +10,7 @@ namespace FP2Lib.Player.Patches
         static void PatchStart(ref FPPlayer[] ___playerList)
         {
 
-            foreach (PlayableChara character in FP2Lib.Player.Patches.PlayableChars.Values)
+            foreach (PlayableChara character in PlayerHandler.PlayableChars.Values)
             {
                 if (character.registered)
                 {

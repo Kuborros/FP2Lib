@@ -25,7 +25,7 @@ namespace FP2Lib.Player
             LoadFromStorage();
         }
 
-        public static bool RegisterPlayableCharacter(string uid, string name, MethodInfo airMoves, MethodInfo groundMoves, GameObject prefab)
+        public static bool RegisterPlayableCharacter(string uid, string name, Delegate airMoves, Delegate groundMoves, GameObject prefab)
         {
             if (!PlayableChars.ContainsKey(uid))
             {

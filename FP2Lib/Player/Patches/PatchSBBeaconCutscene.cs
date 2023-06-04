@@ -13,9 +13,9 @@ namespace FP2Lib.Player.Patches
 
         private static void CustomActivationHandler()
         {
-            if (!FP2Lib.Player.Patches.currentCharacter.useOwnCutsceneActivators)
+            if (!PlayerHandler.currentCharacter.useOwnCutsceneActivators)
             {
-                switch (FP2Lib.Player.Patches.currentCharacter.eventActivatorCharacter)
+                switch (PlayerHandler.currentCharacter.eventActivatorCharacter)
                 {
                     case FPCharacterID.LILAC:
                         instance.cutsceneToStart[0].Activate(false);

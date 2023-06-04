@@ -13,7 +13,7 @@ namespace FP2Lib.Player.Patches
         [HarmonyPatch(typeof(PlayerSpawnPoint), "Start", MethodType.Normal)]
         static void PatchSpawnPointStart(ref AudioClip[] ___characterMusic)
         {
-            for (int i = 1; i <= FP2Lib.Player.Patches.PlayableChars.Count; i++)
+            for (int i = 1; i <= PlayerHandler.PlayableChars.Count; i++)
                 ___characterMusic = ___characterMusic.AddToArray(null);
         }
     }

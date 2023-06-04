@@ -17,7 +17,7 @@ namespace FP2Lib.Player.Patches
             {
                 if (___hudLifeIcon[0].digitFrames.Length < 16)
                 {
-                    ___hudLifeIcon[0].digitFrames = ___hudLifeIcon[0].digitFrames.AddRangeToArray(FP2Lib.Player.Patches.currentCharacter.livesIconAnim);
+                    ___hudLifeIcon[0].digitFrames = ___hudLifeIcon[0].digitFrames.AddRangeToArray(PlayerHandler.currentCharacter.livesIconAnim);
                 }
                 ___hudLifeIcon[0].SetDigitValue(16);
             }
