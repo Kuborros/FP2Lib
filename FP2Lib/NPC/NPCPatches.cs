@@ -45,7 +45,7 @@ namespace FP2Lib.NPC
                     FPSaveManager.npcDialogHistory[npc.ID].dialog = new bool[npc.DialogueTopics];
                 }
             }
-            FP2Lib.npcHandler.writeToStorage();
+            NPCHandler.WriteToStorage();
         }
 
         [HarmonyPostfix]

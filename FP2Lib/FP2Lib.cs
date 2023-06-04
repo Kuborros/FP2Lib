@@ -10,8 +10,6 @@ namespace FP2Lib
     [BepInProcess("FP2.exe")]
     public class FP2Lib : BaseUnityPlugin
     {
-        public static NPCHandler npcHandler;
-
 
         public static ConfigEntry<bool> configSaveRedirect;
         public static ConfigEntry<bool> configSaveFancy;
@@ -23,12 +21,7 @@ namespace FP2Lib
             configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, "Enable save file redirection.");
             configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, "Makes JSON files more human-readable.");
             configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, "Select save redirection profile.");
-
-
-
-
-            npcHandler = new NPCHandler();
-
+            NPCHandler.InitialiseHandler();
 
 
             setupHarmonyPatches();
@@ -46,7 +39,5 @@ namespace FP2Lib
             savePatches.PatchAll(typeof(SavePatches));
 
         }
-
-
     }
 }
