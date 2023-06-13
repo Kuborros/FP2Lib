@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using FP2Lib.BepIn;
 using FP2Lib.NPC;
 using FP2Lib.Player;
 using FP2Lib.Saves;
@@ -19,9 +20,9 @@ namespace FP2Lib
 
         private void Awake()
         {
-            configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, "Enable save file redirection.");
-            configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, "Makes JSON files more human-readable.");
-            configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, "Select save redirection profile.");
+            configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, new ConfigDescription("Enable save file redirection.",null, new ConfigurationManagerAttributes { IsAdvanced = true }));
+            configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, new ConfigDescription("Makes JSON files more human-readable.",null, new ConfigurationManagerAttributes { IsAdvanced = true }));
+            configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, new ConfigDescription("Select save redirection profile.",new AcceptableValueRange<int>(0,9),new ConfigurationManagerAttributes { IsAdvanced = true }));
 
             NPCHandler.InitialiseHandler();
             //PlayerHandler.InitialiseHandler();

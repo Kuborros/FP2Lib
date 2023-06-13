@@ -75,7 +75,7 @@ namespace FP2Lib.NPC
                 HubNPCs.Add(uID, npc);
                 return true;
             }
-            else if (HubNPCs.ContainsKey(uID) && HubNPCs[uID].Prefab == null)
+            else if (HubNPCs.ContainsKey(uID) && HubNPCs[uID].Prefabs.Count == 0)
             {
                 HubNPC npc = new HubNPC(uID, Name, Scene, Prefab, Species, Home, DialogueTopics);
                 npc.ID = HubNPCs[uID].ID;
@@ -84,6 +84,30 @@ namespace FP2Lib.NPC
             }
             else return false;
         }
+
+        public static bool RegisterNPCMultiScene(string uID, string Name, Dictionary<string, GameObject> Prefabs, FPCharacterSpecies Species = FPCharacterSpecies.UNKNOWN, FPCharacterHome Home = FPCharacterHome.UNKNOWN, int DialogueTopics = 1)
+        {
+            return RegisterNPCMultiScene(uID, Name, Prefabs, (int)Species, (int)Home, DialogueTopics);
+        }
+
+        public static bool RegisterNPCMultiScene(string uID, string Name, Dictionary<string, GameObject> Prefabs, int Species = 0, int Home = 0, int DialogueTopics = 1)
+        {
+            if (!HubNPCs.ContainsKey(uID))
+            {
+                HubNPC npc = new HubNPC(uID, Name, Prefabs, Species, Home, DialogueTopics);
+                HubNPCs.Add(uID, npc);
+                return true;
+            }
+            else if (HubNPCs.ContainsKey(uID) && HubNPCs[uID].Prefabs.Count == 0)
+            {
+                HubNPC npc = new HubNPC(uID, Name, Prefabs, Species, Home, DialogueTopics);
+                npc.ID = HubNPCs[uID].ID;
+                HubNPCs[uID] = npc;
+                return true;
+            }
+            else return false;
+        }
+
 
         public static HubNPC GetNPCByUID(string UID)
         {
@@ -115,17 +139,15 @@ namespace FP2Lib.NPC
                 try
                 {
                     byte[] bytes = new UTF8Encoding().GetBytes(json);
-                    using (FileStream fileStream = new FileStream(string.Concat(new object[]
+                    using FileStream fileStream = new(string.Concat(new object[]
                     {
                     storePath,
                     "/",
                     npc.UID,
                     ".json"
-                    }), FileMode.Create, FileAccess.Write, FileShare.Read, bytes.Length, FileOptions.WriteThrough))
-                    {
-                        fileStream.Write(bytes, 0, bytes.Length);
-                        fileStream.Flush();
-                    }
+                    }), FileMode.Create, FileAccess.Write, FileShare.Read, bytes.Length, FileOptions.WriteThrough);
+                    fileStream.Write(bytes, 0, bytes.Length);
+                    fileStream.Flush();
                 }
                 catch (Exception e)
                 {

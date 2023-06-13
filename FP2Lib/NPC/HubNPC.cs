@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FP2Lib.NPC
@@ -8,20 +9,29 @@ namespace FP2Lib.NPC
         public bool registered = false;
         public string UID;
         public string Name;
-        public string HomeScene;
         public int Species;
         public int Home;
         public int ID;
         public int DialogueTopics = 1;
-        public GameObject Prefab;
+        public Dictionary<string,GameObject> Prefabs = new();
         public GameObject RuntimeObject;
 
         public HubNPC(string uID, string name, string scene, GameObject prefab, int species = 0, int home = 0, int topics = 1)
         {
             this.UID = uID;
             this.Name = name;
-            this.HomeScene = scene;
-            this.Prefab = prefab;
+            Prefabs.Add(scene,prefab);
+            this.Species = species;
+            this.Home = home;
+            this.DialogueTopics = topics;
+            this.registered = true;
+        }
+
+        public HubNPC(string uID, string name, Dictionary<string,GameObject> prefabs, int species = 0, int home = 0, int topics = 1)
+        {
+            this.UID = uID;
+            this.Name = name;
+            this.Prefabs = prefabs;
             this.Species = species;
             this.Home = home;
             this.DialogueTopics = topics;

@@ -56,9 +56,9 @@ namespace FP2Lib.NPC
 
             foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
             {
-                if (npc.HomeScene == stageName)
+                if (npc.Prefabs.ContainsKey(stageName))
                 {
-                    npc.RuntimeObject = GameObject.Instantiate(npc.Prefab);
+                    npc.RuntimeObject = GameObject.Instantiate(npc.Prefabs[stageName]);
                 }
                 else npc.RuntimeObject = null;
             }
