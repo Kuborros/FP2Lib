@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using UnityEngine;
 
 namespace FP2Lib.Player
@@ -35,7 +34,10 @@ namespace FP2Lib.Player
 
         public PlayableChara(string uid,string name, int id)
         {
-
+            Uid = uid;
+            Name = name;
+            this.id = id;
+            registered = false;
         }
 
         internal CharacterData GetCharacterData()

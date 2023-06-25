@@ -29,7 +29,7 @@ namespace FP2Lib.Player
             if (!PlayableChars.ContainsKey(uid))
             {
                 PlayableChara chara = new PlayableChara(uid, name, airMoves, groundMoves, prefab);
-                PlayerLogSource.LogInfo("Registering chara with no ID, assigned ID:");
+                PlayerLogSource.LogInfo("Registering character with no ID, assigned ID:");
                 chara.id = GetNextFreeID();
                 PlayerLogSource.LogInfo(chara.id);
                 PlayableChars.Add(uid, chara);
@@ -38,7 +38,7 @@ namespace FP2Lib.Player
             if (PlayableChars.ContainsKey(uid) && PlayableChars[uid].prefab == null)
             {
                 PlayableChara chara = new PlayableChara(uid, name, airMoves, groundMoves, prefab);
-                PlayerLogSource.LogInfo("Registering chara with existing ID, assigned ID:");
+                PlayerLogSource.LogInfo("Registering character with existing ID, assigned ID:");
                 chara.id = PlayableChars[uid].id;
                 PlayerLogSource.LogInfo(chara.id);
                 PlayableChars.Add(uid, chara);

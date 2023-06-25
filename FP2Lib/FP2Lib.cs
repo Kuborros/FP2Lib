@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using FP2Lib.BepIn;
 using FP2Lib.NPC;
+using FP2Lib.Patches;
 using FP2Lib.Player;
 using FP2Lib.Saves;
 using HarmonyLib;
@@ -32,15 +33,20 @@ namespace FP2Lib
 
         private void setupHarmonyPatches()
         {
-
+            //NPC Lib
             Harmony npcPatches = new("000.kuborro.libraries.fp2.fp2lib.npc");
             npcPatches.PatchAll(typeof(NPCPatches));
 
             //Harmony playerPatches = new("000.kuborro.libraries.fp2.fp2lib.player");
 
+            //Save Redirection
             Harmony savePatches = new("000.kuborro.libraries.fp2.fp2lib.saves");
             savePatches.PatchAll(typeof(SavePatches));
 
+            //Misc fixes and patches
+            Harmony generalPatches = new("000.kuborro.libraries.fp2.fp2lib.patches");
+            generalPatches.PatchAll(typeof(ScreenshotFix));
+            generalPatches.PatchAll(typeof(PotionSizeFix));
         }
     }
 }
