@@ -21,19 +21,14 @@ namespace FP2Lib.Tools
             string version = Application.version;
 
             gameVersion = new Version(version.Remove(version.Length -1));
-            
-            switch (version.Substring(version.Length - 1))
+
+            build = version.Substring(version.Length - 1) switch
             {
-                case "r":
-                    build = GameRelease.RELEASE; break;
-                case "s":
-                case "d":
-                    build = GameRelease.SAMPLE; break;
-                case "b":
-                    build = GameRelease.BETA; break;
-                default:
-                    build = GameRelease.RELEASE; break;
-            }
+                "r" => GameRelease.RELEASE,
+                "s" or "d" => GameRelease.SAMPLE,
+                "b" => GameRelease.BETA,
+                _ => GameRelease.RELEASE,
+            };
         }
 
         public string getVersionString()
