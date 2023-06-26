@@ -3,8 +3,22 @@ using UnityEngine;
 
 namespace FP2Lib.NPC
 {
+    /*
+     * {
+     *  "UID":"",
+     *  "name":"",
+     *  "scene":"",
+     *  "bundlePath":"",
+     *  "species":0,
+     *  "home":0,
+     *  "dialogue":1
+     * }
+     */
+
+
+
     [Serializable]
-    internal class ezModeData
+    internal class EzModeData
     {
         public string UID;
         public string name;
@@ -14,7 +28,7 @@ namespace FP2Lib.NPC
         public int home;
         public int dialogue;
 
-        internal ezModeData(string uid, string name,string scene, string bundlePath, int species, int home, int dialogue)
+        internal EzModeData(string uid, string name,string scene, string bundlePath, int species, int home, int dialogue)
         {
             this.UID = uid;
             this.name = name;
@@ -25,9 +39,9 @@ namespace FP2Lib.NPC
             this.dialogue = dialogue;
         }
 
-        internal static ezModeData LoadFromJson(string json)
+        internal static EzModeData LoadFromJson(string json)
         {
-            return JsonUtility.FromJson<ezModeData>(json);
+            return JsonUtility.FromJson<EzModeData>(json);
         }
     }
 }

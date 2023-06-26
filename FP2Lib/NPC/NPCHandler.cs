@@ -3,8 +3,10 @@ using BepInEx.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace FP2Lib.NPC
 {
@@ -57,6 +59,7 @@ namespace FP2Lib.NPC
 
         internal static void InitialiseHandler()
         {
+
             storePath = Path.Combine(Paths.ConfigPath, "NPCLibStore");
             ezPath = Path.Combine(Paths.ConfigPath, "NPCLibEzNPC");
             Directory.CreateDirectory(storePath);
@@ -126,14 +129,35 @@ namespace FP2Lib.NPC
                 if (js.EndsWith(".json"))
                 {
                     EzModeData data = EzModeData.LoadFromJson(File.ReadAllText(js));
-                    NPCLogSource.LogDebug("Loaded EzMode NPC: " + data.name + "(" + data.UID + ")");
+                    GameObject gameObject;
+                    Console.WriteLine("Loaded EzMode NPC: " + data.name + "(" + data.UID + ")");
 
-                    GameObject gameObject = AssetBundle.LoadFromFile(data.bundlePath).LoadAllAssets<GameObject>()[0];
+                    NPCLogSource.LogInfo(File.ReadAllText(js));
+                    NPCLogSource.LogInfo($"{data.name}");
+
+                    try
+                    {
+                        gameObject = AssetBundle.LoadFromFile(data.bundlePath).LoadAllAssets<GameObject>()[0];
+                    } 
+                    catch (Exception ex)
+                    {
+                        NPCLogSource.LogError("Failed to load EzMode AssetBundle! " + ex.Message);
+                        return;
+                    }
+                    //Something went wrong, abort!
+                    if (gameObject == null || data.UID == null) return;
+
 
                     if (!HubNPCs.ContainsKey(data.UID))
                     {
                         HubNPC npc = new HubNPC(data.UID, data.name, data.scene, gameObject, data.species, data.home, data.dialogue);
                         HubNPCs.Add(data.UID, npc);
+                    }
+                    else if (HubNPCs.ContainsKey(data.UID) && HubNPCs[data.UID].Prefabs.Count == 0)
+                    {
+                        HubNPC npc = new HubNPC(data.UID, data.name, data.scene, gameObject, data.species, data.home, data.dialogue);
+                        npc.ID = HubNPCs[data.UID].ID;
+                        HubNPCs[data.UID] = npc;
                     }
                 }
             }
