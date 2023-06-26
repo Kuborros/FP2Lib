@@ -6,3 +6,5 @@ A library intended to simplify most common parts of modding **Freedom Planet 2**
 ### Currently:
 * Provides *Save file redirection* features used by the mod manager.
 * Provides framework to easily instance new NPC.
+* Provides framework to instance NPC from json and AssetBundle pair.
+* Provides game build information
