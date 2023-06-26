@@ -16,7 +16,11 @@ namespace FP2Lib.Player
         internal FPCharacterID eventActivatorCharacter;
 
         public Sprite profilePic;
+        public Sprite keyArtSprite;
         public Sprite[] livesIconAnim;
+
+        public AudioClip resultsTrack;
+        public AudioClip endingTrack;
 
         public int id;
         internal GameObject prefab;

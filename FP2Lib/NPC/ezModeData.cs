@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace FP2Lib.NPC
 {
-    [System.Serializable]
+    [Serializable]
     internal class ezModeData
     {
         public string UID;
@@ -26,9 +23,6 @@ namespace FP2Lib.NPC
             this.species = species;
             this.home = home;
             this.dialogue = dialogue;
-
-
-
         }
 
         internal static ezModeData LoadFromJson(string json)

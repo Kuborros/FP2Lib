@@ -51,15 +51,19 @@ namespace FP2Lib.NPC
     public static class NPCHandler
     {
         internal static Dictionary<string, HubNPC> HubNPCs = new();
-        private static string storePath;
+        private static string storePath, ezPath;
         private static ManualLogSource NPCLogSource = new ManualLogSource("FP2Lib-NPC");
+
 
         internal static void InitialiseHandler()
         {
             storePath = Path.Combine(Paths.ConfigPath, "NPCLibStore");
+            ezPath = Path.Combine(Paths.ConfigPath, "NPCLibEzNPC");
             Directory.CreateDirectory(storePath);
+            Directory.CreateDirectory(ezPath);
 
             LoadFromStorage();
+            LoadEzModeNPC();
         }
 
         public static bool RegisterNPC(string uID, string Name, string Scene, GameObject Prefab, FPCharacterSpecies Species = FPCharacterSpecies.UNKNOWN, FPCharacterHome Home = FPCharacterHome.UNKNOWN, int DialogueTopics = 1)
@@ -112,6 +116,27 @@ namespace FP2Lib.NPC
         public static HubNPC GetNPCByUID(string UID)
         {
             return HubNPCs[UID];
+        }
+
+
+        private static void LoadEzModeNPC()
+        {
+            foreach (string js in Directory.GetFiles(ezPath))
+            {
+                if (js.EndsWith(".json"))
+                {
+                    EzModeData data = EzModeData.LoadFromJson(File.ReadAllText(js));
+                    NPCLogSource.LogDebug("Loaded EzMode NPC: " + data.name + "(" + data.UID + ")");
+
+                    GameObject gameObject = AssetBundle.LoadFromFile(data.bundlePath).LoadAllAssets<GameObject>()[0];
+
+                    if (!HubNPCs.ContainsKey(data.UID))
+                    {
+                        HubNPC npc = new HubNPC(data.UID, data.name, data.scene, gameObject, data.species, data.home, data.dialogue);
+                        HubNPCs.Add(data.UID, npc);
+                    }
+                }
+            }
         }
 
         private static void LoadFromStorage()

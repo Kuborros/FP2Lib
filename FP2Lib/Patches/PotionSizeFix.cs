@@ -11,16 +11,12 @@ namespace FP2Lib.Patches
         public static bool PatchGetPotionSlots(ref int __result, ref int potionCapacityUpgradeLevel)
         {
             potionCapacityUpgradeLevel = Mathf.Clamp(potionCapacityUpgradeLevel, 0, FPSaveManager.EXPANSION_LIMIT_POTION_SLOTS);
-            if (potionCapacityUpgradeLevel == 1)
-            {
-                __result = FPSaveManager.DEFAULT_POTION_SLOTS + FPSaveManager.EXTRA_POTION_SLOTS_LEVEL1;
-            }
-            else if (potionCapacityUpgradeLevel >= 2)
+            if (potionCapacityUpgradeLevel >= 2)
             {
                 __result = FPSaveManager.DEFAULT_POTION_SLOTS + FPSaveManager.EXTRA_POTION_SLOTS_LEVEL2;
+                return false;
             }
-            else __result = FPSaveManager.DEFAULT_POTION_SLOTS;
-            return false;
+            return true;
         }
     }
 }
