@@ -6,6 +6,9 @@ namespace FP2Lib.NPC
 {
     internal class NPCPatches
     {
+        static RuntimeAnimatorController npcRenderer;
+        private static int selectedNPC = 0;
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPSaveManager), nameof(FPSaveManager.LoadFromFile), MethodType.Normal)]
         static void PatchFPSaveManager(ref string[] ___npcNames)
@@ -76,5 +79,53 @@ namespace FP2Lib.NPC
                 }
             }
         }
+
+        
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(MenuGlobalPause),"UpdateNPCList", MethodType.Normal)]
+        static void PatchUpdateNPCList(MenuGlobalPause __instance, ref SpriteRenderer ___npcPreviewSprite, int ___currentNPC, int ___npcListOffset)
+        {
+            if (npcRenderer == null)
+            {
+                npcRenderer = ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController;
+            }
+
+            int[] array = new int[FPSaveManager.npcFlag.Length];
+            int npcListLength = 0;
+            for (int i = 1; i < FPSaveManager.npcFlag.Length; i++)
+            {
+                if (FPSaveManager.npcFlag[i] > 0)
+                {
+                    array[npcListLength] = i;
+                    npcListLength++;
+                }
+            }
+            int id = array[___currentNPC + ___npcListOffset];
+
+            if (id != selectedNPC)
+            {
+                ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npcRenderer;
+                selectedNPC = id;
+
+                Animator component = __instance.npcPreviewSprite.gameObject.GetComponent<Animator>();
+                if (component.GetCurrentAnimatorClipInfoCount(0) > 0)
+                {
+                    if (component.GetCurrentAnimatorClipInfo(0)[0].clip.name == "null")
+                    {
+                        FileLog.Log("Found NPC missing animation in animator. ID=" + id);
+                        foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
+                        {
+                            if (npc.ID == id)
+                            {
+                                FileLog.Log("Found matchin NPC object with UID=" + npc.UID);
+                                ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npc.Prefabs.Values.First().GetComponent<Animator>().runtimeAnimatorController;
+                                FileLog.Log(___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController.name);
+                                component.Play("Default", 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }        
     }
 }
