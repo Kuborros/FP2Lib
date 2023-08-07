@@ -3,10 +3,8 @@ using BepInEx.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace FP2Lib.NPC
 {
@@ -130,10 +128,7 @@ namespace FP2Lib.NPC
                 {
                     EzModeData data = EzModeData.LoadFromJson(File.ReadAllText(js));
                     GameObject gameObject;
-                    Console.WriteLine("Loaded EzMode NPC: " + data.name + "(" + data.UID + ")");
-
-                    NPCLogSource.LogInfo(File.ReadAllText(js));
-                    NPCLogSource.LogInfo($"{data.name}");
+                    //Console.WriteLine("Loaded EzMode NPC: " + data.name + "(" + data.UID + ")");
 
                     try
                     {
