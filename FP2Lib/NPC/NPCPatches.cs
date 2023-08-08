@@ -46,9 +46,9 @@ namespace FP2Lib.NPC
             //Handling of NPC with no ID assigned
             foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
             {
-                FP2Lib.logSource.LogDebug("Found NPC with no ID: " + npc.UID);
                 if (npc.ID == 0 && !(___npcNames.Contains(npc.getNpcString())))
                 {
+                    FP2Lib.logSource.LogDebug("Found NPC with no ID: " + npc.UID);
                     //Zero ID + Not existing within array == new NPC, add it.
                     //First try to repurpose blank ID's
                     for (int i = 1; i < ___npcNames.Length; i++)
