@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using BepInEx.Logging;
 using FP2Lib.BepIn;
 using FP2Lib.NPC;
 using FP2Lib.Patches;
@@ -21,11 +22,13 @@ namespace FP2Lib
         public static ConfigEntry<int> configSaveProfile;
 
         public static GameInfo gameInfo;
+        internal static ManualLogSource logSource;
 
         private void Awake()
         {
 
             gameInfo = new GameInfo();
+            logSource = Logger;
 
             configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, new ConfigDescription("Enable save file redirection.",null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, new ConfigDescription("Makes JSON files more human-readable.",null, new ConfigurationManagerAttributes { IsAdvanced = true }));

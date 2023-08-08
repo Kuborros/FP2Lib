@@ -52,7 +52,7 @@ namespace FP2Lib.NPC
     {
         internal static Dictionary<string, HubNPC> HubNPCs = new();
         private static string storePath, ezPath;
-        private static ManualLogSource NPCLogSource = new ManualLogSource("FP2Lib-NPC");
+        private static readonly ManualLogSource NPCLogSource = FP2Lib.logSource;
 
 
         internal static void InitialiseHandler()

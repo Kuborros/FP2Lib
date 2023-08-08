@@ -1,5 +1,5 @@
-﻿using BepInEx;
-using HarmonyLib;
+﻿using HarmonyLib;
+using System.Collections.Specialized;
 using System.Linq;
 using UnityEngine;
 
@@ -15,12 +15,13 @@ namespace FP2Lib.NPC
         static void PatchFPSaveManager(ref string[] ___npcNames)
         {
             //Save file loading from filesystem, running logic to append our NPC listing
+            //Loop for NPC with existing ID's
             foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
             {
                 //If NPC got ID outside of current array size, expand it accordingly and populate it with default data
                 if (npc.ID >= ___npcNames.Length)
                 {
-                    for (int i = ___npcNames.Length; i <= (npc.ID + 1); i++)
+                    for (int i = ___npcNames.Length; i <= (npc.ID); i++)
                         ___npcNames = ___npcNames.AddToArray("00 00 Data Missing");
                 }
 
@@ -28,30 +29,61 @@ namespace FP2Lib.NPC
                 {
                     //Non-zero ID means NPC was initialised before (or already exists in the array) and already has ID assigned. Set it in the array.
                     //Also check if it uses placeholder (otherwise we migh have collision which need fixing)
-                    if (___npcNames[npc.ID] == "00 00 Data Missing")
+                    if (___npcNames[npc.ID] == "00 00 Data Missing" || ___npcNames[npc.ID] == npc.getNpcString())
                     {
                         ___npcNames[npc.ID] = npc.getNpcString();
+                        FP2Lib.logSource.LogDebug("NPC " + npc.UID + " restored from storage with ID = " + npc.ID);
                     } 
                     else
                     {
                         //Collision found, set ID to 0 so the next step assigns us new one.
+                        FP2Lib.logSource.LogDebug("NPC " + npc.UID + " conflicts with ID = " + npc.ID);
                         npc.ID = 0;
                     }
                 }
-
-                if (npc.ID == 0 && !(___npcNames.Contains(npc.getNpcString())))
-                {
-                    //Zero ID + Not existing within array == new NPC, add it at the end - this will assign new ID at the end of the array. Any holes in ID's are ignored.
-                    ___npcNames = ___npcNames.AddToArray(npc.getNpcString());
-                }
-                npc.ID = FPSaveManager.GetNPCNumber(npc.Name);
             }
 
-            //Extend other arrays accordingly
+            //Handling of NPC with no ID assigned
+            foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
+            {
+                FP2Lib.logSource.LogDebug("Found NPC with no ID: " + npc.UID);
+                if (npc.ID == 0 && !(___npcNames.Contains(npc.getNpcString())))
+                {
+                    //Zero ID + Not existing within array == new NPC, add it.
+                    //First try to repurpose blank ID's
+                    for (int i = 1; i < ___npcNames.Length; i++)
+                    {
+                        if (___npcNames[i] == "00 00 Data Missing")
+                        {
+                            ___npcNames[i] = npc.getNpcString();
+                            FP2Lib.logSource.LogDebug("Assigned empty ID = "+i);
+                            //Cursed but does what needed.
+                            goto END;
+                        }
+                    }
+                    //If nothing was found, append at the end
+                    FP2Lib.logSource.LogDebug("No empty ID found, adding at end of array.");
+                    ___npcNames = ___npcNames.AddToArray(npc.getNpcString());
+                }
+                END:
+                npc.ID = FPSaveManager.GetNPCNumber(npc.Name);
+                FP2Lib.logSource.LogDebug("ID for NPC " + npc.Name + " = "+ npc.ID);
+            }
+
+
+
+            //Resize other arrays accordingly
+
+            //Resize up
             if (FPSaveManager.npcFlag.Length < ___npcNames.Length)
                 FPSaveManager.npcFlag = FPSaveManager.ExpandByteArray(FPSaveManager.npcFlag, ___npcNames.Length);
             if (FPSaveManager.npcDialogHistory.Length < ___npcNames.Length)
                 FPSaveManager.npcDialogHistory = FPSaveManager.ExpandNPCDialogHistory(FPSaveManager.npcDialogHistory, ___npcNames.Length);
+            //Trim if too long (occurs when NPC gets fully wiped but has 'seen' flag, causes issues in Citiziens tab)
+            if (FPSaveManager.npcFlag.Length > ___npcNames.Length)
+                FPSaveManager.npcFlag = FPSaveManager.npcFlag.Take(___npcNames.Length).ToArray();
+            if (FPSaveManager.npcDialogHistory.Length > ___npcNames.Length)
+                FPSaveManager.npcDialogHistory = FPSaveManager.npcDialogHistory.Take(___npcNames.Length).ToArray();
 
             foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
             {
