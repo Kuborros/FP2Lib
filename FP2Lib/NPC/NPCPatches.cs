@@ -156,40 +156,50 @@ namespace FP2Lib.NPC
                 }
             }
 
-            int[] array2 = new int[FPSaveManager.npcFlag.Length];
-            array.CopyTo(array2, 0);
-            for (int j = 0; j < ___npcListLength; j++)
+            int id;
+            //1.2.4 and newer sort the list, patch accordingly.
+            if (FP2Lib.gameInfo.gameVersion > new Version("1.2.3"))
             {
-                bool flag = false;
-                int num = j;
-                while (!flag && j > 0)
+
+                int[] array2 = new int[FPSaveManager.npcFlag.Length];
+                array.CopyTo(array2, 0);
+                for (int j = 0; j < ___npcListLength; j++)
                 {
-                    int num2 = array2[num];
-                    int num3 = array2[num - 1];
-                    string text = FPSaveManager.GetNPCName(num2);
-                    string text2 = FPSaveManager.GetNPCName(num3);
-                    if (text == "Dr Tuvluv")
+                    bool flag = false;
+                    int num = j;
+                    while (!flag && j > 0)
                     {
-                        text = "Tuvluv";
-                    }
-                    if (text2 == "Dr Tuvluv")
-                    {
-                        text2 = "Tuvluv";
-                    }
-                    int num4 = text.CompareTo(text2);
-                    if (num4 < 0)
-                    {
-                        array2[num - 1] = num2;
-                        array2[num] = num3;
-                        num--;
-                    }
-                    else
-                    {
-                        flag = true;
+                        int num2 = array2[num];
+                        int num3 = array2[num - 1];
+                        string text = FPSaveManager.GetNPCName(num2);
+                        string text2 = FPSaveManager.GetNPCName(num3);
+                        if (text == "Dr Tuvluv")
+                        {
+                            text = "Tuvluv";
+                        }
+                        if (text2 == "Dr Tuvluv")
+                        {
+                            text2 = "Tuvluv";
+                        }
+                        int num4 = text.CompareTo(text2);
+                        if (num4 < 0)
+                        {
+                            array2[num - 1] = num2;
+                            array2[num] = num3;
+                            num--;
+                        }
+                        else
+                        {
+                            flag = true;
+                        }
                     }
                 }
+                id = array2[___currentNPC + ___npcListOffset];
+            } 
+            else
+            {
+                id = array[___currentNPC + ___npcListOffset];
             }
-            int id = array2[___currentNPC + ___npcListOffset];
 
             //If we swapped to different NPC than last frame
             if (id != selectedNPC)
