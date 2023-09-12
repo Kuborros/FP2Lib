@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using System.Collections.Specialized;
 using System.Linq;
 using UnityEngine;
@@ -135,7 +136,7 @@ namespace FP2Lib.NPC
         
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuGlobalPause),"UpdateNPCList", MethodType.Normal)]
-        static void PatchUpdateNPCList(MenuGlobalPause __instance, ref SpriteRenderer ___npcPreviewSprite, int ___currentNPC, int ___npcListOffset)
+        static void PatchUpdateNPCList(MenuGlobalPause __instance, ref SpriteRenderer ___npcPreviewSprite, int ___currentNPC, int ___npcListOffset,ref int ___npcListLength)
         {
             if (npcRenderer == null)
             {
@@ -145,16 +146,50 @@ namespace FP2Lib.NPC
 
             //currentNPC (0-9, screen position) to NPC id conversion
             int[] array = new int[FPSaveManager.npcFlag.Length];
-            int npcListLength = 0;
+            ___npcListLength = 0;
             for (int i = 1; i < FPSaveManager.npcFlag.Length; i++)
             {
                 if (FPSaveManager.npcFlag[i] > 0)
                 {
-                    array[npcListLength] = i;
-                    npcListLength++;
+                    array[___npcListLength] = i;
+                    ___npcListLength++;
                 }
             }
-            int id = array[___currentNPC + ___npcListOffset];
+
+            int[] array2 = new int[FPSaveManager.npcFlag.Length];
+            array.CopyTo(array2, 0);
+            for (int j = 0; j < ___npcListLength; j++)
+            {
+                bool flag = false;
+                int num = j;
+                while (!flag && j > 0)
+                {
+                    int num2 = array2[num];
+                    int num3 = array2[num - 1];
+                    string text = FPSaveManager.GetNPCName(num2);
+                    string text2 = FPSaveManager.GetNPCName(num3);
+                    if (text == "Dr Tuvluv")
+                    {
+                        text = "Tuvluv";
+                    }
+                    if (text2 == "Dr Tuvluv")
+                    {
+                        text2 = "Tuvluv";
+                    }
+                    int num4 = text.CompareTo(text2);
+                    if (num4 < 0)
+                    {
+                        array2[num - 1] = num2;
+                        array2[num] = num3;
+                        num--;
+                    }
+                    else
+                    {
+                        flag = true;
+                    }
+                }
+            }
+            int id = array2[___currentNPC + ___npcListOffset];
 
             //If we swapped to different NPC than last frame
             if (id != selectedNPC)
@@ -163,20 +198,14 @@ namespace FP2Lib.NPC
                 selectedNPC = id;
 
                 Animator component = __instance.npcPreviewSprite.gameObject.GetComponent<Animator>();
-                //Check if animator is initialised
-                if (component.GetCurrentAnimatorClipInfoCount(0) > 0)
+
+                foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
                 {
-                    //Check if we selected 'null' animation, if so replace with Default pose of the NPC (from the first prefab in case of multiple)
-                    if (component.GetCurrentAnimatorClipInfo(0)[0].clip.name == "null")
+                    if (npc.ID == id)
                     {
-                        foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
-                        {
-                            if (npc.ID == id)
-                            {
-                                ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npc.Prefabs.Values.First().GetComponent<Animator>().runtimeAnimatorController;
-                                component.Play("Default", 0);
-                            }
-                        }
+                        ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npc.Prefabs.Values.First().GetComponent<Animator>().runtimeAnimatorController;
+                        component.Play("Default", 0);
+                        return;
                     }
                 }
             }

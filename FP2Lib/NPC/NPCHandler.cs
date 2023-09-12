@@ -128,8 +128,6 @@ namespace FP2Lib.NPC
                 {
                     EzModeData data = EzModeData.LoadFromJson(File.ReadAllText(js));
                     GameObject gameObject;
-                    //Console.WriteLine("Loaded EzMode NPC: " + data.name + "(" + data.UID + ")");
-
                     try
                     {
                         gameObject = AssetBundle.LoadFromFile(data.bundlePath).LoadAllAssets<GameObject>()[0];
