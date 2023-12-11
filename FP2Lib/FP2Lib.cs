@@ -4,15 +4,13 @@ using BepInEx.Logging;
 using FP2Lib.BepIn;
 using FP2Lib.NPC;
 using FP2Lib.Patches;
-using FP2Lib.Player;
 using FP2Lib.Saves;
 using FP2Lib.Tools;
 using HarmonyLib;
-using UnityEngine;
 
 namespace FP2Lib
 {
-    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.2.2")]
+    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.2.3")]
     [BepInProcess("FP2.exe")]
     public class FP2Lib : BaseUnityPlugin
     {
@@ -66,7 +64,10 @@ namespace FP2Lib
             //Misc fixes and patches
             Logger.LogDebug("Bugfix Patch Init");
             Harmony generalPatches = new("000.kuborro.libraries.fp2.fp2lib.patches");
-            generalPatches.PatchAll(typeof(ScreenshotFix));
+            if (gameInfo.gameVersion < new System.Version("1.2.6"))
+            {
+                generalPatches.PatchAll(typeof(ScreenshotFix));
+            }
             generalPatches.PatchAll(typeof(PotionSizeFix));
 
             Logger.LogInfo("Init done!");
