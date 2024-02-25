@@ -10,7 +10,7 @@ using HarmonyLib;
 
 namespace FP2Lib
 {
-    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.2.4")]
+    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.2.3.1")]
     [BepInProcess("FP2.exe")]
     public class FP2Lib : BaseUnityPlugin
     {
@@ -64,7 +64,7 @@ namespace FP2Lib
             //Misc fixes and patches
             Logger.LogDebug("Bugfix Patch Init");
             Harmony generalPatches = new("000.kuborro.libraries.fp2.fp2lib.patches");
-            if (gameInfo.gameVersion < new System.Version("1.2.6"))
+            if (gameInfo.gameVersion.CompareTo(new System.Version("1.2.6")) <= 0)
             {
                 Logger.LogInfo("Game version lower than 1.2.6, applying screenshot resolution fix!");
                 generalPatches.PatchAll(typeof(ScreenshotFix));

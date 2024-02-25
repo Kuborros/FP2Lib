@@ -7,6 +7,14 @@
     <Version>0.2.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Freedom Planet 2 Modding Library</Title>
+    <Authors>Kuborros</Authors>
+    <Company />
+    <RepositoryUrl>https://github.com/Kuborros/FP2Lib</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Kuborros/FP2Lib</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,5 +36,12 @@
   
   <ItemGroup>
     <Folder Include="Saves\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 </Project>
