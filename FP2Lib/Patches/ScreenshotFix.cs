@@ -6,23 +6,27 @@ namespace FP2Lib.Patches
 {
     internal class ScreenshotFix
     {
-
+        //On older game versions a patch is needed in case internal resolution is not the default. v1.2.6 and above handle it themselves.
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuPhoto), "Start", MethodType.Normal)]
         private static void PatchMenuPhoto(ref int ___captureHeight, ref int ___captureWidth)
         {
-            GameObject pixelArtTarget = GameObject.Find("Pixel Art Target");
-            if (pixelArtTarget != null)
+            if (FP2Lib.gameInfo.gameVersion.CompareTo(new System.Version("1.2.6")) <= 0)
             {
-                Texture pixelArtBuffer = pixelArtTarget.GetComponent<MeshRenderer>().material.mainTexture;
-                if (pixelArtBuffer != null)
+                GameObject pixelArtTarget = GameObject.Find("Pixel Art Target");
+                if (pixelArtTarget != null)
                 {
-                    ___captureHeight = pixelArtBuffer.height;
-                    ___captureWidth = pixelArtBuffer.width;
+                    Texture pixelArtBuffer = pixelArtTarget.GetComponent<MeshRenderer>().material.mainTexture;
+                    if (pixelArtBuffer != null)
+                    {
+                        ___captureHeight = pixelArtBuffer.height;
+                        ___captureWidth = pixelArtBuffer.width;
+                    }
                 }
             }
         }
 
+        //Png is bigger than normal screenshots, needs resizing to not break the UI.
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuAlbum), "LoadPNG", MethodType.Normal)]
         [HarmonyPatch(typeof(MenuPhoto), "LoadPNG", MethodType.Normal)]
@@ -35,7 +39,7 @@ namespace FP2Lib.Patches
             }
         }
 
-
+        //Hacky resize code, there does not seem to be an easier and faster way to do so in Unity 5.6
         private static void Resize(Texture2D texture, int newWidth, int newHeight)
         {
             RenderTexture tmp = RenderTexture.GetTemporary(newWidth, newHeight, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);

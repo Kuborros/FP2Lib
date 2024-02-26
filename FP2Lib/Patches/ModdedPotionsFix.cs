@@ -7,6 +7,8 @@ namespace FP2Lib.Patches
 {
     internal class ModdedPotionsFix
     {
+        //If a mod introduced new potion IDs and then got removed game will try to render invalid potion sprites within the save menu, resulting in an unhandled null pointer.
+        //This Finalizer intercepts this exception, and restores sane defaults which lets the game proceed far enough for its own sanity checks to fire and correct the file.
         [HarmonyFinalizer]
         [HarmonyPatch(typeof(FPSaveManager), "DrawPotion", new Type[] { typeof(FPPowerup[]), typeof(byte[]),
             typeof(SpriteRenderer[]),typeof(SpriteRenderer), typeof(Sprite[]), typeof(Sprite[]),

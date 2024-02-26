@@ -64,11 +64,7 @@ namespace FP2Lib
             //Misc fixes and patches
             Logger.LogDebug("Bugfix Patch Init");
             Harmony generalPatches = new("000.kuborro.libraries.fp2.fp2lib.patches");
-            if (gameInfo.gameVersion.CompareTo(new System.Version("1.2.6")) <= 0)
-            {
-                Logger.LogInfo("Game version lower than 1.2.6, applying screenshot resolution fix!");
-                generalPatches.PatchAll(typeof(ScreenshotFix));
-            }
+            generalPatches.PatchAll(typeof(ScreenshotFix));
             generalPatches.PatchAll(typeof(PotionSizeFix));
             generalPatches.PatchAll(typeof(ModdedPotionsFix));
 

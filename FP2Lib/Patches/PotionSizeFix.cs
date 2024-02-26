@@ -6,6 +6,7 @@ namespace FP2Lib.Patches
 {
     internal class PotionSizeFix
     {
+        //A bug in base game makes potionCapacityUpgradeLevel behave incorrectly when set to 2. This restores the intended behaviour.
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FPSaveManager),"GetPotionSlots", new Type[] { typeof(int) })]
         public static bool PatchGetPotionSlots(ref int __result, ref int potionCapacityUpgradeLevel)

@@ -157,7 +157,7 @@ namespace FP2Lib.NPC
 
             int id;
             //1.2.4 and newer sort the list, patch accordingly.
-            if (FP2Lib.gameInfo.gameVersion > new Version("1.2.3"))
+            if (FP2Lib.gameInfo.gameVersion.CompareTo(new Version("1.2.3")) > 0)
             {
 
                 int[] array2 = new int[FPSaveManager.npcFlag.Length];
