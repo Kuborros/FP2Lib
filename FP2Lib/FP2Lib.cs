@@ -4,6 +4,7 @@ using BepInEx.Logging;
 using FP2Lib.BepIn;
 using FP2Lib.NPC;
 using FP2Lib.Patches;
+using FP2Lib.Player;
 using FP2Lib.Saves;
 using FP2Lib.Tools;
 using HarmonyLib;
@@ -20,6 +21,7 @@ namespace FP2Lib
         public static ConfigEntry<int> configSaveProfile;
 
         public static GameInfo gameInfo;
+        public static string Language = "english";
         internal static ManualLogSource logSource;
 
         private void Awake()
@@ -33,7 +35,7 @@ namespace FP2Lib
             configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, new ConfigDescription("Select save redirection profile.",new AcceptableValueRange<int>(0,9),new ConfigurationManagerAttributes { IsAdvanced = true }));
 
             NPCHandler.InitialiseHandler();
-            //PlayerHandler.InitialiseHandler();
+            PlayerHandler.InitialiseHandler();
 
             Logger.LogMessage("Running FP2 Version: " + gameInfo.getVersionString());
             if (gameInfo.build == GameRelease.SAMPLE)
@@ -53,8 +55,8 @@ namespace FP2Lib
             Harmony npcPatches = new("000.kuborro.libraries.fp2.fp2lib.npc");
             npcPatches.PatchAll(typeof(NPCPatches));
 
-            //Logger.LogDebug("Player Patch Init");
-            //Harmony playerPatches = new("000.kuborro.libraries.fp2.fp2lib.player");
+            Logger.LogDebug("Player Patch Init");
+            Harmony playerPatches = new("000.kuborro.libraries.fp2.fp2lib.player");
 
             //Save Redirection
             Logger.LogDebug("Saves Patch Init");
@@ -67,6 +69,7 @@ namespace FP2Lib
             generalPatches.PatchAll(typeof(ScreenshotFix));
             generalPatches.PatchAll(typeof(PotionSizeFix));
             generalPatches.PatchAll(typeof(ModdedPotionsFix));
+            generalPatches.PatchAll(typeof(LanguageExpander));
 
             Logger.LogInfo("Init done!");
         }
