@@ -1,10 +1,8 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
-using FP2Lib.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -23,8 +21,9 @@ namespace FP2Lib.Vinyl
 
         internal static void InitialiseHandler()
         {
-            //File.Create(Paths.ConfigPath + "/VinylStore.json").Close();
-            //LoadFromStorage();
+            if(!File.Exists(Paths.ConfigPath + "/VinylStore.json"))
+                File.Create(Paths.ConfigPath + "/VinylStore.json").Close();
+            LoadFromStorage();
         }
 
         public static bool RegisterVinyl(string name,AudioClip track, VAddToShop shop)
@@ -49,15 +48,17 @@ namespace FP2Lib.Vinyl
             return Vinyls[name];
         } 
 
-        /*
+        
         private static void LoadFromStorage()
         {
             string json = File.ReadAllText(Paths.ConfigPath + "/VinylStore.json");
             if (json.IsNullOrWhiteSpace()) return;
-            VinylData[] vinylInfo = JsonHelper.FromJson<VinylData>(json);
-            if (vinylInfo == null) return;
-            foreach (VinylData vinyl in vinylInfo)
+
+            string[] vinylJson = json.Split(new string[] { "<sep>" }, StringSplitOptions.None);
+            foreach (string vinylString in vinylJson)
             {
+                VinylData vinyl = VinylData.LoadFromJson(vinylString);
+
                 VinylLogSource.LogDebug("Loaded Vinyl from storage: " + vinyl.name + "(" + vinyl.id + ")");
                 if (!Vinyls.ContainsKey(vinyl.name))
                 {
@@ -69,16 +70,18 @@ namespace FP2Lib.Vinyl
 
         internal static void WriteToStorage()
         {
-            string json = "{\"Items\":[\n";
+            if (Vinyls.Values.Count == 0) return;
+
+            string json = "";
 
             foreach (VinylData vinyl in Vinyls.Values)
             {
                 json += vinyl.WriteToJson();
-                json += ",\n";
+                json += "<sep>\n";
             }
 
-            json = json.Remove(json.Length - 2);
-            json += "\n]}";
+            json = json.Remove(json.Length - 6);
+            json += "";
 
             try
             {
@@ -98,6 +101,6 @@ namespace FP2Lib.Vinyl
                 Debug.LogError(e);
             }
         }
-        */
+        
     }
 }

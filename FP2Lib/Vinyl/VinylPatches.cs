@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using HarmonyLib;
-using System;
 using System.Linq;
 using UnityEngine;
 
@@ -19,6 +18,8 @@ namespace FP2Lib.Vinyl
             //But if it's too ling things will break, so we trim it in such case.
             if (___musicTracks.Length > VinylHandler.totalTracks)
                 ___musicTracks = ___musicTracks.Take(VinylHandler.totalTracks +1).ToArray();
+
+            VinylHandler.WriteToStorage();
         }
 
         [HarmonyPostfix]
