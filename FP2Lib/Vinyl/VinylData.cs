@@ -2,8 +2,7 @@
 
 namespace FP2Lib.Vinyl
 {
-    enum VAddToShop{
-
+    public enum VAddToShop {
         None,
         ClassicOnly,
         Naomi, //Battlesphere
@@ -11,12 +10,30 @@ namespace FP2Lib.Vinyl
         Fawnstar //Paradise Prime
     }
 
-    internal class VinylData
+    [System.Serializable]
+    public class VinylData
     {
-        int id;
-        string name;
-        AudioClip audioClip;
-        VAddToShop shopLocation;
+        public int id;
+        public string name;
+        internal AudioClip audioClip;
+        public VAddToShop shopLocation;
 
+        public VinylData(string name, AudioClip audioClip, int id, VAddToShop shop)
+        {
+            this.name = name;
+            this.audioClip = audioClip;
+            this.id = id;
+            this.shopLocation = shop;
+        }
+
+        internal static VinylData LoadFromJson(string json)
+        {
+            return JsonUtility.FromJson<VinylData>(json);
+        }
+
+        internal string WriteToJson()
+        {
+            return JsonUtility.ToJson(this, true);
+        }
     }
 }

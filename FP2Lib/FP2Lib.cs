@@ -29,7 +29,9 @@ namespace FP2Lib
         public static string language = "english";
         internal static ManualLogSource logSource;
 
+#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
+#pragma warning restore IDE0051 // Remove unused private members
         {
 
             gameInfo = new GameInfo();
@@ -64,10 +66,10 @@ namespace FP2Lib
                 Logger.LogWarning("Hook-in checks disabled by config option - things might break, but you asked for it! Cowabunga it is.");
 
             Logger.LogInfo("FP2Lib initialisation started!");
-            setupHarmonyPatches();
+            SetupHarmonyPatches();
         }
 
-        private void setupHarmonyPatches()
+        private void SetupHarmonyPatches()
         {
             //NPC
             Logger.LogDebug("NPC Patch Init");
@@ -75,8 +77,8 @@ namespace FP2Lib
             npcPatches.PatchAll(typeof(NPCPatches));
 
             //Player
-            Logger.LogDebug("Player Patch Init");
-            Harmony playerPatches = new("000.kuborro.libraries.fp2.fp2lib.player");
+            //Logger.LogDebug("Player Patch Init");
+            //Harmony playerPatches = new("000.kuborro.libraries.fp2.fp2lib.player");
 
             //Vinyls
             Logger.LogDebug("Vinyl Patch Init");
