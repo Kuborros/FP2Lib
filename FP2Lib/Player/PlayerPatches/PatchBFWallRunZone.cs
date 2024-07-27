@@ -7,6 +7,8 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchBFWallRunZone
     {
+        //Fire GroundMoves of custom character
+        /*
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(BFWallRunZone), "Update", MethodType.Normal)]
         static IEnumerable<CodeInstruction> BFWallRunZoneTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -37,5 +39,6 @@ namespace FP2Lib.Player.PlayerPatches
 
             return codes;
         }
+        */
     }
 }

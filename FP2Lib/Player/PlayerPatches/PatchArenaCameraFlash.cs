@@ -11,11 +11,19 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (SceneManager.GetActiveScene().name != "Cutscene_BattlesphereEnding")
             {
-                if (___voicePlayerKO != null && FPStage.currentStage.GetPlayerInstance_FPPlayer().characterID == (FPCharacterID)5)
+                if (___voicePlayerKO != null && PlayerHandler.currentCharacter.Gender == CharacterGender.MALE)
                 {
+                    //Swap to male variant
                     for (int i = 0; i < ___voicePlayerKO.Length; i++)
                     {
                         if (___voicePlayerKO[i] == 8) ___voicePlayerKO[i] = 9;
+                    }
+                } else if (___voicePlayerKO != null && PlayerHandler.currentCharacter.Gender == CharacterGender.NON_BINARY)
+                {
+                    //Swap to non-gendered line
+                    for (int i = 0; i < ___voicePlayerKO.Length; i++)
+                    {
+                        if (___voicePlayerKO[i] == 8) ___voicePlayerKO[i] = 0;
                     }
                 }
             }

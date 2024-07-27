@@ -11,21 +11,26 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(MenuTutorialPrompt), "State_Transition", MethodType.Normal)]
         static IEnumerable<CodeInstruction> MWConfirmTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
         {
-            Label spadStart = il.DefineLabel();
-            Label spadEnd = il.DefineLabel();
+            Label patchStart = il.DefineLabel();
+            Label patchEnd = il.DefineLabel();
 
             List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
             for (var i = 1; i < codes.Count; i++)
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_1)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(spadStart).ToArray();
-                    codes[i].operand = targets;
-                    codes[i + 2].labels.Add(spadStart); //Load up Lilac's tutorial
+                    codes[i + 1].operand = patchStart;
+                    codes[i + 4].labels.Add(patchEnd);
                 }
 
             }
+            CodeInstruction spadCodeStart = new CodeInstruction(OpCodes.Ldloc_1);
+            spadCodeStart.labels.Add(patchStart);
+
+            codes.Add(spadCodeStart);
+            codes.Add(new CodeInstruction(OpCodes.Call,PatchMenuWorldMapConfirm.m_getTutorialScene));
+            codes.Add(new CodeInstruction(OpCodes.Br, patchEnd));
+
             return codes;
         }
     }

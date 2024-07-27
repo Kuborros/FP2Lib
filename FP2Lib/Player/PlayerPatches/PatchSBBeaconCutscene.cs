@@ -50,8 +50,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_3)
                 {
-                    exitLabel = codes[i].labels[0];
-                    codes[i].operand = entryLabel;
+                    exitLabel = codes[i+1].labels[0];
+                    codes[i+1].operand = entryLabel;
                 }
             }
             CodeInstruction entry = new CodeInstruction(OpCodes.Ldarg_0);

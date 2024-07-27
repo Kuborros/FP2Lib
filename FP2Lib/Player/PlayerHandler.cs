@@ -24,11 +24,11 @@ namespace FP2Lib.Player
             LoadFromStorage();
         }
 
-        public static bool RegisterPlayableCharacter(string uid, string name, Delegate airMoves, Delegate groundMoves, GameObject prefab)
+        public static bool RegisterPlayableCharacter(string uid, string name, CharacterGender gender, Delegate airMoves, Delegate groundMoves, GameObject prefab,AssetBundle assets)
         {
             if (!PlayableChars.ContainsKey(uid))
             {
-                PlayableChara chara = new PlayableChara(uid, name, airMoves, groundMoves, prefab);
+                PlayableChara chara = new PlayableChara(uid, name,gender, airMoves, groundMoves, prefab,assets);
                 PlayerLogSource.LogInfo("Registering character with no ID, assigned ID:");
                 chara.id = GetNextFreeID();
                 PlayerLogSource.LogInfo(chara.id);
@@ -37,7 +37,7 @@ namespace FP2Lib.Player
             }
             if (PlayableChars.ContainsKey(uid) && PlayableChars[uid].prefab == null)
             {
-                PlayableChara chara = new PlayableChara(uid, name, airMoves, groundMoves, prefab);
+                PlayableChara chara = new PlayableChara(uid, name,gender, airMoves, groundMoves, prefab,assets);
                 PlayerLogSource.LogInfo("Registering character with existing ID, assigned ID:");
                 chara.id = PlayableChars[uid].id;
                 PlayerLogSource.LogInfo(chara.id);
@@ -72,7 +72,7 @@ namespace FP2Lib.Player
                     PlayerLogSource.LogInfo("Loaded Character from storage: " + data.name + "(" + data.UID + ")");
                     if (!PlayableChars.ContainsKey(data.UID))
                     {
-                        PlayableChara chara = new PlayableChara(data.UID, data.name, data.runtimeID);
+                        PlayableChara chara = new PlayableChara(data.UID, data.name, data.runtimeID,data.gender);
                         PlayableChars.Add(data.UID, chara);
                     }
                 }

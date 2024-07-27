@@ -10,14 +10,11 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(FPStage), "Start", MethodType.Normal)]
         static void PatchStart(ref FPPlayer[] ___playerList)
         {
-            GameObject spadeObject = Plugin.moddedBundle.LoadAsset<GameObject>("Player Spade");
-            ___playerList = ___playerList.AddItem(spadeObject.GetComponent<FPPlayer>()).ToArray();
+            //Load each playable characters GameObject prefab here, append to ___playerList in order of IDs
 
-            if (FPStage.stageNameString != "Nalao Lake" || FPStage.stageNameString != "The Battlesphere")
-            {
-                PatchBFFMicroMissile.BFFActive = false;
-            }
-            if (FPStage.stageNameString == "Bakunawa Chase") PatchBFFMicroMissile.BFFActive = true;
+            //GameObject spadeObject = Plugin.moddedBundle.LoadAsset<GameObject>("Player Spade");
+            //___playerList = ___playerList.AddItem(spadeObject.GetComponent<FPPlayer>()).ToArray();
+
         }
     }
 }

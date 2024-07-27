@@ -9,6 +9,7 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(PlayerSpawnPoint), "Start", MethodType.Normal)]
         static void PatchSpawnPointStart(ref AudioClip[] ___characterMusic)
         {
+            //Unused, but game *will* explode if this is missing...
             for (int i = 0; i < PlayerHandler.PlayableChars.Count;i++)
             ___characterMusic = ___characterMusic.AddToArray(null);
         }

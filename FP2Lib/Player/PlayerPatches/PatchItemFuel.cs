@@ -8,9 +8,9 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchItemFuel
     {
-        protected static Sprite cardsItem;
+        //ItemFuel needs sprite and code per each character.
 
-
+        /*
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ItemFuel), "Start", MethodType.Normal)]
         static void PatchStart(ref Sprite[] ___iconSprite)
@@ -40,6 +40,6 @@ namespace FP2Lib.Player.PlayerPatches
             }
             return codes;
         }
-
+        */
     }
 }

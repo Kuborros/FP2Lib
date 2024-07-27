@@ -10,6 +10,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (FPSaveManager.character <= (FPCharacterID)5)
             {
+                //Everyone is here to help!
                 __instance.assistRoster.Add(Bakunawa.Assist.Milla);
                 __instance.assistRoster.Add(Bakunawa.Assist.Neera);
                 __instance.assistRoster.Add(Bakunawa.Assist.Carol);

@@ -9,8 +9,9 @@ namespace FP2Lib.Player.PlayerPatches
     internal class PatchMenuCharacterSelect
     {
 
-        static GameObject spadeSelector;
+        //Maybe just implement own character select?
 
+        /*
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuCharacterSelect), "Start", MethodType.Normal)]
         static void PatchCharacterSelectStart(MenuCharacterSelect __instance, ref MenuCharacterWheel[] ___characterSprites, ref Sprite[] ___nameLabelSprites, ref MenuText[] ___infoText)
@@ -31,6 +32,7 @@ namespace FP2Lib.Player.PlayerPatches
 
         }
 
+        //Bump the maximum number of characters
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(MenuCharacterSelect), "State_SelectCharacter", MethodType.Normal)]
         static IEnumerable<CodeInstruction> CharacterSelectTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -46,6 +48,8 @@ namespace FP2Lib.Player.PlayerPatches
             return codes;
         }
 
+
+        //Patch digitframes to show live icon of selected character
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuCharacterSelect), "State_CharacterConfirm", MethodType.Normal)]
         static void PatchCharacterConfirm(MenuCharacterSelect __instance, ref FPHudDigit ___characterIcon)
@@ -57,6 +61,8 @@ namespace FP2Lib.Player.PlayerPatches
             }
         }
 
+
+        //Patch code to write proper character ID to file
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(MenuCharacterSelect), "State_CharacterConfirm", MethodType.Normal)]
         static IEnumerable<CodeInstruction> CharacterConfirmTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -90,7 +96,7 @@ namespace FP2Lib.Player.PlayerPatches
 
             return codes;
 
-
+            */
         }
     }
 }

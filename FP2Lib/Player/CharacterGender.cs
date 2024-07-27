@@ -1,6 +1,6 @@
 ﻿namespace FP2Lib.Player
 {
-        enum CharacterGender
+        public enum CharacterGender
         {
             NON_BINARY,
             MALE,

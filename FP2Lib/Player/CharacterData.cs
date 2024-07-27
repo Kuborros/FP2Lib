@@ -8,13 +8,15 @@ namespace FP2Lib.Player
 
         public string UID;
         public int runtimeID;
+        public CharacterGender gender;
         public string name;
 
-        internal CharacterData(string uid, int runtimeID, string name)
+        internal CharacterData(string uid, int runtimeID, string name, CharacterGender gender)
         {
             this.UID = uid;
             this.runtimeID = runtimeID;
             this.name = name;
+            this.gender = gender;
         }
 
         internal static CharacterData LoadFromJson(string json)

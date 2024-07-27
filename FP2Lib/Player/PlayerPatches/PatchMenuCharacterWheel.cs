@@ -10,6 +10,8 @@ namespace FP2Lib.Player.PlayerPatches
         static bool ReplaceMenuCharacterUpdate(MenuCharacterWheel __instance, ref SpriteRenderer ___spriteRenderer)
         {
 
+            //Wheel can comfortably fit up to ~10 characters. Any more will go to shadow realm of "Other Characters" menu.
+            /*
             if (__instance != null)
             {
                 switch (__instance.name)
@@ -41,6 +43,7 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 __instance.rotation = (__instance.rotation * (num - 1f) + (float)__instance.parentObject.character * 72f + __instance.rotationOffset) / num;
             }
+            */
 
             return false;
         }
