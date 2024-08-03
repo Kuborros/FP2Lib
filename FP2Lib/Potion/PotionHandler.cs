@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FP2Lib.Item
+namespace FP2Lib.Potion
 {
-    internal class ItemIDBroker
+    internal class PotionHandler
     {
-        internal int lastItemID;
-
     }
 }

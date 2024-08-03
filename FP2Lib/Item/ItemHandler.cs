@@ -5,8 +5,7 @@ using System.Text;
 
 namespace FP2Lib.Item
 {
-    internal class PotionIDBroker
+    internal class ItemHandler
     {
-        internal int lastPotionID;
     }
 }
