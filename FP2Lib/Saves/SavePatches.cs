@@ -8,8 +8,11 @@ namespace FP2Lib.Saves
 {
     internal class SavePatches
     {
-
-        static string getSavesPath()
+        /// <summary>
+        /// Returns path to current profile's save directory
+        /// </summary>
+        /// <returns>Save file path</returns>
+        public static string getSavesPath()
         {
             if (FP2Lib.configSaveRedirect.Value && FP2Lib.configSaveProfile.Value != 0)
             {
@@ -19,6 +22,7 @@ namespace FP2Lib.Saves
             else return Application.persistentDataPath;
         }
 
+        //Modifies output of JsonUtility to switch to 'everyting is not yeeted into single line' mode.
         static string fancifyJson(Object obj)
         {
             if (FP2Lib.configSaveFancy.Value)
@@ -28,6 +32,7 @@ namespace FP2Lib.Saves
             else return JsonUtility.ToJson(obj, false);
         }
 
+        //Change Call OpCode target from 'JsonUtility.ToJson(obj)' to 'fancifyJson(obj)'
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPSaveManager), "SaveToFile", MethodType.Normal)]
         static IEnumerable<CodeInstruction> PatchJsonStyle(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -44,7 +49,7 @@ namespace FP2Lib.Saves
             return codes;
         }
 
-
+        //Override path from 'Application.persistentDataPath' to return value of 'getSavesPath()'
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPSaveManager),"SaveToFile",MethodType.Normal)]
         static IEnumerable<CodeInstruction> PatchSaveWrite(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -61,6 +66,7 @@ namespace FP2Lib.Saves
             return codes;
         }
 
+        //Override path from 'Application.persistentDataPath' to return value of 'getSavesPath()'
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
         static IEnumerable<CodeInstruction> PatchSaveLoad(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -77,6 +83,7 @@ namespace FP2Lib.Saves
             return codes;
         }
 
+        //Override path from 'Application.persistentDataPath' to return value of 'getSavesPath()'
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPSaveManager), "DeleteFile", MethodType.Normal)]
         static IEnumerable<CodeInstruction> PatchSaveDelete(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -93,6 +100,7 @@ namespace FP2Lib.Saves
             return codes;
         }
 
+        //Override path from 'Application.persistentDataPath' to return value of 'getSavesPath()'
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(MenuFile), "GetFileInfo", MethodType.Normal)]
         static IEnumerable<CodeInstruction> PatchFileInfo(IEnumerable<CodeInstruction> instructions, ILGenerator il)

@@ -8,6 +8,7 @@ using FP2Lib.Player;
 using FP2Lib.Saves;
 using FP2Lib.Tools;
 using FP2Lib.Vinyl;
+using FP2Lib.Badge;
 using HarmonyLib;
 
 namespace FP2Lib
@@ -54,6 +55,7 @@ namespace FP2Lib
             NPCHandler.InitialiseHandler();
             PlayerHandler.InitialiseHandler();
             VinylHandler.InitialiseHandler();
+            BadgeHandler.InitialiseHandler();
 
             Logger.LogMessage("Running FP2 Version: " + gameInfo.getVersionString());
             if (gameInfo.build == GameRelease.SAMPLE && !configCowabunga.Value)
@@ -84,6 +86,11 @@ namespace FP2Lib
             Logger.LogDebug("Vinyl Patch Init");
             Harmony vinylPatches = new("000.kuborro.libraries.fp2.fp2lib.vinyl");
             vinylPatches.PatchAll(typeof(VinylPatches));
+
+            //Badges
+            Logger.LogDebug("Badge Patch Init");
+            Harmony badgePatches = new("000.kuborro.libraries.fp2.fp2lib.badge");
+            badgePatches.PatchAll(typeof(BadgePatches));
 
             //Save Redirection
             Logger.LogDebug("Saves Patch Init");

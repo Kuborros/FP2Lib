@@ -7,23 +7,29 @@ namespace FP2Lib.Vinyl
         ClassicOnly,
         Naomi, //Battlesphere
         Digo, //Adventure Square
-        Fawnstar //Paradise Prime
+        Fawnstar, //Paradise Prime
+        All //All of the above
     }
 
     [System.Serializable]
     public class VinylData
     {
-        public int id;
+        public string uid;
+        public int id = 0;
         public string name;
         internal AudioClip audioClip;
+        public int starCards;
+        public int crystalsPrice;
         public VAddToShop shopLocation;
 
-        public VinylData(string name, AudioClip audioClip, int id, VAddToShop shop)
+        public VinylData(string uid ,string name, AudioClip audioClip, VAddToShop shop, int starCards, int crystalsPrice)
         {
+            this.uid = uid;
             this.name = name;
             this.audioClip = audioClip;
-            this.id = id;
             this.shopLocation = shop;
+            this.starCards = starCards;
+            this.crystalsPrice = crystalsPrice;
         }
 
         internal static VinylData LoadFromJson(string json)

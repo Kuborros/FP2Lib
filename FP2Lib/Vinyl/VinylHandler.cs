@@ -12,40 +12,101 @@ namespace FP2Lib.Vinyl
     {
         private static readonly ManualLogSource VinylLogSource = FP2Lib.logSource;
 
-        //Get how many tracks are currently added.
-        private static readonly int baseTracks = Enum.GetValues(typeof(FPMusicTrack)).Length;
-        public static int totalTracks = baseTracks - 1;
+        //Get how many tracks are currently added in base game.
+        public static readonly int baseTracks = Enum.GetValues(typeof(FPMusicTrack)).Length;
 
         internal static Dictionary<string, VinylData> Vinyls = [];
-
+        internal static bool[] takenIDs = new bool[256];
 
         internal static void InitialiseHandler()
         {
             if(!File.Exists(Paths.ConfigPath + "/VinylStore.json"))
                 File.Create(Paths.ConfigPath + "/VinylStore.json").Close();
+
+            //Mark first ~90 vinyl ids as taken by base game.
+            for (int i = 0; i < baseTracks; i++)
+            {
+                takenIDs[i] = true;
+            }
+
             LoadFromStorage();
         }
 
-        public static bool RegisterVinyl(string name,AudioClip track, VAddToShop shop)
+        /// <summary>
+        /// Register the vinyl into FP2Lib's database. Badges registered will be assigned internal game id, and added to the game.
+        /// It can be later purchased at selected stores - or none, if so choosen, in which case You can add it manually to custom shops by the ID obtainable using <c>GetVinylDataByUid(uid)</c>.
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name">Mame of the track</param>
+        /// <param name="track"><c>AudioClip</c> with the track</param>
+        /// <param name="shop">Which shop should it be added to</param>
+        /// <param name="starCards">How many Star Cards are needed to unlock it</param>
+        /// <param name="crystalsPrice">Price in crystals</param>
+        /// <returns>Registered successfully?</returns>
+        public static bool RegisterVinyl(string uid,string name,AudioClip track, VAddToShop shop = VAddToShop.Naomi, int starCards = 0, int crystalsPrice = 300)
         {
-            if (!Vinyls.ContainsKey(name))
+            if (!Vinyls.ContainsKey(uid))
             {
-                totalTracks++;
-                VinylData data = new VinylData(name,track,totalTracks,shop);
-                Vinyls.Add(name,data);
+                VinylData data = new VinylData(uid,name,track,shop,starCards,crystalsPrice);
+                data.id = AssignVinylID(data);
+                Vinyls.Add(uid,data);
                 return true;
             } 
-            else if (Vinyls.ContainsKey(name) && Vinyls[name].audioClip == null)
+            else if (Vinyls.ContainsKey(uid) && Vinyls[uid].audioClip == null)
             {
-                Vinyls[name].audioClip = track;
+                Vinyls[uid].name = name;
+                Vinyls[uid].shopLocation = shop;
+                Vinyls[uid].starCards = starCards;
+                Vinyls[uid].crystalsPrice = crystalsPrice; 
+                Vinyls[uid].audioClip = track;
+                Vinyls[uid].id = AssignVinylID(Vinyls[uid]);
                 return true;
             }
             return false;
         }
 
-        public static VinylData GetVinylDataByName(string name)
+        private static int AssignVinylID(VinylData vinyl)
         {
-            return Vinyls[name];
+            //Vinyl already has ID
+            if (vinyl.id != 0)
+            {
+                //Extend array if needed
+                if (vinyl.id > takenIDs.Length)
+                    takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, vinyl.id);
+                //Mark id as taken
+                takenIDs[vinyl.id] = true;
+                VinylLogSource.LogDebug("Stored vinyl ID assigned (" + vinyl.uid + "): " + vinyl.id);
+                return vinyl.id;
+            }
+            else
+            {
+                VinylLogSource.LogDebug("Vinyl with unassigned ID registered! Running assignment process for " + vinyl.uid);
+                //Iterate over array, assign first non-taken slot
+                for (int i = 64; i < takenIDs.Length; i++)
+                {
+                    //First slot with false = empty space
+                    if (!takenIDs[i])
+                    {
+                        vinyl.id = i;
+                        takenIDs[i] = true;
+                        VinylLogSource.LogDebug("ID assigned:" + vinyl.id);
+                        //Will also break loop
+                        return vinyl.id;
+                    }
+                }
+            }
+            VinylLogSource.LogWarning("Vinyl: " + vinyl.uid + " failed ID assignment! That's *very* bad!");
+            return 0;
+        }
+
+        /// <summary>
+        /// Returns the VinylData object for given uid
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public static VinylData GetVinylDataByUid(string uid)
+        {
+            return Vinyls[uid];
         } 
 
         
@@ -60,10 +121,9 @@ namespace FP2Lib.Vinyl
                 VinylData vinyl = VinylData.LoadFromJson(vinylString);
 
                 VinylLogSource.LogDebug("Loaded Vinyl from storage: " + vinyl.name + "(" + vinyl.id + ")");
-                if (!Vinyls.ContainsKey(vinyl.name))
+                if (!Vinyls.ContainsKey(vinyl.uid))
                 {
-                    totalTracks++;
-                    Vinyls.Add(vinyl.name, vinyl);
+                    Vinyls.Add(vinyl.uid, vinyl);
                 }
             }
         }
