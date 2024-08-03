@@ -27,7 +27,7 @@ namespace FP2Lib.Vinyl
                     VinylLogSource.LogDebug("Detected gap in Vinyl ids!");
                 }
             }
-            //Add slots in file for extra tracks. The +1 accounts for the 0 index 'null' entry in the array.
+            //Add slots in file for extra tracks.
             ___musicTracks = FPSaveManager.ExpandBoolArray(___musicTracks, totalTracks);
             //But if it's too ling things will break, so we trim it in such case.
             //Very important as the game _will_ detonate if you scroll to a vinyl you have 'unlocked' but it has no data for.

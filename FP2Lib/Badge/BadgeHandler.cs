@@ -120,8 +120,12 @@ namespace FP2Lib.Badge
         /// <returns>Unlock success</returns>
         public static bool UnlockBadge(string uid)
         {
-            int id = Badges[uid].id;
-            return UnlockBadge(id);
+            if (Badges.ContainsKey(uid))
+            {
+                int id = Badges[uid].id;
+                return UnlockBadge(id);
+            }
+            else return false;
         }
 
         /// <summary>
@@ -135,8 +139,8 @@ namespace FP2Lib.Badge
             {
                 FPSaveManager.ForceBadgeUnlock(id);
                 return true;
-            } else 
-                return false;
+            } 
+            else return false;
         }
 
 

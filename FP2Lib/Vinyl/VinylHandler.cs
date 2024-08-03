@@ -103,10 +103,12 @@ namespace FP2Lib.Vinyl
         /// Returns the VinylData object for given uid
         /// </summary>
         /// <param name="uid"></param>
-        /// <returns></returns>
+        /// <returns>VinylData for given uid, or Null if none such exists.</returns>
         public static VinylData GetVinylDataByUid(string uid)
         {
-            return Vinyls[uid];
+            if (Vinyls.ContainsKey(uid))
+                return Vinyls[uid];
+            else return null;
         } 
 
         
