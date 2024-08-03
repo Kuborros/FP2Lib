@@ -10,3 +10,5 @@ A library intended to simplify most common parts of modding **Freedom Planet 2**
 * Provides framework to instance NPC from json and AssetBundle pair.
 * Provides patches for issues caused by workings of mods
 * Provides game build information
+
+You can read documentation of specific parts on the [Wiki](https://github.com/Kuborros/FP2Lib/wiki)
