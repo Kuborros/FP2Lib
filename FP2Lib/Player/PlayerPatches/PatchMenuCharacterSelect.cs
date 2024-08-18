@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
 
@@ -8,28 +9,43 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchMenuCharacterSelect
     {
+        internal static readonly MethodInfo m_getRealTotalCharacterNumber = SymbolExtensions.GetMethodInfo(() => PlayerHandler.GetRealTotalCharacterNumber);
 
-        //Maybe just implement own character select?
-
-        /*
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuCharacterSelect), "Start", MethodType.Normal)]
         static void PatchCharacterSelectStart(MenuCharacterSelect __instance, ref MenuCharacterWheel[] ___characterSprites, ref Sprite[] ___nameLabelSprites, ref MenuText[] ___infoText)
         {
-            spadeSelector = GameObject.Instantiate(Plugin.moddedBundle.LoadAsset<GameObject>("Menu CS Character Spade"));
-            MenuCharacterWheel spadeWheel = spadeSelector.GetComponent<MenuCharacterWheel>();
-            spadeWheel.parentObject = __instance;
-            spadeWheel.gameObject.transform.parent = __instance.transform;
-            ___characterSprites = ___characterSprites.AddToArray(spadeWheel);
+            //Extend arrays
+            for (int i = 5; i < PlayerHandler.highestID; i++)
+            {
+                ___characterSprites = ___characterSprites.AddToArray(null);
+                ___nameLabelSprites = ___nameLabelSprites.AddToArray(null);
+                ___infoText[0].paragraph = ___infoText[0].paragraph.AddToArray("");
+                ___infoText[1].paragraph = ___infoText[1].paragraph.AddToArray("");
+                ___infoText[2].paragraph = ___infoText[2].paragraph.AddToArray("");
+                ___infoText[3].paragraph = ___infoText[3].paragraph.AddToArray("");
+                ___infoText[4].paragraph = ___infoText[4].paragraph.AddToArray("");
+            }
 
-            ___nameLabelSprites = ___nameLabelSprites.AddToArray(Plugin.moddedBundle.LoadAsset<Sprite>("Spade_Name"));
+            //Inject all characters
+            foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
+            {
 
-            ___infoText[0].paragraph = ___infoText[0].paragraph.AddToArray("RANGED Type");
-            ___infoText[1].paragraph = ___infoText[1].paragraph.AddToArray("Card Special");
-            ___infoText[2].paragraph = ___infoText[2].paragraph.AddToArray("Jump");
-            ___infoText[3].paragraph = ___infoText[3].paragraph.AddToArray("Card Throw");
-            ___infoText[4].paragraph = ___infoText[4].paragraph.AddToArray("Dodge Dash");
+                GameObject charSelector = GameObject.Instantiate(chara.characterSelectPrefab);
+                MenuCharacterWheel spadeWheel = charSelector.GetComponent<MenuCharacterWheel>();
+                spadeWheel.parentObject = __instance;
+                spadeWheel.gameObject.transform.parent = __instance.transform;
+                ___characterSprites = ___characterSprites.AddToArray(spadeWheel);
 
+                ___nameLabelSprites = ___nameLabelSprites.AddToArray(chara.charSelectName);
+
+                ___infoText[0].paragraph[chara.id] = chara.characterType;
+                ___infoText[1].paragraph[chara.id] = chara.skill1;
+                ___infoText[2].paragraph[chara.id] = chara.skill2;
+                ___infoText[3].paragraph[chara.id] = chara.skill3;
+                ___infoText[4].paragraph[chara.id] = chara.skill4;
+
+            }
         }
 
         //Bump the maximum number of characters
@@ -42,7 +58,7 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Ldc_I4_3)
                 {
-                    codes[i].opcode = OpCodes.Ldc_I4_4;
+                    codes[i] = new CodeInstruction(OpCodes.Call, m_getRealTotalCharacterNumber);
                 }
             }
             return codes;
@@ -54,7 +70,7 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(MenuCharacterSelect), "State_CharacterConfirm", MethodType.Normal)]
         static void PatchCharacterConfirm(MenuCharacterSelect __instance, ref FPHudDigit ___characterIcon)
         {
-            if (__instance.character == 4)
+            if (__instance.character >= 4)
             {
                 ___characterIcon.digitFrames = ___characterIcon.digitFrames.AddToArray(Plugin.moddedBundle.LoadAssetWithSubAssets<Sprite>("Spade_Stock")[0]);
                 ___characterIcon.SetDigitValue(16);
@@ -96,7 +112,7 @@ namespace FP2Lib.Player.PlayerPatches
 
             return codes;
 
-            */
-        
+        }
+       
     }
 }

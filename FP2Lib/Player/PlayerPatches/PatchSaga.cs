@@ -13,11 +13,11 @@ namespace FP2Lib.Player.PlayerPatches
         private static void PatchSagaStart(ref Animator ___animator, Saga __instance) 
         {
             //If not playing as custom character, no touchie. Also do not mess with not yet initialised values
-            if (FPSaveManager.character <= (FPCharacterID)5 && __instance != null && ___animator != null)
+            if (FPSaveManager.character >= (FPCharacterID)5 && __instance != null && ___animator != null)
             {
                 //Pull Saga animations from character's asstetpackage
-                RuntimeAnimatorController AnimatorSaga = PlayerHandler.currentCharacter.dataBundle.LoadAssetWithSubAssets<RuntimeAnimatorController>("SagaBlock")[0];
-                RuntimeAnimatorController AnimatorSaga2 = PlayerHandler.currentCharacter.dataBundle.LoadAssetWithSubAssets<RuntimeAnimatorController>("SyntaxSagaBlock")[0];
+                RuntimeAnimatorController AnimatorSaga = PlayerHandler.currentCharacter.sagaBlock;
+                RuntimeAnimatorController AnimatorSaga2 = PlayerHandler.currentCharacter.sagaBlockSyntax;
 
                 if (__instance.name.Contains("Syntax")) //Code Black ver.
                 {

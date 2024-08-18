@@ -9,12 +9,11 @@ namespace FP2Lib.Player.PlayerPatches
     internal class PatchMenuWorldMapConfirm
     {
 
-        internal static readonly MethodInfo m_getTutorialScene = SymbolExtensions.GetMethodInfo(() => getTutorialScene());
+        internal static readonly MethodInfo m_getTutorialScene = SymbolExtensions.GetMethodInfo(() => GetTutorialScene());
 
-        private static string getTutorialScene()
+        private static string GetTutorialScene()
         {
-            //Load up Lilac's tutorial for now.
-            return "Tutorial1";
+            return PlayerHandler.currentCharacter.TutorialScene;
         }
 
         [HarmonyTranspiler]

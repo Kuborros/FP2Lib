@@ -16,7 +16,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             int character = (int)FPSaveManager.character;
 
-            //If character has their own cutscenes, they will be added to the array and can be played.
+            //If character has their own cutscenes, they will be added to the array and can be played. (I hope, that's the mod maker's responibility.)
             if (PlayerHandler.currentCharacter.useOwnCutsceneActivators)
             {
                 instance.cutsceneToStart[character].Activate(false);
@@ -37,7 +37,7 @@ namespace FP2Lib.Player.PlayerPatches
         }
 
 
-        //Adding new "default:" section for the enum. All extra characters will miss the default sections and get forwarded to our code instead. 
+        //Adding new "default:" section for the enum. All extra characters will miss the built-in sections and get forwarded to our code instead. 
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(SBBeaconCutscene), "Update", MethodType.Normal)]
         static IEnumerable<CodeInstruction> EventSequenceDefaultTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)

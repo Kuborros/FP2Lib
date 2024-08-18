@@ -9,7 +9,23 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(FPHudDigit), "SetDigitValue", MethodType.Normal)]
         static void PatchFPHudDigitValue(FPHudDigit __instance, ref Sprite[] ___digitFrames)
         {
-            //Add portrait for saves
+            if (__instance.name == "PortraitCharacter")
+            {
+                if (___digitFrames[5] == null)
+                {
+                    //Extend array
+                    for (int i = 4; i <= PlayerHandler.highestID +1; i++)
+                    {
+                        ___digitFrames = ___digitFrames.AddToArray(null);
+                    }
+                    
+                    //Load profile pic
+                    foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
+                    {
+                        ___digitFrames[chara.id] = chara.profilePic;
+                    }
+                }
+            }
         }
     }
 }

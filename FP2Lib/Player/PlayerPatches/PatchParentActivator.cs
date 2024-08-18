@@ -22,17 +22,13 @@ namespace FP2Lib.Player.PlayerPatches
             }
             
             //Clear static array. 
-            activeCharacters = new bool[PlayerHandler.PlayableChars.Count + 5];
+            activeCharacters = new bool[PlayerHandler.highestID];
 
             if (__instance.disableInClassicMode && FPSaveManager.gameMode == FPGameMode.CLASSIC)
             {
                 DisableObject(__instance);
             }
 
-            //Code to fill array from chara code here. 
-            //
-            //blah
-            //
             //Code to populate default characters
             activeCharacters[0] = __instance.lilac;
             activeCharacters[1] = __instance.carol;
@@ -40,6 +36,31 @@ namespace FP2Lib.Player.PlayerPatches
             activeCharacters[3] = __instance.milla;
             activeCharacters[4] = __instance.neera;
 
+            foreach (PlayableChara character in PlayerHandler.PlayableChars.Values)
+            {
+                if (!character.useOwnCutsceneActivators)
+                {
+                    switch (character.eventActivatorCharacter)
+                    {
+                        case FPCharacterID.LILAC:
+                            if (activeCharacters[0]) activeCharacters[character.id] = true;
+                            break;
+                        case FPCharacterID.CAROL:
+                        case FPCharacterID.BIKECAROL:
+                            if (activeCharacters[1] || activeCharacters[2]) activeCharacters[character.id] = true;
+                            break;
+                        case FPCharacterID.MILLA:
+                            if (activeCharacters[3]) activeCharacters[character.id] = true;
+                            break;
+                        case FPCharacterID.NEERA:
+                            if (activeCharacters[4]) activeCharacters[character.id] = true;
+                            break;
+                        default:
+                            activeCharacters[character.id] = false; 
+                            break;
+                    }
+                }
+            }
             //If characterID has false set, deactivate the activator.
             if (!activeCharacters[(int)FPSaveManager.character])
             {

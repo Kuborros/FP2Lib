@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ namespace FP2Lib.Player
     public static class PlayerHandler
     {
         internal static Dictionary<string, PlayableChara> PlayableChars = new();
+        internal static bool[] takenIDs = new bool[256];
+        internal static int highestID = 4;
         private static string storePath;
         public static PlayableChara currentCharacter;
 
@@ -18,19 +21,25 @@ namespace FP2Lib.Player
 
         public static void InitialiseHandler()
         {
+            //5 base characters
+            for (int i = 0; i < 5; i++)
+            {
+                takenIDs[i] = true;
+            }
+
             storePath = Path.Combine(Paths.ConfigPath, "CharaLibStore");
             Directory.CreateDirectory(storePath);
 
             LoadFromStorage();
         }
 
-        public static bool RegisterPlayableCharacter(string uid, string name, CharacterGender gender, Delegate airMoves, Delegate groundMoves, GameObject prefab,AssetBundle assets)
+        public static bool RegisterPlayableCharacter(string uid, string name, CharacterGender gender, Action airMoves, Action groundMoves, GameObject prefab,AssetBundle assets)
         {
             if (!PlayableChars.ContainsKey(uid))
             {
                 PlayableChara chara = new PlayableChara(uid, name,gender, airMoves, groundMoves, prefab,assets);
                 PlayerLogSource.LogInfo("Registering character with no ID, assigned ID:");
-                chara.id = GetNextFreeID();
+                chara.id = AssignPlayerID(chara);
                 PlayerLogSource.LogInfo(chara.id);
                 PlayableChars.Add(uid, chara);
                 return true;
@@ -39,7 +48,7 @@ namespace FP2Lib.Player
             {
                 PlayableChara chara = new PlayableChara(uid, name,gender, airMoves, groundMoves, prefab,assets);
                 PlayerLogSource.LogInfo("Registering character with existing ID, assigned ID:");
-                chara.id = PlayableChars[uid].id;
+                chara.id = AssignPlayerID(chara);
                 PlayerLogSource.LogInfo(chara.id);
                 PlayableChars.Add(uid, chara);
                 return true;
@@ -47,14 +56,56 @@ namespace FP2Lib.Player
             return false;
         }
 
-        private static int GetNextFreeID()
+        //Scan for VERY BAD scenario. We do _not_ want this to happen.
+        public static bool doWeHaveHolesInIds()
         {
-            int freeID = 5;
-            foreach (PlayableChara chara in PlayableChars.Values)
+            for (int i = 0; i <= highestID;i++)
             {
-                if (chara.id >= freeID) freeID = chara.id + 1;
+                //VERY BAD
+                if (!takenIDs[i])
+                {
+                    return true;
+                }
             }
-            return freeID;
+            return false;
+        }
+
+
+        internal static int GetRealTotalCharacterNumber()
+        {
+            return takenIDs.Count(c => c);
+        }
+
+        private static int AssignPlayerID(PlayableChara character)
+        {
+            //Character has ID
+            if (character.id != 0)
+            {
+                takenIDs[character.id] = true;
+                PlayerLogSource.LogDebug("Stored playable character ID assigned (" + character.uid + "): " + character.id);
+                if (character.id > highestID) highestID = character.id;
+                return character.id;
+            }
+            else
+            {
+                PlayerLogSource.LogDebug("Character with unassigned ID registered! Running assignment process for " + character.uid);
+                //Iterate over array, assign first non-taken slot
+                for (int i = 64; i < takenIDs.Length; i++)
+                {
+                    //First slot with false = empty space
+                    if (!takenIDs[i])
+                    {
+                        character.id = i;
+                        takenIDs[i] = true;
+                        PlayerLogSource.LogDebug("Assigned ID: " + character.id);
+                        if (character.id > highestID) highestID = character.id;
+                        //Will also break loop
+                        return character.id;
+                    }
+                }
+            }
+            PlayerLogSource.LogWarning("Character: " + character.uid + " failed ID assignment! That's *very* bad!");
+            return 0;
         }
 
         public static PlayableChara GetPlayableCharaByUid(string uid)
@@ -94,7 +145,7 @@ namespace FP2Lib.Player
                         {
                     storePath,
                     "/",
-                    chara.Uid,
+                    chara.uid,
                     ".json"
                         }), FileMode.Create, FileAccess.Write, FileShare.Read, bytes.Length, FileOptions.WriteThrough))
                         {

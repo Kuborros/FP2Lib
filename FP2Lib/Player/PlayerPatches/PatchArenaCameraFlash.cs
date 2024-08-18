@@ -18,7 +18,8 @@ namespace FP2Lib.Player.PlayerPatches
                     {
                         if (___voicePlayerKO[i] == 8) ___voicePlayerKO[i] = 9;
                     }
-                } else if (___voicePlayerKO != null && PlayerHandler.currentCharacter.Gender == CharacterGender.NON_BINARY)
+                } 
+                else if (___voicePlayerKO != null && PlayerHandler.currentCharacter.Gender == CharacterGender.NON_BINARY)
                 {
                     //Swap to non-gendered line
                     for (int i = 0; i < ___voicePlayerKO.Length; i++)
