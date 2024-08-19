@@ -23,7 +23,7 @@ namespace FP2Lib.Player
         public static void InitialiseHandler()
         {
             //5 base characters
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i <= 4; i++)
             {
                 takenIDs[i] = true;
             }
@@ -184,7 +184,7 @@ namespace FP2Lib.Player
             {
                 PlayerLogSource.LogDebug("Character with unassigned ID registered! Running assignment process for " + character.uid);
                 //Iterate over array, assign first non-taken slot
-                for (int i = 64; i < takenIDs.Length; i++)
+                for (int i = 4; i < takenIDs.Length; i++)
                 {
                     //First slot with false = empty space
                     if (!takenIDs[i])

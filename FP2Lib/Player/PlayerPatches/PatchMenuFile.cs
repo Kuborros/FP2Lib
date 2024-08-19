@@ -20,7 +20,7 @@ namespace FP2Lib.Player.PlayerPatches
 
                 foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
                 {
-                    ___characterIcons[fileSlot - 1].digitFrames[chara.id + 1] = chara.profilePic;
+                    ___characterIcons[fileSlot - 1].digitFrames[chara.id + 1] = chara.livesIconAnim[0];
                 }
                 ___characterIcons[fileSlot - 1].digitFrames = ___characterIcons[fileSlot - 1].digitFrames.AddToArray(heart);
             }
