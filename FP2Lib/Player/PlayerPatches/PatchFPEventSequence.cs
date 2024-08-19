@@ -9,8 +9,8 @@ namespace FP2Lib.Player.PlayerPatches
     internal class PatchFPEventSequence
     {
 
-        //Lots of code needed here
-        /*
+
+        //Sets activation ranges. Can maybe be done with prefix? (They are not edited if it falls trough)
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPEventSequence), "Start", MethodType.Normal)]
         static IEnumerable<CodeInstruction> EventSequenceStartTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -32,6 +32,7 @@ namespace FP2Lib.Player.PlayerPatches
             return codes;
         }
 
+        //Checks if should we activate for character. Consider replacing with postfix, as it simply fires this.Activate(false) at the end!
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPEventSequence), "State_Default", MethodType.Normal)]
         static IEnumerable<CodeInstruction> EventSequenceDefaultTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -50,6 +51,8 @@ namespace FP2Lib.Player.PlayerPatches
             }
             return codes;
         }
+
+        //This handles getting to waypoints. Unless mod adds their own ones, assign ones for the character we masquarade as
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPEventSequence), "State_Event", MethodType.Normal)]
         static IEnumerable<CodeInstruction> EventSequenceEventTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -69,6 +72,5 @@ namespace FP2Lib.Player.PlayerPatches
             }
             return codes;
         }
-        */
     }
 }

@@ -25,5 +25,12 @@ namespace FP2Lib.Player.PlayerPatches
                 ___characterIcons[fileSlot - 1].digitFrames = ___characterIcons[fileSlot - 1].digitFrames.AddToArray(heart);
             }
         }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(MenuFile),"State_Transition",MethodType.Normal)]
+        static void PatchMenuTransition()
+        {
+            //Set the selected character as current character
+            PlayerHandler.currentCharacter = PlayerHandler.GetPlayableCharaByFPCharacterId(FPSaveManager.character);
+        }
     }
 }

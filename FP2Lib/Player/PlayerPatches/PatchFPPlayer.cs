@@ -1,30 +1,46 @@
 ﻿using HarmonyLib;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using UnityEngine;
 
 namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchFPPlayer
     {
 
-        //Patches should only fire AirMoves and GroundMoves events. Mod creator handles their own postfixes etc.
+        public static FPPlayer player;
 
-        /*
-        internal static readonly MethodInfo m_AirMoves = SymbolExtensions.GetMethodInfo(() => Action_Spade_AirMoves());
+        internal static readonly MethodInfo m_AirMoves = SymbolExtensions.GetMethodInfo(() => HandleActionAirMoves());
         internal static readonly MethodInfo m_Jump = SymbolExtensions.GetMethodInfo(() => Action_Jump());
-        internal static readonly MethodInfo m_GroundMoves = SymbolExtensions.GetMethodInfo(() => Action_Spade_GroundMoves());
+        internal static readonly MethodInfo m_GroundMoves = SymbolExtensions.GetMethodInfo(() => HandleActionGroundMoves());
+
+        internal static void HandleActionGroundMoves()
+        {
+            PlayerHandler.currentCharacter.GroundMoves?.Invoke();
+        }
+
+        internal static void HandleActionAirMoves()
+        {
+            PlayerHandler.currentCharacter.AirMoves?.Invoke();
+        }
+
+        public static void Action_Jump()
+        {
+            player.Action_Jump();
+        }
+
+        //Patches should only fire AirMoves and GroundMoves events. Mod creator handles their own postfixes etc.
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPPlayer), "Update", MethodType.Normal)]
         static void PatchPlayerUpdate(FPPlayer __instance, float ___speedMultiplier)
         {
+            //Yeet the player instance for our own nefarious uses.
             player = __instance;
         }
         
+
+        //AutoGuard
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPPlayer), "AutoGuard", MethodType.Normal)]
         static IEnumerable<CodeInstruction> PlayerHurtTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -39,17 +55,13 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_0)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(airStart).ToArray();
-                    codes[i].operand = targets;
-                    airEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = airStart;
+                    airEnd = (Label)codes[i + 4].operand;
                 }
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_1)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(groundStart).ToArray();
-                    codes[i].operand = targets;
-                    groundEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = groundStart;
+                    groundEnd = (Label)codes[i + 4].operand;
                     break;
                 }
             }
@@ -71,6 +83,7 @@ namespace FP2Lib.Player.PlayerPatches
             return codes;
         }
 
+        //Crouch
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPPlayer), "State_Crouching", MethodType.Normal)]
         static IEnumerable<CodeInstruction> PlayerCrouchTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -83,10 +96,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_1)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(groundStart).ToArray();
-                    codes[i].operand = targets;
-                    groundEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = groundStart;
+                    groundEnd = (Label)codes[i + 4].operand;
                     break;
                 }
             }
@@ -102,6 +113,7 @@ namespace FP2Lib.Player.PlayerPatches
             return codes;
         }
 
+        //Looking up
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPPlayer), "State_LookUp", MethodType.Normal)]
         static IEnumerable<CodeInstruction> PlayerLookUpTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -114,10 +126,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_0)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(groundStart).ToArray();
-                    codes[i].operand = targets;
-                    groundEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = groundStart;
+                    groundEnd = (Label)codes[i + 4].operand;
                     break;
                 }
             }
@@ -133,6 +143,7 @@ namespace FP2Lib.Player.PlayerPatches
             return codes;
         }
 
+        //Grounded
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPPlayer), "State_Ground", MethodType.Normal)]
         static IEnumerable<CodeInstruction> PlayerGroundTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -145,10 +156,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_S)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(groundStart).ToArray();
-                    codes[i].operand = targets;
-                    groundEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = groundStart;
+                    groundEnd = (Label)codes[i + 4].operand;
                     break;
                 }
             }
@@ -162,16 +171,6 @@ namespace FP2Lib.Player.PlayerPatches
 
 
             return codes;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(FPPlayer), "State_InAir", MethodType.Normal)]
-        static void PatchPlayerInAir()
-        {
-            if (player.currentAnimation == "AirThrow" && player.animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8f)
-            {
-                player.SetPlayerAnimation("Jumping");
-            }
         }
 
         [HarmonyTranspiler]
@@ -186,10 +185,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_2)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(airStart).ToArray();
-                    codes[i].operand = targets;
-                    airEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = airStart;
+                    airEnd = (Label)codes[i + 4].operand;
                 }
 
             }
@@ -201,13 +198,6 @@ namespace FP2Lib.Player.PlayerPatches
             codes.Add(new CodeInstruction(OpCodes.Br, airEnd));
 
             return codes;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(FPPlayer), "State_Hanging", MethodType.Normal)]
-        static void PatchPlayerHang()
-        {
-            upDash = true;
         }
 
         [HarmonyTranspiler]
@@ -222,10 +212,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_S)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(airStart).ToArray();
-                    codes[i].operand = targets;
-                    airEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = airStart;
+                    airEnd = (Label)codes[i + 4].operand;
                 }
 
             }
@@ -251,10 +239,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_0)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(airStart).ToArray();
-                    codes[i].operand = targets;
-                    airEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = airStart;
+                    airEnd = (Label)codes[i + 4].operand;
                 }
 
             }
@@ -266,13 +252,6 @@ namespace FP2Lib.Player.PlayerPatches
             codes.Add(new CodeInstruction(OpCodes.Br, airEnd));
 
             return codes;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(FPPlayer), "State_Swimming", MethodType.Normal)]
-        static void PatchPlayerSwim()
-        {
-            upDash = true;
         }
 
         [HarmonyTranspiler]
@@ -287,10 +266,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_1)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(airStart).ToArray();
-                    codes[i].operand = targets;
-                    airEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = airStart;
+                    airEnd = (Label)codes[i + 4].operand;
                 }
 
             }
@@ -302,14 +279,6 @@ namespace FP2Lib.Player.PlayerPatches
             codes.Add(new CodeInstruction(OpCodes.Br, airEnd));
 
             return codes;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(FPPlayer), "State_GrindRail", MethodType.Normal)]
-        [HarmonyPatch(typeof(FPPlayer), "PseudoGrindRail", MethodType.Normal)]
-        static void PatchPlayerGrind()
-        {
-            upDash = true;
         }
 
         [HarmonyTranspiler]
@@ -324,10 +293,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && (codes[i - 1].opcode == OpCodes.Ldloc_2))
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(airStart).ToArray();
-                    codes[i].operand = targets;
-                    airEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = airStart;
+                    airEnd = (Label)codes[i + 5].operand;
                 }
 
             }
@@ -341,6 +308,5 @@ namespace FP2Lib.Player.PlayerPatches
 
             return codes;
         }
-        */
     }
 }

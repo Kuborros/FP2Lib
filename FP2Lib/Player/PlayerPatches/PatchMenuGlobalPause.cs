@@ -9,6 +9,9 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(MenuGlobalPause),"Start",MethodType.Normal)]
         static void PatchMenuGlobalPauseStart(ref MenuGlobalPause __instance)
         {
+            //Just to be 100% sure we got it right.
+            PlayerHandler.currentCharacter = PlayerHandler.GetPlayableCharaByFPCharacterId(FPSaveManager.character);
+
             PlayableChara chara = PlayerHandler.currentCharacter;
             if (FPSaveManager.character <= (FPCharacterID)5)
             {

@@ -6,8 +6,10 @@ namespace FP2Lib.Player.PlayerPatches
     internal class PatchParentActivator
     {
 
+        /// <summary>
+        /// Which characters should it be active for? Put true/false under your character's ID here!
+        /// </summary>
         public static bool[] activeCharacters;
-
 
         //Full Rewrite of the Parent Activator starter. Base game uses 4 booleans to decide who gets to see it.
         //Instead, we use an array with bool for each character. 
@@ -67,14 +69,10 @@ namespace FP2Lib.Player.PlayerPatches
                 DisableObject(__instance);
             }
 
+            //If story disables the object, nuke it
             if (__instance.requiredStoryFlag > 0 && FPSaveManager.storyFlag[__instance.requiredStoryFlag] <= 0)
             {
-                bool flag = true;
-                if (__instance.restoreAtStoryFlag > 0 && FPSaveManager.storyFlag[__instance.restoreAtStoryFlag] > 0)
-                {
-                    flag = false;
-                }
-                if (flag)
+                if (!(__instance.restoreAtStoryFlag > 0 && FPSaveManager.storyFlag[__instance.restoreAtStoryFlag] > 0))
                 {
                     if (__instance.destroyForCharactersOnly)
                     {
@@ -88,12 +86,7 @@ namespace FP2Lib.Player.PlayerPatches
             }
             if (__instance.disableAtStoryFlag > 0 && FPSaveManager.storyFlag[__instance.disableAtStoryFlag] > 0)
             {
-                bool flag2 = true;
-                if (__instance.restoreAtStoryFlag > 0 && FPSaveManager.storyFlag[__instance.restoreAtStoryFlag] > 0)
-                {
-                    flag2 = false;
-                }
-                if (flag2)
+                if (!(__instance.restoreAtStoryFlag > 0 && FPSaveManager.storyFlag[__instance.restoreAtStoryFlag] > 0))
                 {
                     if (__instance.destroyForCharactersOnly)
                     {
@@ -105,7 +98,7 @@ namespace FP2Lib.Player.PlayerPatches
                     }
                 }
             }
-            Start(__instance); 
+            //Start(__instance); 
             ParentActivator.classID = FPStage.RegisterObjectType(__instance, __instance.GetType(), 0);
             __instance.objectID = ParentActivator.classID;
 
@@ -115,14 +108,6 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyReversePatch]
         [HarmonyPatch(typeof(ParentActivator), "DisableObject", MethodType.Normal)]
         public static void DisableObject(ParentActivator instance)
-        {
-            // Replaced at runtime with reverse patch
-            throw new NotImplementedException("Method failed to reverse patch!");
-        }
-
-        [HarmonyReversePatch]
-        [HarmonyPatch(typeof(FPBaseObject), "DisableObject", MethodType.Normal)]
-        public static void Start(FPBaseObject instance)
         {
             // Replaced at runtime with reverse patch
             throw new NotImplementedException("Method failed to reverse patch!");

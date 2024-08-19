@@ -5,7 +5,7 @@ namespace FP2Lib.Player
 {
     public class PlayableChara
     {
-        public int id;
+        internal int id;
 
         public string uid;
         public string Name;
@@ -16,12 +16,12 @@ namespace FP2Lib.Player
         public string skill3;
         public string skill4;
 
-        public bool registered;
+        internal bool registered;
         public bool useOwnCutsceneActivators;
 
-        internal Action AirMoves;
-        internal Action GroundMoves;
-        internal Action ItemFuelPickup;
+        public Action AirMoves;
+        public Action GroundMoves;
+        public Action ItemFuelPickup;
 
         public FPCharacterID eventActivatorCharacter;
         public CharacterGender Gender;
@@ -48,11 +48,26 @@ namespace FP2Lib.Player
         public MenuPhotoPose menuPhotoPose;
 
         public GameObject characterSelectPrefab;
-
-        internal GameObject prefab;
+        public GameObject prefab;
         internal GameObject runtimeObject;
-        internal AssetBundle dataBundle;
 
+        public AssetBundle dataBundle;
+
+        /// <summary>
+        /// Allows creating the object by hand without passing constructor params
+        /// </summary>
+        public PlayableChara() { }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="gender"></param>
+        /// <param name="airMoves"></param>
+        /// <param name="groundMoves"></param>
+        /// <param name="prefab"></param>
+        /// <param name="dataBundle"></param>
         public PlayableChara(string uid, string name, CharacterGender gender, Action airMoves, Action groundMoves, GameObject prefab, AssetBundle dataBundle)
         {
             this.uid = uid;

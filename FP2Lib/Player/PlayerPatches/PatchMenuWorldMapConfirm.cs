@@ -11,6 +11,8 @@ namespace FP2Lib.Player.PlayerPatches
 
         internal static readonly MethodInfo m_getTutorialScene = SymbolExtensions.GetMethodInfo(() => GetTutorialScene());
 
+        //Load up tutorial scene string from the character data. Default is Lilac's tutorial.
+        //Up to the mod creator to actually make and load their own tutorial scene.
         private static string GetTutorialScene()
         {
             return PlayerHandler.currentCharacter.TutorialScene;

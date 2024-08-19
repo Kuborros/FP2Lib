@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection.Emit;
 
 namespace FP2Lib.Player.PlayerPatches
@@ -8,7 +7,7 @@ namespace FP2Lib.Player.PlayerPatches
     internal class PatchBFWallRunZone
     {
         //Fire GroundMoves of custom character
-        /*
+
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(BFWallRunZone), "Update", MethodType.Normal)]
         static IEnumerable<CodeInstruction> BFWallRunZoneTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -21,10 +20,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_3)
                 {
-                    Label[] targets = (Label[])codes[i].operand;
-                    targets = targets.AddItem(groundStart).ToArray();
-                    codes[i].operand = targets;
-                    groundEnd = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = groundStart;
+                    groundEnd = (Label)codes[i + 5].operand;
                     break;
                 }
             }
@@ -39,6 +36,5 @@ namespace FP2Lib.Player.PlayerPatches
 
             return codes;
         }
-        */
     }
 }

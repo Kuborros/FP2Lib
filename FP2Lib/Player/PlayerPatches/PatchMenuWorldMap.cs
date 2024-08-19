@@ -34,13 +34,13 @@ namespace FP2Lib.Player.PlayerPatches
             }
             else if (walking)
             {
-                ___playerSpriteRenderer.sprite = chara.worldMapWalk[((int)(___animTimer) % 4)];
+                ___playerSpriteRenderer.sprite = chara.worldMapWalk[((int)(___animTimer) % chara.worldMapWalk.Length)];
                 ___playerShadowRenderer.sprite = null;
                 ___playerSpriteRenderer.transform.localPosition = new Vector3(0f, 0f, 0f);
             }
             else
             {
-                ___playerSpriteRenderer.sprite = chara.worldMapIdle[Mathf.Min((int)((___animTimer) % 12), 6)];
+                ___playerSpriteRenderer.sprite = chara.worldMapIdle[Mathf.Min((int)((___animTimer) % 12), chara.worldMapIdle.Length)];
                 ___playerShadowRenderer.sprite = null;
                 ___playerSpriteRenderer.transform.localPosition = new Vector3(0f, 0f, 0f);
             }
@@ -61,6 +61,8 @@ namespace FP2Lib.Player.PlayerPatches
             throw new NotImplementedException("Method failed to reverse patch!");
         }
 
+        //TODO:
+        //Fix Battlesphere in story mode being dumb. It sends us to shadow realm instead of progressing story. Force flag maybe?
         /*
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuWorldMap), "CutsceneCheck", MethodType.Normal)]

@@ -35,7 +35,7 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(FPHudMaster), "LateUpdate", MethodType.Normal)]
         static void PatchHudMasterLateUpdate(FPHudMaster __instance, FPHudDigit[] ___hudLifeIcon, float ___lifeIconBlinkTimer)
         {
-            if (__instance.targetPlayer.characterID == (FPCharacterID)5)
+            if (__instance.targetPlayer.characterID >= (FPCharacterID)5)
             {
                 if (___hudLifeIcon[0].digitFrames.Length < 16)
                 {

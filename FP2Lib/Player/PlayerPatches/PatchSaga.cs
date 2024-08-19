@@ -30,6 +30,8 @@ namespace FP2Lib.Player.PlayerPatches
             }
         }
 
+
+        //Modder-provided animations should have field "TrapPlayer"
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(Saga), "State_Default", MethodType.Normal)]
         static IEnumerable<CodeInstruction> SagaDefaultTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -42,8 +44,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_S)
                 {
-                    exitLabel = codes[i].labels[0];
-                    codes[i].operand = entryLabel;
+                    exitLabel = (Label)codes[i + 1].operand;
+                    codes[i + 1].operand = entryLabel;
                 }
             }
 

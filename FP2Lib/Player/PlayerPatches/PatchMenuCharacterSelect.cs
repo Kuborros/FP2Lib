@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
@@ -9,12 +8,17 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchMenuCharacterSelect
     {
-        internal static readonly MethodInfo m_getRealTotalCharacterNumber = SymbolExtensions.GetMethodInfo(() => PlayerHandler.GetRealTotalCharacterNumber);
+        internal static readonly MethodInfo m_getRealTotalCharacterNumber = SymbolExtensions.GetMethodInfo(() => PlayerHandler.GetRealTotalCharacterNumber());
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuCharacterSelect), "Start", MethodType.Normal)]
         static void PatchCharacterSelectStart(MenuCharacterSelect __instance, ref MenuCharacterWheel[] ___characterSprites, ref Sprite[] ___nameLabelSprites, ref MenuText[] ___infoText)
         {
+            //Calculate offset
+            int totalCharacters = PlayerHandler.GetTotalActiveCharacters();
+            int offset = 360 / totalCharacters;
+
+
             //Extend arrays
             for (int i = 5; i < PlayerHandler.highestID; i++)
             {
@@ -30,12 +34,18 @@ namespace FP2Lib.Player.PlayerPatches
             //Inject all characters
             foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
             {
+                //No character file, skip them.
+                if (chara.prefab == null) continue;
 
                 GameObject charSelector = GameObject.Instantiate(chara.characterSelectPrefab);
-                MenuCharacterWheel spadeWheel = charSelector.GetComponent<MenuCharacterWheel>();
-                spadeWheel.parentObject = __instance;
-                spadeWheel.gameObject.transform.parent = __instance.transform;
-                ___characterSprites = ___characterSprites.AddToArray(spadeWheel);
+                MenuCharacterWheel wheel = charSelector.GetComponent<MenuCharacterWheel>();
+                //Calculate offset for the wheel.
+                //Maybe this will just work?
+                wheel.rotationOffset = 180 - (offset * chara.id);
+
+                wheel.parentObject = __instance;
+                wheel.gameObject.transform.parent = __instance.transform;
+                ___characterSprites = ___characterSprites.AddToArray(wheel);
 
                 ___nameLabelSprites = ___nameLabelSprites.AddToArray(chara.charSelectName);
 
@@ -70,21 +80,24 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(MenuCharacterSelect), "State_CharacterConfirm", MethodType.Normal)]
         static void PatchCharacterConfirm(MenuCharacterSelect __instance, ref FPHudDigit ___characterIcon)
         {
+            //Since BikeCarol is not counted here, all id's need to be +1'd
             if (__instance.character >= 4)
             {
-                ___characterIcon.digitFrames = ___characterIcon.digitFrames.AddToArray(Plugin.moddedBundle.LoadAssetWithSubAssets<Sprite>("Spade_Stock")[0]);
+                ___characterIcon.digitFrames = ___characterIcon.digitFrames.AddToArray(PlayerHandler.GetPlayableCharaByRuntimeId(__instance.character + 1).livesIconAnim[0]);
                 ___characterIcon.SetDigitValue(16);
             }
         }
 
-
+        /*
+         * Might not be needed? Instead of editing the data _before_ the jump to State_Go, maybe just edit it in Prefix?
+         * 
         //Patch code to write proper character ID to file
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(MenuCharacterSelect), "State_CharacterConfirm", MethodType.Normal)]
         static IEnumerable<CodeInstruction> CharacterConfirmTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
         {
             Label spadeSelect = il.DefineLabel();
-            Label spadeBr = il.DefineLabel();
+            Label endBr = il.DefineLabel();
 
             System.Object staticVal = null;
             List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
@@ -95,7 +108,7 @@ namespace FP2Lib.Player.PlayerPatches
                 {
                     Label[] targets = (Label[])codes[i].operand;
                     staticVal = codes[i + 3].operand;
-                    codes[i + 1].labels.Add(spadeBr);
+                    codes[i + 1].labels.Add(endBr);
                     targets = targets.AddItem(spadeSelect).ToArray();
                     codes[i].operand = targets;
                 }
@@ -108,11 +121,22 @@ namespace FP2Lib.Player.PlayerPatches
 
             codes.Add(idCodeStart);
             codes.Add(new CodeInstruction(OpCodes.Stsfld, staticVal));
-            codes.Add(new CodeInstruction(OpCodes.Br, spadeBr));
+            codes.Add(new CodeInstruction(OpCodes.Br, endBr));
 
             return codes;
 
         }
-       
+        */
+        //Might just work like this instead?
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(MenuCharacterSelect), "State_Go", MethodType.Normal)]
+        static void PatchMenuCharacterSelectGo(int ___character)
+        {
+            if (___character >= 4)
+            {
+                FPSaveManager.character = (FPCharacterID)(___character + 1);
+                PlayerHandler.currentCharacter = PlayerHandler.GetPlayableCharaByFPCharacterId(FPSaveManager.character);
+            }
+        }
     }
 }

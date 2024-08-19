@@ -44,7 +44,7 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_2)
                 {
-                    exitLabel = codes[i + 1].labels[0];
+                    exitLabel = (Label)codes[i + 1].operand;
                     codes[i + 1].operand = entryLabel;
                 }
             }

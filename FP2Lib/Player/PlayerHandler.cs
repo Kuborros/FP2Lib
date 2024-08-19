@@ -12,7 +12,8 @@ namespace FP2Lib.Player
     public static class PlayerHandler
     {
         internal static Dictionary<string, PlayableChara> PlayableChars = new();
-        internal static bool[] takenIDs = new bool[256];
+        //The wheel can only handle 24 positions without becoming wonky, so this is the soft limit for now.
+        internal static bool[] takenIDs = new bool[23];
         internal static int highestID = 4;
         private static string storePath;
         public static PlayableChara currentCharacter;
@@ -33,6 +34,17 @@ namespace FP2Lib.Player
             LoadFromStorage();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="gender"></param>
+        /// <param name="airMoves"></param>
+        /// <param name="groundMoves"></param>
+        /// <param name="prefab"></param>
+        /// <param name="assets"></param>
+        /// <returns></returns>
         public static bool RegisterPlayableCharacter(string uid, string name, CharacterGender gender, Action airMoves, Action groundMoves, GameObject prefab,AssetBundle assets)
         {
             if (!PlayableChars.ContainsKey(uid))
@@ -56,7 +68,37 @@ namespace FP2Lib.Player
             return false;
         }
 
+        /// <summary>
+        /// "Build it yourself" variant.
+        /// </summary>
+        /// <param name="character">Prepared PlayableChara object</param>
+        /// <returns></returns>
+        public static bool RegisterPlayableCharacterDirect(PlayableChara character)
+        {
+            if (!PlayableChars.ContainsKey(character.uid))
+            {
+                PlayerLogSource.LogInfo("Registering character with no ID, assigned ID:");
+                character.id = AssignPlayerID(character);
+                PlayerLogSource.LogInfo(character.id);
+                PlayableChars.Add(character.uid, character);
+                return true;
+            }
+            if (PlayableChars.ContainsKey(character.uid) && PlayableChars[character.uid].prefab == null)
+            {
+                PlayerLogSource.LogInfo("Registering character with existing ID, assigned ID:");
+                character.id = AssignPlayerID(character);
+                PlayerLogSource.LogInfo(character.id);
+                PlayableChars.Add(character.uid, character);
+                return true;
+            }
+            return false;
+        }
+
         //Scan for VERY BAD scenario. We do _not_ want this to happen.
+        /// <summary>
+        /// Checks for any holes in our ID order. Usually caused only by manual edits to the files, but it will screw things up if it happens.
+        /// </summary>
+        /// <returns>Have any holes been found.</returns>
         public static bool doWeHaveHolesInIds()
         {
             for (int i = 0; i <= highestID;i++)
@@ -64,16 +106,68 @@ namespace FP2Lib.Player
                 //VERY BAD
                 if (!takenIDs[i])
                 {
+                    PlayerLogSource.LogError("Very bad thing boss, there's a hole in the Player ID's! Investigate!");
                     return true;
                 }
             }
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public static PlayableChara GetPlayableCharaByUid(string uid)
+        {
+            return PlayableChars[uid];
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static PlayableChara GetPlayableCharaByFPCharacterId(FPCharacterID id)
+        {
+            return GetPlayableCharaByRuntimeId((int)id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static PlayableChara GetPlayableCharaByRuntimeId(int id)
+        {
+            foreach (PlayableChara chara in PlayableChars.Values)
+            {
+                if (chara.id == id) return chara; 
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         internal static int GetRealTotalCharacterNumber()
         {
             return takenIDs.Count(c => c);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        internal static int GetTotalActiveCharacters()
+        {
+            int totalActiveCharacters = 4;
+            foreach (PlayableChara chara in PlayableChars.Values )
+            {
+                if (chara.prefab != null) totalActiveCharacters++;
+            }
+            return totalActiveCharacters;
         }
 
         private static int AssignPlayerID(PlayableChara character)
@@ -106,11 +200,6 @@ namespace FP2Lib.Player
             }
             PlayerLogSource.LogWarning("Character: " + character.uid + " failed ID assignment! That's *very* bad!");
             return 0;
-        }
-
-        public static PlayableChara GetPlayableCharaByUid(string uid)
-        {
-            return PlayableChars[uid];
         }
 
         private static void LoadFromStorage()

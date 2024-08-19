@@ -10,6 +10,7 @@ using FP2Lib.Tools;
 using FP2Lib.Vinyl;
 using FP2Lib.Badge;
 using HarmonyLib;
+using FP2Lib.Player.PlayerPatches;
 
 namespace FP2Lib
 {
@@ -79,8 +80,36 @@ namespace FP2Lib
             npcPatches.PatchAll(typeof(NPCPatches));
 
             //Player
-            //Logger.LogDebug("Player Patch Init");
-            //Harmony playerPatches = new("000.kuborro.libraries.fp2.fp2lib.player");
+            Logger.LogDebug("Player Patch Init");
+            Harmony playerPatches = new("000.kuborro.libraries.fp2.fp2lib.player");
+            playerPatches.PatchAll(typeof(PatchFPPlayer));
+            playerPatches.PatchAll(typeof(PatchItemFuel));
+            playerPatches.PatchAll(typeof(PatchPlayerSpawnPoint));
+            playerPatches.PatchAll(typeof(PatchFPStage));
+            playerPatches.PatchAll(typeof(PatchMenuFile));
+            //playerPatches.PatchAll(typeof(PatchFPEventSequence));
+            playerPatches.PatchAll(typeof(PatchParentActivator));
+            playerPatches.PatchAll(typeof(PatchArenaRace));
+            playerPatches.PatchAll(typeof(PatchMenuCharacterSelect));
+            playerPatches.PatchAll(typeof(PatchMenuCharacterWheel));
+            playerPatches.PatchAll(typeof(PatchMenuTutorialPrompt));
+            playerPatches.PatchAll(typeof(PatchMenuGlobalPause));
+            playerPatches.PatchAll(typeof(PatchMenuPhoto));
+            playerPatches.PatchAll(typeof(PatchBFFCombiner));
+            playerPatches.PatchAll(typeof(PatchFPHudDigit));
+            playerPatches.PatchAll(typeof(PatchFPHudMaster));
+            playerPatches.PatchAll(typeof(PatchSBBeaconCutscene));
+            playerPatches.PatchAll(typeof(PatchBakunawaFusion));
+            playerPatches.PatchAll(typeof(PatchBFWallRunZone));
+            playerPatches.PatchAll(typeof(PatchBSAutoscroller));
+            playerPatches.PatchAll(typeof(PatchArenaCameraFlash));
+            playerPatches.PatchAll(typeof(PatchMenuCredits));
+            playerPatches.PatchAll(typeof(PatchMenuWorldMap));
+            playerPatches.PatchAll(typeof(PatchFPBossHud));
+            playerPatches.PatchAll(typeof(PatchMenuWorldMapConfirm));
+            playerPatches.PatchAll(typeof(PatchSaga));
+            playerPatches.PatchAll(typeof(PatchAcrabellePieTrap));
+            playerPatches.PatchAll(typeof(PatchMenuShop));
 
             //Vinyls
             Logger.LogDebug("Vinyl Patch Init");
