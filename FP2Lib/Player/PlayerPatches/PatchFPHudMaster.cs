@@ -23,14 +23,15 @@ namespace FP2Lib.Player.PlayerPatches
                         }
 
                         foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
-                        {
-                            digit.digitFrames[chara.id] = chara.livesIconAnim[0];
+                        { 
+                            if (chara.registered)
+                                digit.digitFrames[chara.id] = chara.livesIconAnim[0];
                         }
                     }
                 }
             }
         }
-
+         
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FPHudMaster), "LateUpdate", MethodType.Normal)]
         static void PatchHudMasterLateUpdate(FPHudMaster __instance, FPHudDigit[] ___hudLifeIcon, float ___lifeIconBlinkTimer)

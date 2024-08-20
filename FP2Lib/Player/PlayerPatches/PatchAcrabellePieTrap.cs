@@ -21,12 +21,14 @@ namespace FP2Lib.Player.PlayerPatches
 
             foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
             {
+                if (chara.registered)
+                {
+                    Sprite Pied = chara.piedSprite;
+                    Sprite PiedHurt = chara.piedHurtSprite;
 
-                Sprite Pied = chara.piedSprite;
-                Sprite PiedHurt = chara.piedHurtSprite;
-
-                ___characterBase[chara.id] = Pied;
-                ___characterStruggle[chara.id] = PiedHurt;
+                    ___characterBase[chara.id] = Pied;
+                    ___characterStruggle[chara.id] = PiedHurt;
+                }
             }
         }
     }

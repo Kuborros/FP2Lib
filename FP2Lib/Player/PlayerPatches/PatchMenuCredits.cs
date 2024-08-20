@@ -18,8 +18,11 @@ namespace FP2Lib.Player.PlayerPatches
 
             foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
             {
-                ___bgmCredits[chara.id] = chara.endingTrack;
-                ___characterSprites[chara.id] = chara.endingKeyArtSprite;
+                if (chara.registered)
+                {
+                    ___bgmCredits[chara.id] = chara.endingTrack;
+                    ___characterSprites[chara.id] = chara.endingKeyArtSprite;
+                }
             }
         }
     }

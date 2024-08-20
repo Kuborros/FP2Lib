@@ -23,7 +23,8 @@ namespace FP2Lib.Player.PlayerPatches
                     //Load profile pic
                     foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
                     {
-                        ___digitFrames[chara.id] = chara.profilePic;
+                        if (chara.registered)
+                            ___digitFrames[chara.id] = chara.profilePic;
                     }
                 }
             }

@@ -28,7 +28,8 @@ namespace FP2Lib.Player.PlayerPatches
 
             foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
             {
-                ___iconSprite[chara.id] = chara.itemFuel;
+                if (chara.registered)
+                    ___iconSprite[chara.id] = chara.itemFuel;
             }
         }
 
