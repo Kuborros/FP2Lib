@@ -7,11 +7,8 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchBFFCombiner
     {
-        private static BFFCombinerCutscene instance;
-        internal static readonly MethodInfo m_BFFCombinerHandler = SymbolExtensions.GetMethodInfo(() => BFFCombinerHandler());
 
-
-        private static void BFFCombinerHandler()
+        private static void BFFCombinerHandler(BFFCombinerCutscene instance)
         {
             int character = (int)FPSaveManager.character;
 
@@ -26,15 +23,6 @@ namespace FP2Lib.Player.PlayerPatches
                 instance.cutsceneToStart[(int)PlayerHandler.currentCharacter.eventActivatorCharacter].Activate(false);
             }
         }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(BFFCombinerCutscene), "Update", MethodType.Normal)]
-        static void EventSequencePrefix(BFFCombinerCutscene __instance)
-        {
-            //Dirty hack
-            instance = __instance;
-        }
-
 
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(BFFCombinerCutscene), "Update", MethodType.Normal)]
@@ -56,7 +44,7 @@ namespace FP2Lib.Player.PlayerPatches
                 CodeInstruction entry = new CodeInstruction(OpCodes.Ldarg_0);
                 entry.labels.Add(entryLabel);
                 codes.Add(entry);
-                codes.Add(new CodeInstruction(OpCodes.Callvirt, m_BFFCombinerHandler));
+                codes.Add(CodeInstruction.Call(typeof(PatchBFFCombiner),nameof(BFFCombinerHandler)));
                 codes.Add(new CodeInstruction(OpCodes.Br, exitLabel));
                 return codes;
             }
