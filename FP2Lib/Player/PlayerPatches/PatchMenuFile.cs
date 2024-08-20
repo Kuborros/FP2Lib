@@ -1,11 +1,36 @@
-﻿using HarmonyLib;
+﻿using BepInEx;
+using HarmonyLib;
+using System.ComponentModel;
 using UnityEngine;
 
 namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchMenuFile
     {
+        //If some mod wants to add their own character manually, they can add their id here to unlock it.
+        public static bool[] enabledChars;
+
+
         [HarmonyPrefix]
+        [HarmonyWrapSafe]
+        [HarmonyPatch(typeof(MenuFile), "Start", MethodType.Normal)]
+        static void PatchMenuFileStart()
+        {
+            enabledChars = new bool[255];
+            //Set built-in characters
+            enabledChars[0] = true;
+            enabledChars[1] = true;
+            enabledChars[2] = true;
+            enabledChars[3] = true;
+            enabledChars[4] = true;
+            foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
+            {
+                enabledChars[chara.id] = chara.registered;
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyWrapSafe]
         [HarmonyPatch(typeof(MenuFile), "GetFileInfo", MethodType.Normal)]
         static void PatchMenuFileInfo(int fileSlot, MenuFile __instance, ref FPHudDigit[] ___characterIcons)
         {
@@ -15,16 +40,45 @@ namespace FP2Lib.Player.PlayerPatches
 
                 for (int i = 5; i < PlayerHandler.highestID; i++)
                 {
-                    ___characterIcons[fileSlot - 1].digitFrames = ___characterIcons[fileSlot - 1].digitFrames.AddToArray(null);
+                    ___characterIcons[fileSlot - 1].digitFrames = ___characterIcons[fileSlot - 1].digitFrames.AddToArray(heart);
                 }
 
                 foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
                 {
-                    ___characterIcons[fileSlot - 1].digitFrames[chara.id + 1] = chara.livesIconAnim[0];
+                    if (chara.registered)
+                        ___characterIcons[fileSlot - 1].digitFrames[chara.id + 1] = chara.livesIconAnim[0];
                 }
                 ___characterIcons[fileSlot - 1].digitFrames = ___characterIcons[fileSlot - 1].digitFrames.AddToArray(heart);
             }
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(MenuFile), "GetFileInfo", MethodType.Normal)]
+        static void PatchMenuFileInfoPost(int fileSlot, MenuFile __instance) {
+
+            if (__instance != null)
+            {
+                int characterId = __instance.files[fileSlot - 1].pfCharacterPortrait.digitValue;
+                if (!enabledChars[characterId])
+                {
+                    MenuFilePanel menuFilePanel = __instance.files[fileSlot - 1]; ;
+                    menuFilePanel.off.SetActive(false);
+                    menuFilePanel.on.SetActive(false);
+                    foreach (FPHudDigit digit in menuFilePanel.itemIcon)
+                    {
+                        digit.gameObject.SetActive(false);
+                    }
+                    menuFilePanel.error.SetActive(true);
+                    string name = "Data Deleted!\n(did you mess with the .json files?)";
+                    if (!PlayerHandler.GetPlayableCharaByRuntimeIdSafe(characterId).Name.IsNullOrWhiteSpace())
+                        name = PlayerHandler.GetPlayableCharaByRuntimeId(characterId).Name;
+
+                    menuFilePanel.error.GetComponentInChildren<TextMesh>().text = ("This character mod is not installed.\nPlease reinstall it order to play this file.\nCharacter: " + name);
+                }
+            }
+        }
+
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuFile),"State_Transition",MethodType.Normal)]
         static void PatchMenuTransition()

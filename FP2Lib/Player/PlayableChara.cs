@@ -9,7 +9,7 @@ namespace FP2Lib.Player
         internal int wheelId;
 
         public string uid;
-        public string Name;
+        public string Name = "";
         public string TutorialScene = "Tutorial1";
         public string characterType;
         public string skill1;
@@ -17,7 +17,7 @@ namespace FP2Lib.Player
         public string skill3;
         public string skill4;
 
-        internal bool registered;
+        internal bool registered = false;
         public bool useOwnCutsceneActivators;
         public bool enabledInAventure;
 

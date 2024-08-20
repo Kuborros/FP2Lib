@@ -16,7 +16,10 @@ namespace FP2Lib.Player.PlayerPatches
 
             foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
             {
-                ___playerList[chara.id] = chara.prefab.GetComponent<FPPlayer>();
+                if (chara.registered)
+                {
+                    ___playerList[chara.id] = chara.prefab.GetComponent<FPPlayer>();
+                }
             }
         }
     }

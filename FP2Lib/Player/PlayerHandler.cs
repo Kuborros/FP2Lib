@@ -43,6 +43,9 @@ namespace FP2Lib.Player
             if (!PlayableChars.ContainsKey(character.uid))
             {
                 character.id = AssignPlayerID(character);
+                //Write the assigned ID onto the prefab
+                character.prefab.GetComponent<FPPlayer>().characterID = (FPCharacterID)character.id;
+                character.registered = true;
                 PlayableChars.Add(character.uid, character);
                 return true;
             }
@@ -52,6 +55,9 @@ namespace FP2Lib.Player
                 character.id = PlayableChars[character.uid].id;
                 //Check if assigned ID is valid.
                 character.id = AssignPlayerID(character);
+                //Write the assigned ID onto the prefab
+                character.prefab.GetComponent<FPPlayer>().characterID = (FPCharacterID)character.id;
+                character.registered = true;
                 PlayableChars[character.uid] = character;
                 return true;
             }
@@ -100,7 +106,7 @@ namespace FP2Lib.Player
         /// Get playable character object by it's character id.
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>Character object, or null if none found</returns>
         public static PlayableChara GetPlayableCharaByRuntimeId(int id)
         {
             foreach (PlayableChara chara in PlayableChars.Values)
@@ -108,6 +114,20 @@ namespace FP2Lib.Player
                 if (chara.id == id) return chara; 
             }
             return null;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Character object, or empty version of it if none found</returns>
+        public static PlayableChara GetPlayableCharaByRuntimeIdSafe(int id)
+        {
+            foreach (PlayableChara chara in PlayableChars.Values)
+            {
+                if (chara.id == id) return chara;
+            }
+            //Return non-null value with placeholder data. Technically should be never triggered in normal scenarios but..
+            return new PlayableChara();
         }
 
         /// <summary>
@@ -167,6 +187,7 @@ namespace FP2Lib.Player
                     if (!PlayableChars.ContainsKey(data.UID))
                     {
                         PlayableChara chara = new PlayableChara(data.UID, data.name, data.runtimeID,data.gender);
+                        chara.registered = false;
                         PlayableChars.Add(data.UID, chara);
                     }
                 }
