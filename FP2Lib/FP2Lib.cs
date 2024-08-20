@@ -87,7 +87,7 @@ namespace FP2Lib
             playerPatches.PatchAll(typeof(PatchPlayerSpawnPoint));
             playerPatches.PatchAll(typeof(PatchFPStage));
             playerPatches.PatchAll(typeof(PatchMenuFile));
-            //playerPatches.PatchAll(typeof(PatchFPEventSequence));
+            playerPatches.PatchAll(typeof(PatchFPEventSequence));
             playerPatches.PatchAll(typeof(PatchParentActivator));
             playerPatches.PatchAll(typeof(PatchArenaRace));
             playerPatches.PatchAll(typeof(PatchMenuCharacterSelect));

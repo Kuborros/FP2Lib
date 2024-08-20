@@ -6,6 +6,7 @@ namespace FP2Lib.Player
     public class PlayableChara
     {
         internal int id;
+        internal int wheelId;
 
         public string uid;
         public string Name;
@@ -18,10 +19,13 @@ namespace FP2Lib.Player
 
         internal bool registered;
         public bool useOwnCutsceneActivators;
+        public bool enabledInAventure;
 
         public Action AirMoves;
         public Action GroundMoves;
         public Action ItemFuelPickup;
+        //public Action CutsceneActivator;
+        public Action<FPEventSequence> EventSequenceStart;
 
         public FPCharacterID eventActivatorCharacter;
         public CharacterGender Gender;
@@ -63,31 +67,9 @@ namespace FP2Lib.Player
         /// </summary>
         /// <param name="uid"></param>
         /// <param name="name"></param>
-        /// <param name="gender"></param>
-        /// <param name="airMoves"></param>
-        /// <param name="groundMoves"></param>
-        /// <param name="prefab"></param>
-        /// <param name="dataBundle"></param>
-        public PlayableChara(string uid, string name, CharacterGender gender, Action airMoves, Action groundMoves, GameObject prefab, AssetBundle dataBundle)
-        {
-            this.uid = uid;
-            Name = name;
-            AirMoves = airMoves;
-            GroundMoves = groundMoves;
-            Gender = gender;
-            this.prefab = prefab;
-            this.registered = true;
-            this.dataBundle = dataBundle;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="name"></param>
         /// <param name="id"></param>
         /// <param name="gender"></param>
-        public PlayableChara(string uid,string name, int id, CharacterGender gender)
+        internal PlayableChara(string uid,string name, int id, CharacterGender gender)
         {
             this.uid = uid;
             Name = name;

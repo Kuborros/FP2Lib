@@ -3,7 +3,6 @@ using BepInEx.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -18,7 +17,7 @@ namespace FP2Lib.Player
         private static string storePath;
         public static PlayableChara currentCharacter;
 
-        private static readonly ManualLogSource PlayerLogSource = new ManualLogSource("FP2Lib-Player");
+        internal static readonly ManualLogSource PlayerLogSource = FP2Lib.logSource;
 
         public static void InitialiseHandler()
         {
@@ -32,40 +31,6 @@ namespace FP2Lib.Player
             Directory.CreateDirectory(storePath);
 
             LoadFromStorage();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="name"></param>
-        /// <param name="gender"></param>
-        /// <param name="airMoves"></param>
-        /// <param name="groundMoves"></param>
-        /// <param name="prefab"></param>
-        /// <param name="assets"></param>
-        /// <returns></returns>
-        public static bool RegisterPlayableCharacter(string uid, string name, CharacterGender gender, Action airMoves, Action groundMoves, GameObject prefab,AssetBundle assets)
-        {
-            if (!PlayableChars.ContainsKey(uid))
-            {
-                PlayableChara chara = new PlayableChara(uid, name,gender, airMoves, groundMoves, prefab,assets);
-                PlayerLogSource.LogInfo("Registering character with no ID, assigned ID:");
-                chara.id = AssignPlayerID(chara);
-                PlayerLogSource.LogInfo(chara.id);
-                PlayableChars.Add(uid, chara);
-                return true;
-            }
-            if (PlayableChars.ContainsKey(uid) && PlayableChars[uid].prefab == null)
-            {
-                PlayableChara chara = new PlayableChara(uid, name,gender, airMoves, groundMoves, prefab,assets);
-                PlayerLogSource.LogInfo("Registering character with existing ID, assigned ID:");
-                chara.id = AssignPlayerID(chara);
-                PlayerLogSource.LogInfo(chara.id);
-                PlayableChars.Add(uid, chara);
-                return true;
-            }
-            return false;
         }
 
         /// <summary>
@@ -94,7 +59,6 @@ namespace FP2Lib.Player
             return false;
         }
 
-        //Scan for VERY BAD scenario. We do _not_ want this to happen.
         /// <summary>
         /// Checks for any holes in our ID order. Usually caused only by manual edits to the files, but it will screw things up if it happens.
         /// </summary>
@@ -114,7 +78,7 @@ namespace FP2Lib.Player
         }
 
         /// <summary>
-        /// 
+        /// Get playable character object by it's uid string.
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
@@ -124,7 +88,7 @@ namespace FP2Lib.Player
         }
 
         /// <summary>
-        /// 
+        /// Get playable character object by it's FPCharacterID.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -134,7 +98,7 @@ namespace FP2Lib.Player
         }
 
         /// <summary>
-        /// 
+        /// Get playable character object by it's character id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -148,16 +112,7 @@ namespace FP2Lib.Player
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        internal static int GetRealTotalCharacterNumber()
-        {
-            return takenIDs.Count(c => c);
-        }
-
-        /// <summary>
-        /// 
+        /// Get amount of total characters in-game which are in functional state
         /// </summary>
         /// <returns></returns>
         internal static int GetTotalActiveCharacters()

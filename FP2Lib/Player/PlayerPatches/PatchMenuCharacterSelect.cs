@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
@@ -8,19 +9,36 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchMenuCharacterSelect
     {
-        internal static readonly MethodInfo m_getRealTotalCharacterNumber = SymbolExtensions.GetMethodInfo(() => PlayerHandler.GetRealTotalCharacterNumber());
+        internal static readonly MethodInfo m_getTotalWheelNumber = SymbolExtensions.GetMethodInfo(() => GetTotalWheelNumber());
+        internal static int wheelcharas;
+
+        internal static int GetTotalWheelNumber()
+        {
+            return wheelcharas;
+        }
+
+        public static PlayableChara GetPlayableCharaByWheelId(int id)
+        {
+            foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
+            {
+                if (chara.wheelId == id) return chara;
+            }
+            return null;
+        }
+
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuCharacterSelect), "Start", MethodType.Normal)]
         static void PatchCharacterSelectStart(MenuCharacterSelect __instance, ref MenuCharacterWheel[] ___characterSprites, ref Sprite[] ___nameLabelSprites, ref MenuText[] ___infoText)
         {
-            //Calculate offset
-            int totalCharacters = PlayerHandler.GetTotalActiveCharacters();
-            int offset = 360 / totalCharacters;
+            //Reset character number for the wheel
+            wheelcharas = 3;
 
+            //Warn the gamer on anything sus
+            PlayerHandler.doWeHaveHolesInIds();
 
             //Extend arrays
-            for (int i = 5; i < PlayerHandler.highestID; i++)
+            for (int i = 4; i < PlayerHandler.highestID; i++)
             {
                 ___characterSprites = ___characterSprites.AddToArray(null);
                 ___nameLabelSprites = ___nameLabelSprites.AddToArray(null);
@@ -31,30 +49,44 @@ namespace FP2Lib.Player.PlayerPatches
                 ___infoText[4].paragraph = ___infoText[4].paragraph.AddToArray("");
             }
 
+
             //Inject all characters
             foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
             {
-                //No character file, skip them.
-                if (chara.prefab == null) continue;
+                //No character file, skip them. Same for chars without adventure mode.
+                if (chara.prefab == null || (!chara.enabledInAventure && FPSaveManager.gameMode == FPGameMode.ADVENTURE)) continue;
 
                 GameObject charSelector = GameObject.Instantiate(chara.characterSelectPrefab);
                 MenuCharacterWheel wheel = charSelector.GetComponent<MenuCharacterWheel>();
+                wheelcharas++;
+                chara.wheelId = wheelcharas;
                 //Calculate offset for the wheel.
                 //Maybe this will just work?
-                wheel.rotationOffset = 180 - (offset * chara.id);
+                //wheel.rotationOffset = 180 - (offset * chara.wheelId);
 
                 wheel.parentObject = __instance;
                 wheel.gameObject.transform.parent = __instance.transform;
-                ___characterSprites = ___characterSprites.AddToArray(wheel);
+                ___characterSprites[chara.wheelId] = wheel;
+                ___nameLabelSprites[chara.wheelId] = chara.charSelectName;
 
-                ___nameLabelSprites = ___nameLabelSprites.AddToArray(chara.charSelectName);
+                ___infoText[0].paragraph[chara.wheelId] = chara.characterType;
+                ___infoText[1].paragraph[chara.wheelId] = chara.skill1;
+                ___infoText[2].paragraph[chara.wheelId] = chara.skill2;
+                ___infoText[3].paragraph[chara.wheelId] = chara.skill3;
+                ___infoText[4].paragraph[chara.wheelId] = chara.skill4;
+            }
+            //Calculate offset
+            int totalCharacters = wheelcharas + 1;
+            int offset = 360 / totalCharacters;
 
-                ___infoText[0].paragraph[chara.id] = chara.characterType;
-                ___infoText[1].paragraph[chara.id] = chara.skill1;
-                ___infoText[2].paragraph[chara.id] = chara.skill2;
-                ___infoText[3].paragraph[chara.id] = chara.skill3;
-                ___infoText[4].paragraph[chara.id] = chara.skill4;
+            //Strip nulls
+            ___characterSprites = ___characterSprites.Where(x => x != null).ToArray();
+            ___nameLabelSprites = ___nameLabelSprites.Where(x => x != null).ToArray();
 
+            //Set offset
+            for (int i = 4; i <= wheelcharas; i++)
+            {
+                ___characterSprites[i].rotationOffset = 180 - (offset * i);
             }
         }
 
@@ -66,9 +98,9 @@ namespace FP2Lib.Player.PlayerPatches
             List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
             for (var i = 1; i < codes.Count; i++)
             {
-                if (codes[i].opcode == OpCodes.Ldc_I4_3)
+                if ((codes[i].opcode == OpCodes.Ldc_I4_3 && codes[i - 1].opcode == OpCodes.Ldfld) || (codes[i].opcode == OpCodes.Ldc_I4_3 && codes[i - 1].opcode == OpCodes.Ldarg_0))
                 {
-                    codes[i] = new CodeInstruction(OpCodes.Call, m_getRealTotalCharacterNumber);
+                    codes[i] = new CodeInstruction(OpCodes.Call, m_getTotalWheelNumber);
                 }
             }
             return codes;
@@ -83,59 +115,20 @@ namespace FP2Lib.Player.PlayerPatches
             //Since BikeCarol is not counted here, all id's need to be +1'd
             if (__instance.character >= 4)
             {
-                ___characterIcon.digitFrames = ___characterIcon.digitFrames.AddToArray(PlayerHandler.GetPlayableCharaByRuntimeId(__instance.character + 1).livesIconAnim[0]);
+                ___characterIcon.digitFrames = ___characterIcon.digitFrames.AddToArray(GetPlayableCharaByWheelId(__instance.character).livesIconAnim[0]);
                 ___characterIcon.SetDigitValue(16);
             }
         }
 
-        /*
-         * Might not be needed? Instead of editing the data _before_ the jump to State_Go, maybe just edit it in Prefix?
-         * 
-        //Patch code to write proper character ID to file
-        [HarmonyTranspiler]
-        [HarmonyPatch(typeof(MenuCharacterSelect), "State_CharacterConfirm", MethodType.Normal)]
-        static IEnumerable<CodeInstruction> CharacterConfirmTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
-        {
-            Label spadeSelect = il.DefineLabel();
-            Label endBr = il.DefineLabel();
-
-            System.Object staticVal = null;
-            List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
-            for (var i = 1; i < codes.Count; i++)
-            {
-                //Save file character id write
-                if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_S)
-                {
-                    Label[] targets = (Label[])codes[i].operand;
-                    staticVal = codes[i + 3].operand;
-                    codes[i + 1].labels.Add(endBr);
-                    targets = targets.AddItem(spadeSelect).ToArray();
-                    codes[i].operand = targets;
-                }
-
-            }
-
-            //SaveFile magic
-            CodeInstruction idCodeStart = new CodeInstruction(OpCodes.Ldc_I4_5);
-            idCodeStart.labels.Add(spadeSelect);
-
-            codes.Add(idCodeStart);
-            codes.Add(new CodeInstruction(OpCodes.Stsfld, staticVal));
-            codes.Add(new CodeInstruction(OpCodes.Br, endBr));
-
-            return codes;
-
-        }
-        */
-        //Might just work like this instead?
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuCharacterSelect), "State_Go", MethodType.Normal)]
         static void PatchMenuCharacterSelectGo(int ___character)
         {
             if (___character >= 4)
             {
-                FPSaveManager.character = (FPCharacterID)(___character + 1);
-                PlayerHandler.currentCharacter = PlayerHandler.GetPlayableCharaByFPCharacterId(FPSaveManager.character);
+                PlayableChara chara = GetPlayableCharaByWheelId(___character);
+                FPSaveManager.character = (FPCharacterID)(chara.id);
+                PlayerHandler.currentCharacter = chara;
             }
         }
     }

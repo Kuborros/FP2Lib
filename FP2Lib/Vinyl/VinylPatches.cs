@@ -126,16 +126,19 @@ namespace FP2Lib.Vinyl
         {
             if (___itemCosts != null && ___itemsForSale != null)
             {
-                foreach (VinylData vinyl in VinylHandler.Vinyls.Values)
-                {
-                    if (vinyl.shopLocation != VAddToShop.None && FPSaveManager.gameMode == FPGameMode.CLASSIC)
+                //Are we in Vinyl shop?
+                if (___itemsForSale[0] == FPPowerup.NONE) {
+                    foreach (VinylData vinyl in VinylHandler.Vinyls.Values)
                     {
-                        if (!___musicID.Contains((FPMusicTrack)vinyl.id))
+                        if (vinyl.shopLocation != VAddToShop.None && FPSaveManager.gameMode == FPGameMode.CLASSIC)
+                        {
+                            if (!___musicID.Contains((FPMusicTrack)vinyl.id))
                             {
                                 ___itemsForSale = ___itemsForSale.AddToArray(FPPowerup.NONE);
                                 ___itemCosts = ___itemCosts.AddToArray(vinyl.crystalsPrice);
                                 ___starCardRequirements = ___starCardRequirements.AddToArray(vinyl.starCards);
                                 ___musicID = ___musicID.AddToArray((FPMusicTrack)vinyl.id);
+                            }
                         }
                     }
                 }

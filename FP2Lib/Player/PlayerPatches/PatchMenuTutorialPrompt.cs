@@ -24,10 +24,10 @@ namespace FP2Lib.Player.PlayerPatches
                 }
 
             }
-            CodeInstruction spadCodeStart = new CodeInstruction(OpCodes.Ldloc_1);
-            spadCodeStart.labels.Add(patchStart);
+            CodeInstruction codeStart = new CodeInstruction(OpCodes.Ldloc_0);
+            codeStart.labels.Add(patchStart);
 
-            codes.Add(spadCodeStart);
+            codes.Add(codeStart);
             codes.Add(new CodeInstruction(OpCodes.Call,PatchMenuWorldMapConfirm.m_getTutorialScene));
             codes.Add(new CodeInstruction(OpCodes.Br, patchEnd));
 

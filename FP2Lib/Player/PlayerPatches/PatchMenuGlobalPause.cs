@@ -10,11 +10,10 @@ namespace FP2Lib.Player.PlayerPatches
         static void PatchMenuGlobalPauseStart(ref MenuGlobalPause __instance)
         {
             //Just to be 100% sure we got it right.
-            PlayerHandler.currentCharacter = PlayerHandler.GetPlayableCharaByFPCharacterId(FPSaveManager.character);
-
-            PlayableChara chara = PlayerHandler.currentCharacter;
             if (FPSaveManager.character <= (FPCharacterID)5)
             {
+                PlayerHandler.currentCharacter = PlayerHandler.GetPlayableCharaByFPCharacterId(FPSaveManager.character);
+                PlayableChara chara = PlayerHandler.currentCharacter;
                 int npcnumber = FPSaveManager.GetNPCNumber(chara.Name);
                 if (npcnumber > 0)
                 {
