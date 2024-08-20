@@ -42,18 +42,17 @@ namespace FP2Lib.Player
         {
             if (!PlayableChars.ContainsKey(character.uid))
             {
-                PlayerLogSource.LogInfo("Registering character with no ID, assigned ID:");
                 character.id = AssignPlayerID(character);
-                PlayerLogSource.LogInfo(character.id);
                 PlayableChars.Add(character.uid, character);
                 return true;
             }
             if (PlayableChars.ContainsKey(character.uid) && PlayableChars[character.uid].prefab == null)
             {
-                PlayerLogSource.LogInfo("Registering character with existing ID, assigned ID:");
+                //Load up stored ID.
+                character.id = PlayableChars[character.uid].id;
+                //Check if assigned ID is valid.
                 character.id = AssignPlayerID(character);
-                PlayerLogSource.LogInfo(character.id);
-                PlayableChars.Add(character.uid, character);
+                PlayableChars[character.uid] = character;
                 return true;
             }
             return false;
@@ -128,7 +127,7 @@ namespace FP2Lib.Player
         private static int AssignPlayerID(PlayableChara character)
         {
             //Character has ID
-            if (character.id != 0)
+            if (character.id != 0 && !takenIDs[character.id])
             {
                 takenIDs[character.id] = true;
                 PlayerLogSource.LogDebug("Stored playable character ID assigned (" + character.uid + "): " + character.id);
@@ -164,7 +163,7 @@ namespace FP2Lib.Player
                 if (js.EndsWith(".json"))
                 {
                     CharacterData data = CharacterData.LoadFromJson(File.ReadAllText(js));
-                    PlayerLogSource.LogInfo("Loaded Character from storage: " + data.name + "(" + data.UID + ")");
+                    PlayerLogSource.LogDebug("Loaded Character from storage: " + data.name + "(" + data.UID + ")");
                     if (!PlayableChars.ContainsKey(data.UID))
                     {
                         PlayableChara chara = new PlayableChara(data.UID, data.name, data.runtimeID,data.gender);

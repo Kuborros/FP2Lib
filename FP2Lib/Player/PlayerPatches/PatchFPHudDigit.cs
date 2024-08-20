@@ -11,7 +11,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (__instance.name == "PortraitCharacter")
             {
-                if (___digitFrames[5] == null)
+                if (___digitFrames.Length <= 6)
                 {
                     //Extend array
                     for (int i = 4; i <= PlayerHandler.highestID +1; i++)

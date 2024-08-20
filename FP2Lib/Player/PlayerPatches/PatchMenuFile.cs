@@ -31,6 +31,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             //Set the selected character as current character
             PlayerHandler.currentCharacter = PlayerHandler.GetPlayableCharaByFPCharacterId(FPSaveManager.character);
+            PlayerHandler.WriteToStorage();
         }
     }
 }
