@@ -54,7 +54,7 @@ namespace FP2Lib.Player.PlayerPatches
             State_WaitForMenu(currInstance);
         }
 
-        [HarmonyReversePatch(0)]
+        [HarmonyReversePatch]
         [HarmonyPatch(typeof(MenuWorldMap), "State_WaitForMenu", MethodType.Normal)]
         public static void State_WaitForMenu(MenuWorldMap instance)
         {

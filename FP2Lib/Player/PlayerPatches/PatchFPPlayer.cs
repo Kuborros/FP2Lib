@@ -13,6 +13,7 @@ namespace FP2Lib.Player.PlayerPatches
         internal static readonly MethodInfo m_AirMoves = SymbolExtensions.GetMethodInfo(() => HandleActionAirMoves());
         internal static readonly MethodInfo m_Jump = SymbolExtensions.GetMethodInfo(() => Action_Jump());
         internal static readonly MethodInfo m_GroundMoves = SymbolExtensions.GetMethodInfo(() => HandleActionGroundMoves());
+        internal static readonly MethodInfo m_Grind = SymbolExtensions.GetMethodInfo(() => HandleGrindJump());
 
         internal static void HandleActionGroundMoves()
         {
@@ -22,6 +23,20 @@ namespace FP2Lib.Player.PlayerPatches
         internal static void HandleActionAirMoves()
         {
             PlayerHandler.currentCharacter.AirMoves?.Invoke();
+        }
+
+        internal static void HandleGrindJump()
+        {
+            if (player.input.left)
+            {
+                player.direction = FPDirection.FACING_LEFT;
+            }
+            else if (player.input.right)
+            {
+                player.direction = FPDirection.FACING_RIGHT;
+            }
+            Action_Jump();
+            HandleActionAirMoves();
         }
 
         public static void Action_Jump()
@@ -293,8 +308,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (codes[i].opcode == OpCodes.Switch && (codes[i - 1].opcode == OpCodes.Ldloc_2))
                 {
+                    airEnd = (Label)codes[i + 1].operand;
                     codes[i + 1].operand = airStart;
-                    airEnd = (Label)codes[i + 5].operand;
                 }
 
             }
@@ -302,10 +317,28 @@ namespace FP2Lib.Player.PlayerPatches
             airCodeStart.labels.Add(airStart);
 
             codes.Add(airCodeStart);
-            codes.Add(new CodeInstruction(OpCodes.Call, m_Jump));
-            codes.Add(new CodeInstruction(OpCodes.Call, m_AirMoves));
+            codes.Add(new CodeInstruction(OpCodes.Call, m_Grind));
             codes.Add(new CodeInstruction(OpCodes.Br, airEnd));
 
+            return codes;
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(FPPlayer), "PseudoGrindRail", MethodType.Normal)]
+        static IEnumerable<CodeInstruction> PlayerPseudoGrindTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
+        {
+            Label airStart = il.DefineLabel();
+
+            List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+            for (var i = 1; i < codes.Count; i++)
+            {
+                if (codes[i].opcode == OpCodes.Switch && (codes[i - 1].opcode == OpCodes.Ldloc_S))
+                {
+                    //Code is identical for everyone but Neera
+                    codes[i + 2].labels.Add(airStart);
+                    codes[i + 1].operand = airStart;
+                }
+            }
             return codes;
         }
     }
