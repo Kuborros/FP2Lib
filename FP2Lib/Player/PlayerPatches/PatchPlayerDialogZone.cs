@@ -81,9 +81,8 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (FPSaveManager.gameMode != FPGameMode.CLASSIC || __instance.playInClassicMode)
             {
-                if (___playerInRange && ___currentLine < __instance.dialogSequence.Length - 1)
+                if (___playerInRange && ___currentLine <= __instance.dialogSequence.Length - 1 && __instance.dialogSequence.Length != 1)
                 {
-                    ___currentLine++;
                     if (!PlayerHandler.currentCharacter.useOwnCutsceneActivators) {
                         if (PlayerHandler.currentCharacter.eventActivatorCharacter == FPCharacterID.LILAC && __instance.dialogSequence[___currentLine].characters[0])
                         {
@@ -113,6 +112,7 @@ namespace FP2Lib.Player.PlayerPatches
                             Dialog(__instance, 0, __instance.dialogSequence[___currentLine].ID);
                         }
                     }
+                    if (___currentLine == __instance.dialogSequence.Length - 1) ___currentLine++;
                 }
             }
         }

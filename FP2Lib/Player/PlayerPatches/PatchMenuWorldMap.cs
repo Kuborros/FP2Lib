@@ -6,9 +6,6 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchMenuWorldMap
     {
-
-        private static MenuWorldMap currInstance;
-
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuWorldMap), "SetPlayerSprite", MethodType.Normal)]
         private static bool PatchSetPlayerSprite(bool walking, bool ___vehicleMode, ref SpriteRenderer ___playerSpriteRenderer, ref SpriteRenderer ___playerShadowRenderer, FPMap[] ___renderedMap, int ___currentMap, float ___animTimer)
@@ -20,7 +17,7 @@ namespace FP2Lib.Player.PlayerPatches
 
             if (___vehicleMode)
             {
-                ___playerSpriteRenderer.sprite = ___renderedMap[___currentMap].vehicle[1];
+                ___playerSpriteRenderer.sprite = ___renderedMap[___currentMap].vehicle[chara.airshipSprite];
                 if (___renderedMap[___currentMap].waterVehicle)
                 {
                     ___playerShadowRenderer.sprite = null;
@@ -46,19 +43,6 @@ namespace FP2Lib.Player.PlayerPatches
             }
 
             return false;
-        }
-
-
-        internal static void State_WaitForMenu()
-        {
-            State_WaitForMenu(currInstance);
-        }
-
-        [HarmonyReversePatch]
-        [HarmonyPatch(typeof(MenuWorldMap), "State_WaitForMenu", MethodType.Normal)]
-        public static void State_WaitForMenu(MenuWorldMap instance)
-        {
-            throw new NotImplementedException("Method failed to reverse patch!");
         }
 
         //TODO:

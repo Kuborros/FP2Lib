@@ -111,6 +111,7 @@ namespace FP2Lib
             playerPatches.PatchAll(typeof(PatchAcrabellePieTrap));
             playerPatches.PatchAll(typeof(PatchMenuShop));
             playerPatches.PatchAll(typeof(PatchPlayerDialogZone));
+            playerPatches.PatchAll(typeof(PatchZLBaseballFlyer));
 
             //Vinyls
             Logger.LogDebug("Vinyl Patch Init");
