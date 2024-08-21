@@ -1,10 +1,21 @@
 ﻿using BepInEx;
+using FP2Lib.Saves;
 using HarmonyLib;
-using System.ComponentModel;
+using System;
+using System.IO;
 using UnityEngine;
 
 namespace FP2Lib.Player.PlayerPatches
 {
+
+    [Serializable]
+    internal class PlayerData
+    {
+        public float versionID;
+        public FPGameMode gameMode;
+        public int character;
+    }
+
     internal class PatchMenuFile
     {
         //If some mod wants to add their own character manually, they can add their id here to unlock it.
@@ -58,8 +69,29 @@ namespace FP2Lib.Player.PlayerPatches
 
             if (__instance != null)
             {
-                int characterId = __instance.files[fileSlot - 1].pfCharacterPortrait.digitValue;
-                if (!enabledChars[characterId])
+                int fpcharacterID = 0;
+                //Read the save file. Yes.
+                //The custom PlayerData object can be used to smuggle extra fields onto player data.
+                try
+                {
+                    string json = string.Empty;
+                    if (File.Exists(SavePatches.getSavesPath() + "/" + fileSlot + ".json"))
+                    {
+                        using (StreamReader streamReader = new StreamReader(SavePatches.getSavesPath() + "/" + fileSlot + ".json"))
+                        {
+                            json = streamReader.ReadToEnd();
+                        }
+                        PlayerData playerData = JsonUtility.FromJson<PlayerData>(json);
+                        float versionID = playerData.versionID;
+                        fpcharacterID = playerData.character;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    PlayerHandler.PlayerLogSource.LogError(string.Format("An exception of type '{0}' has been caught!\nMessage: {1}\nStack Trace: {2}", ex.GetType().Name, ex.Message, ex.StackTrace));
+                }
+
+                if (!enabledChars[fpcharacterID])
                 {
                     MenuFilePanel menuFilePanel = __instance.files[fileSlot - 1]; ;
                     menuFilePanel.off.SetActive(false);
@@ -70,10 +102,10 @@ namespace FP2Lib.Player.PlayerPatches
                     }
                     menuFilePanel.error.SetActive(true);
                     string name = "Data Deleted!\n(did you mess with the .json files?)";
-                    if (!PlayerHandler.GetPlayableCharaByRuntimeIdSafe(characterId).Name.IsNullOrWhiteSpace())
-                        name = PlayerHandler.GetPlayableCharaByRuntimeId(characterId).Name;
+                    if (!PlayerHandler.GetPlayableCharaByRuntimeIdSafe(fpcharacterID).Name.IsNullOrWhiteSpace())
+                        name = PlayerHandler.GetPlayableCharaByRuntimeId(fpcharacterID).Name;
 
-                    menuFilePanel.error.GetComponentInChildren<TextMesh>().text = ("This character mod is not installed.\nPlease reinstall it order to play this file.\nCharacter: " + name);
+                    menuFilePanel.error.GetComponentInChildren<TextMesh>().text = ("This character mod is not installed.\nPlease reinstall it in order to play this file.\nCharacter: " + name);
                 }
             }
         }
