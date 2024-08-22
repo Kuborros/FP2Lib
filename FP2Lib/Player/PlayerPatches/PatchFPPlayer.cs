@@ -11,7 +11,6 @@ namespace FP2Lib.Player.PlayerPatches
         public static FPPlayer player;
 
         internal static readonly MethodInfo m_AirMoves = SymbolExtensions.GetMethodInfo(() => HandleActionAirMoves());
-        internal static readonly MethodInfo m_Jump = SymbolExtensions.GetMethodInfo(() => Action_Jump());
         internal static readonly MethodInfo m_GroundMoves = SymbolExtensions.GetMethodInfo(() => HandleActionGroundMoves());
         internal static readonly MethodInfo m_Grind = SymbolExtensions.GetMethodInfo(() => HandleGrindJump());
 
@@ -35,16 +34,9 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 player.direction = FPDirection.FACING_RIGHT;
             }
-            Action_Jump();
+            player.Action_Jump();
             HandleActionAirMoves();
         }
-
-        public static void Action_Jump()
-        {
-            player.Action_Jump();
-        }
-
-        //Patches should only fire AirMoves and GroundMoves events. Mod creator handles their own postfixes etc.
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPPlayer), "Update", MethodType.Normal)]
