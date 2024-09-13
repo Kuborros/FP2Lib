@@ -2,6 +2,11 @@
 
 A library intended to simplify most common parts of modding **Freedom Planet 2**, as well as provide extra functionality used in [Freedom Manager](https://github.com/Kuborros/FreedomManager).
 
+<!-- Badges -->
+[![GitHub issues](https://img.shields.io/github/issues/Kuborros/FP2Lib?style=flat)](https://github.com/Kuborros/FP2Lib/issues)
+[![GitHub forks](https://img.shields.io/github/forks/Kuborros/FP2Lib?style=flat)](https://github.com/Kuborros/FP2Lib/network)
+[![GitHub stars](https://img.shields.io/github/stars/Kuborros/FP2Lib?style=flat)](https://github.com/Kuborros/FP2Lib/stargazers)
+[![GitHub license](https://img.shields.io/github/license/Kuborros/FP2Lib?style=flat)](https://github.com/Kuborros/FP2Lib/blob/master/LICENSE)
 
 ### Current Functionality:
 * Provides *Save file redirection* features used by the mod manager.
