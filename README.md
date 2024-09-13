@@ -22,9 +22,12 @@ You can read documentation of specific parts on the [Wiki](https://github.com/Ku
 ### Usage:
 
 This library is auto-installed by the mod manager, and exposes no player-visible components in-game.
+
 If you wish to use it _without_ the mod manager, you can install it from the Releases tab like any other mod.
-It's main functionality is handled internally, depending on other installed mods which depend on it.
-Some of the functions can be managed by the config file. Example config file contains following options which can be edited by hand:
+
+While it's main functionality is handled internally, depending on other installed mods which depend on it, some of the functions can be managed by the config file. 
+
+Example config file contains following options which can be edited by hand:
 ```ini
 [Debug]
 
