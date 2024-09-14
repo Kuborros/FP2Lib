@@ -15,11 +15,11 @@ namespace FP2Lib.Player.PlayerPatches
                 if (___digitFrames.Length <= 6)
                 {
                     //Extend array
-                    for (int i = ___digitFrames.Length; i <= PlayerHandler.highestID +1; i++)
+                    for (int i = ___digitFrames.Length; i <= PlayerHandler.highestID + 1; i++)
                     {
                         ___digitFrames = ___digitFrames.AddToArray(null);
                     }
-                    
+
                     //Load profile pic
                     foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
                     {

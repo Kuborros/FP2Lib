@@ -1,5 +1,5 @@
-﻿using BepInEx;
-using BepInEx.Logging;
+﻿using BepInEx.Logging;
+using FP2Lib.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +19,7 @@ namespace FP2Lib.Player
 
         internal static readonly ManualLogSource PlayerLogSource = FP2Lib.logSource;
 
-        public static void InitialiseHandler()
+        internal static void InitialiseHandler()
         {
             //5 base characters
             for (int i = 0; i <= 4; i++)
@@ -27,14 +27,14 @@ namespace FP2Lib.Player
                 takenIDs[i] = true;
             }
 
-            storePath = Path.Combine(Paths.ConfigPath, "CharaLibStore");
+            storePath = Path.Combine(GameInfo.getProfilePath(), "CharaLibStore");
             Directory.CreateDirectory(storePath);
 
             LoadFromStorage();
         }
 
         /// <summary>
-        /// "Build it yourself" variant.
+        /// Register a playable character into the system. Takes already cooked PlayableChara object.
         /// </summary>
         /// <param name="character">Prepared PlayableChara object</param>
         /// <returns></returns>
@@ -70,7 +70,7 @@ namespace FP2Lib.Player
         /// <returns>Have any holes been found.</returns>
         public static bool doWeHaveHolesInIds()
         {
-            for (int i = 0; i <= highestID;i++)
+            for (int i = 0; i <= highestID; i++)
             {
                 //VERY BAD
                 if (!takenIDs[i])
@@ -85,7 +85,7 @@ namespace FP2Lib.Player
         /// <summary>
         /// Get playable character object by it's uid string.
         /// </summary>
-        /// <param name="uid"></param>
+        /// <param name="uid">Character's UID</param>
         /// <returns></returns>
         public static PlayableChara GetPlayableCharaByUid(string uid)
         {
@@ -95,7 +95,7 @@ namespace FP2Lib.Player
         /// <summary>
         /// Get playable character object by it's FPCharacterID.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Character's FPCharacterID</param>
         /// <returns></returns>
         public static PlayableChara GetPlayableCharaByFPCharacterId(FPCharacterID id)
         {
@@ -105,20 +105,21 @@ namespace FP2Lib.Player
         /// <summary>
         /// Get playable character object by it's character id.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Character's assigned ID</param>
         /// <returns>Character object, or null if none found</returns>
         public static PlayableChara GetPlayableCharaByRuntimeId(int id)
         {
             foreach (PlayableChara chara in PlayableChars.Values)
             {
-                if (chara.id == id) return chara; 
+                if (chara.id == id) return chara;
             }
             return null;
         }
+
         /// <summary>
-        /// 
+        /// Get playable character object by it's character id.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Character's assigned ID</param>
         /// <returns>Character object, or empty version of it if none found</returns>
         public static PlayableChara GetPlayableCharaByRuntimeIdSafe(int id)
         {
@@ -128,20 +129,6 @@ namespace FP2Lib.Player
             }
             //Return non-null value with placeholder data. Technically should be never triggered in normal scenarios but..
             return new PlayableChara();
-        }
-
-        /// <summary>
-        /// Get amount of total characters in-game which are in functional state
-        /// </summary>
-        /// <returns></returns>
-        internal static int GetTotalActiveCharacters()
-        {
-            int totalActiveCharacters = 4;
-            foreach (PlayableChara chara in PlayableChars.Values )
-            {
-                if (chara.prefab != null) totalActiveCharacters++;
-            }
-            return totalActiveCharacters;
         }
 
         private static int AssignPlayerID(PlayableChara character)
@@ -186,7 +173,7 @@ namespace FP2Lib.Player
                     PlayerLogSource.LogDebug("Loaded Character from storage: " + data.name + "(" + data.UID + ")");
                     if (!PlayableChars.ContainsKey(data.UID))
                     {
-                        PlayableChara chara = new PlayableChara(data.UID, data.name, data.runtimeID,data.gender);
+                        PlayableChara chara = new PlayableChara(data.UID, data.name, data.runtimeID, data.gender);
                         chara.registered = false;
                         PlayableChars.Add(data.UID, chara);
                     }

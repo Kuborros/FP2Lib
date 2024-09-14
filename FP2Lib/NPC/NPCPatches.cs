@@ -33,7 +33,7 @@ namespace FP2Lib.NPC
                     {
                         ___npcNames[npc.ID] = npc.getNpcString();
                         FP2Lib.logSource.LogDebug("NPC " + npc.UID + " restored from storage with ID = " + npc.ID);
-                    } 
+                    }
                     else
                     {
                         //Collision found, set ID to 0 so the next step assigns us new one.
@@ -56,7 +56,7 @@ namespace FP2Lib.NPC
                         if (___npcNames[i] == "00 00 Data Missing")
                         {
                             ___npcNames[i] = npc.getNpcString();
-                            FP2Lib.logSource.LogDebug("Assigned empty ID = "+i);
+                            FP2Lib.logSource.LogDebug("Assigned empty ID = " + i);
                             //Cursed but does what needed.
                             goto END;
                         }
@@ -65,9 +65,9 @@ namespace FP2Lib.NPC
                     FP2Lib.logSource.LogDebug("No empty ID found, adding at end of array.");
                     ___npcNames = ___npcNames.AddToArray(npc.getNpcString());
                 }
-                END:
+            END:
                 npc.ID = FPSaveManager.GetNPCNumber(npc.Name);
-                FP2Lib.logSource.LogDebug("ID for NPC " + npc.Name + " = "+ npc.ID);
+                FP2Lib.logSource.LogDebug("ID for NPC " + npc.Name + " = " + npc.ID);
             }
 
 
@@ -132,10 +132,10 @@ namespace FP2Lib.NPC
             }
         }
 
-        
+
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(MenuGlobalPause),"UpdateNPCList", MethodType.Normal)]
-        static void PatchUpdateNPCList(MenuGlobalPause __instance, ref SpriteRenderer ___npcPreviewSprite, int ___currentNPC, int ___npcListOffset,ref int ___npcListLength)
+        [HarmonyPatch(typeof(MenuGlobalPause), "UpdateNPCList", MethodType.Normal)]
+        static void PatchUpdateNPCList(MenuGlobalPause __instance, ref SpriteRenderer ___npcPreviewSprite, int ___currentNPC, int ___npcListOffset, ref int ___npcListLength)
         {
             if (npcRenderer == null)
             {
@@ -194,7 +194,7 @@ namespace FP2Lib.NPC
                     }
                 }
                 id = array2[___currentNPC + ___npcListOffset];
-            } 
+            }
             else
             {
                 id = array[___currentNPC + ___npcListOffset];
@@ -218,6 +218,6 @@ namespace FP2Lib.NPC
                     }
                 }
             }
-        }        
+        }
     }
 }

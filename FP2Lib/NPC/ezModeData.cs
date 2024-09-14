@@ -15,8 +15,6 @@ namespace FP2Lib.NPC
      * }
      */
 
-
-
     [Serializable]
     internal class EzModeData
     {
@@ -28,7 +26,7 @@ namespace FP2Lib.NPC
         public int home;
         public int dialogue;
 
-        internal EzModeData(string uid, string name,string scene, string bundlePath, int species, int home, int dialogue)
+        internal EzModeData(string uid, string name, string scene, string bundlePath, int species, int home, int dialogue)
         {
             this.UID = uid;
             this.name = name;

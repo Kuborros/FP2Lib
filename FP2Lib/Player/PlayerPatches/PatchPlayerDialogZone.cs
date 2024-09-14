@@ -8,7 +8,7 @@ namespace FP2Lib.Player.PlayerPatches
     {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PlayerDialogZone), "StartDialog", MethodType.Normal)]
-        static bool PatchPDZStart(PlayerDialogZone __instance,ref bool ___playerInRange, ref int ___currentLine)
+        static bool PatchPDZStart(PlayerDialogZone __instance, ref bool ___playerInRange, ref int ___currentLine)
         {
             if (!___playerInRange && FPSaveManager.character >= (FPCharacterID)5)
             {
@@ -58,7 +58,7 @@ namespace FP2Lib.Player.PlayerPatches
                                 ___currentLine = i;
                                 break;
                             }
-                        } 
+                        }
                         else
                         {
                             if (__instance.dialogSequence[i].characters[PlayerHandler.currentCharacter.id])
@@ -71,7 +71,7 @@ namespace FP2Lib.Player.PlayerPatches
                     }
                 }
                 return false;
-            } 
+            }
             else return true;
         }
 
@@ -83,7 +83,8 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 if (___playerInRange && ___currentLine <= __instance.dialogSequence.Length - 1 && __instance.dialogSequence.Length != 1)
                 {
-                    if (!PlayerHandler.currentCharacter.useOwnCutsceneActivators) {
+                    if (!PlayerHandler.currentCharacter.useOwnCutsceneActivators)
+                    {
                         if (PlayerHandler.currentCharacter.eventActivatorCharacter == FPCharacterID.LILAC && __instance.dialogSequence[___currentLine].characters[0])
                         {
                             Dialog(__instance, 0, __instance.dialogSequence[___currentLine].ID);

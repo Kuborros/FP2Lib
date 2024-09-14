@@ -9,7 +9,7 @@ namespace FP2Lib.Player.PlayerPatches
         static void PatchStart(ref FPPlayer[] ___playerList)
         {
             //Load each playable characters GameObject prefab here, append to ___playerList in order of IDs
-            for (int i = 4;  i < PlayerHandler.highestID; i++)
+            for (int i = 4; i < PlayerHandler.highestID; i++)
             {
                 ___playerList = ___playerList.AddToArray(null);
             }

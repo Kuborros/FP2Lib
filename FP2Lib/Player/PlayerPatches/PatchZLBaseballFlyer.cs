@@ -33,7 +33,7 @@ namespace FP2Lib.Player.PlayerPatches
             entry.labels.Add(entryLabel);
             codes.Add(entry);
             codes.Add(CodeInstruction.LoadField(typeof(ZLBaseballFlyer), "spriteRenderer"));
-            codes.Add(CodeInstruction.Call(typeof(PatchZLBaseballFlyer),nameof(SetBaseballSprite)));
+            codes.Add(CodeInstruction.Call(typeof(PatchZLBaseballFlyer), nameof(SetBaseballSprite)));
             codes.Add(new CodeInstruction(OpCodes.Br, exitLabel));
             return codes;
         }

@@ -10,7 +10,7 @@ namespace FP2Lib.Player.PlayerPatches
     {
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Saga), "Start", MethodType.Normal)]
-        private static void PatchSagaStart(ref Animator ___animator, Saga __instance) 
+        private static void PatchSagaStart(ref Animator ___animator, Saga __instance)
         {
             //If not playing as custom character, no touchie. Also do not mess with not yet initialised values
             if (FPSaveManager.character >= (FPCharacterID)5 && __instance != null && ___animator != null)
@@ -22,7 +22,7 @@ namespace FP2Lib.Player.PlayerPatches
                 if (__instance.name.Contains("Syntax")) //Code Black ver.
                 {
                     ___animator.runtimeAnimatorController = AnimatorSaga2;
-                }  
+                }
                 else
                 {
                     ___animator.runtimeAnimatorController = AnimatorSaga;

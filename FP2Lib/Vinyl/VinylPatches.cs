@@ -50,8 +50,8 @@ namespace FP2Lib.Vinyl
                         if (vinyl.name.IsNullOrWhiteSpace()) __result = "Deleted Mod Track!"; //Deleted vinyl with no data somehow (should not render, but adding anyways)
                         else if (vinyl.audioClip == null) __result = vinyl.name + " - (Deleted Mod)"; //Deleted vinyl without audio
                         else __result = vinyl.name;
-                        
-                        break; 
+
+                        break;
                     }
                 }
             }
@@ -60,10 +60,9 @@ namespace FP2Lib.Vinyl
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuJukebox), "Start", MethodType.Normal)]
-        static void PatchMenuJukeBoxStart(ref MenuJukebox __instance,ref AudioClip[] ___music,ref int[] ___soundtrackOrder,ref  FPHudDigit[] ___trackIcon)
+        static void PatchMenuJukeBoxStart(ref AudioClip[] ___music, ref int[] ___soundtrackOrder)
         {
             //Load in custom Vinyls and add them each to the track listing.
-            //Loop 1 - Vinyls with IDs
             foreach (VinylData vinyl in VinylHandler.Vinyls.Values)
             {
                 if (vinyl.id != 0)
@@ -96,25 +95,25 @@ namespace FP2Lib.Vinyl
         {
             if ((___NPCName == "Naomi" || ___NPCName == "Digo" || ___NPCName == "Fawnstar") && ___itemCosts != null && ___itemsForSale != null)
             {
-                    foreach (VinylData vinyl in VinylHandler.Vinyls.Values)
+                foreach (VinylData vinyl in VinylHandler.Vinyls.Values)
+                {
+                    if (vinyl.shopLocation != VAddToShop.None || vinyl.shopLocation != VAddToShop.ClassicOnly)
                     {
-                        if (vinyl.shopLocation != VAddToShop.None || vinyl.shopLocation != VAddToShop.ClassicOnly)
+                        if ((vinyl.shopLocation == VAddToShop.Naomi && ___NPCName == "Naomi")
+                        || (vinyl.shopLocation == VAddToShop.Digo && ___NPCName == "Digo")
+                        || (vinyl.shopLocation == VAddToShop.Fawnstar && ___NPCName == "Fawnstar")
+                        || vinyl.shopLocation == VAddToShop.All)
                         {
-                            if ((vinyl.shopLocation == VAddToShop.Naomi && ___NPCName == "Naomi")
-                            || (vinyl.shopLocation == VAddToShop.Digo && ___NPCName == "Digo")
-                            || (vinyl.shopLocation == VAddToShop.Fawnstar && ___NPCName == "Fawnstar")
-                            || vinyl.shopLocation == VAddToShop.All)
+                            if (!___musicID.Contains((FPMusicTrack)vinyl.id))
                             {
-                                if (!___musicID.Contains((FPMusicTrack)vinyl.id))
-                                {
-                                    ___itemsForSale = ___itemsForSale.AddToArray(FPPowerup.NONE);
-                                    ___itemCosts = ___itemCosts.AddToArray(300);
-                                    ___starCardRequirements = ___starCardRequirements.AddToArray(0);
-                                    ___musicID = ___musicID.AddToArray((FPMusicTrack)vinyl.id);
-                                }
+                                ___itemsForSale = ___itemsForSale.AddToArray(FPPowerup.NONE);
+                                ___itemCosts = ___itemCosts.AddToArray(300);
+                                ___starCardRequirements = ___starCardRequirements.AddToArray(0);
+                                ___musicID = ___musicID.AddToArray((FPMusicTrack)vinyl.id);
                             }
                         }
-                    }       
+                    }
+                }
             }
         }
 
@@ -127,7 +126,8 @@ namespace FP2Lib.Vinyl
             if (___itemCosts != null && ___itemsForSale != null)
             {
                 //Are we in Vinyl shop?
-                if (___itemsForSale[0] == FPPowerup.NONE) {
+                if (___itemsForSale[0] == FPPowerup.NONE)
+                {
                     foreach (VinylData vinyl in VinylHandler.Vinyls.Values)
                     {
                         if (vinyl.shopLocation != VAddToShop.None && FPSaveManager.gameMode == FPGameMode.CLASSIC)
@@ -152,7 +152,8 @@ namespace FP2Lib.Vinyl
         {
             foreach (FPHubNPC fPHubNPC in ___shopkeepers)
             {
-                if (fPHubNPC != null) {
+                if (fPHubNPC != null)
+                {
                     if ((fPHubNPC.NPCName == "Naomi" || fPHubNPC.NPCName == "Digo" || fPHubNPC.NPCName == "Fawnstar") && fPHubNPC.itemCosts != null && fPHubNPC.itemsForSale != null)
                     {
                         foreach (VinylData vinyl in VinylHandler.Vinyls.Values)

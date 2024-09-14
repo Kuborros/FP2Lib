@@ -15,7 +15,7 @@ namespace FP2Lib.Player.PlayerPatches
                 //Instance of current FPEventSequence is handed over for manipulation
                 PlayerHandler.currentCharacter.EventSequenceStart?.Invoke(instance);
                 return false;
-            } 
+            }
             else
             {
                 //Else, return the activation status of the character they picked

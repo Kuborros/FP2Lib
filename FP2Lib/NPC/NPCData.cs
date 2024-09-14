@@ -9,7 +9,7 @@ namespace FP2Lib.NPC
         public int runtimeID;
         public string name;
 
-        internal NPCData(string uid,int runtimeID,string name)
+        internal NPCData(string uid, int runtimeID, string name)
         {
             this.UID = uid;
             this.runtimeID = runtimeID;
@@ -21,9 +21,9 @@ namespace FP2Lib.NPC
             return JsonUtility.FromJson<NPCData>(json);
         }
 
-        internal string WriteToJson() 
+        internal string WriteToJson()
         {
-            return JsonUtility.ToJson(this,true);
+            return JsonUtility.ToJson(this, true);
         }
     }
 }

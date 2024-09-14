@@ -2,7 +2,8 @@
 
 namespace FP2Lib.Vinyl
 {
-    public enum VAddToShop {
+    public enum VAddToShop
+    {
         None,
         ClassicOnly,
         Naomi, //Battlesphere
@@ -22,7 +23,7 @@ namespace FP2Lib.Vinyl
         public int crystalsPrice;
         public VAddToShop shopLocation;
 
-        public VinylData(string uid ,string name, AudioClip audioClip, VAddToShop shop, int starCards, int crystalsPrice)
+        public VinylData(string uid, string name, AudioClip audioClip, VAddToShop shop, int starCards, int crystalsPrice)
         {
             this.uid = uid;
             this.name = name;

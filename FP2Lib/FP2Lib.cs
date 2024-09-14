@@ -1,20 +1,20 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using FP2Lib.Badge;
 using FP2Lib.BepIn;
 using FP2Lib.NPC;
 using FP2Lib.Patches;
 using FP2Lib.Player;
+using FP2Lib.Player.PlayerPatches;
 using FP2Lib.Saves;
 using FP2Lib.Tools;
 using FP2Lib.Vinyl;
-using FP2Lib.Badge;
 using HarmonyLib;
-using FP2Lib.Player.PlayerPatches;
 
 namespace FP2Lib
 {
-    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.2.4.0")]
+    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.3.0.0")]
     [BepInProcess("FP2.exe")]
     public class FP2Lib : BaseUnityPlugin
     {
@@ -39,9 +39,9 @@ namespace FP2Lib
             gameInfo = new GameInfo();
             logSource = Logger;
 
-            configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, new ConfigDescription("Enable save file redirection.",null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, new ConfigDescription("Makes JSON files more human-readable.",null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-            configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, new ConfigDescription("Select save redirection profile.",new AcceptableValueRange<int>(0,9),new ConfigurationManagerAttributes { IsAdvanced = true }));
+            configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, new ConfigDescription("Enable save file redirection.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
+            configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, new ConfigDescription("Makes JSON files more human-readable.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
+            configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, new ConfigDescription("Select save redirection profile.", new AcceptableValueRange<int>(0, 9), new ConfigurationManagerAttributes { IsAdvanced = true }));
             configLanguageForce = Config.Bind("Language Settings", "Force Language", "", new ConfigDescription("Force specific language on launch. Leave empty for default behaviour.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
 
             configCowabunga = Config.Bind("Debug", "Cowabunga", false, new ConfigDescription("Engages cowabunga mode. No sanity checks will be run, will attempt to hook in on any FP2 version.\n" +

@@ -11,8 +11,8 @@ namespace FP2Lib.Player.PlayerPatches
         {
             //Unused, but game *will* explode if this is missing...
             //Mod can add their own tracks there, it _will_ play them.
-            for (int i = 0; i < PlayerHandler.highestID;i++)
-            ___characterMusic = ___characterMusic.AddToArray(null);
+            for (int i = 0; i < PlayerHandler.highestID; i++)
+                ___characterMusic = ___characterMusic.AddToArray(null);
         }
     }
 }

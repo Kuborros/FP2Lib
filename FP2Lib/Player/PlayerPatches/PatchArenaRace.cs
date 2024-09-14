@@ -21,4 +21,4 @@ namespace FP2Lib.Player.PlayerPatches
             }
         }
     }
-} 
+}

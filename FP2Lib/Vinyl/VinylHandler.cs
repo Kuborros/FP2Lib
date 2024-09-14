@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using FP2Lib.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,8 +21,8 @@ namespace FP2Lib.Vinyl
 
         internal static void InitialiseHandler()
         {
-            if(!File.Exists(Paths.ConfigPath + "/VinylStore.json"))
-                File.Create(Paths.ConfigPath + "/VinylStore.json").Close();
+            if (!File.Exists(GameInfo.getProfilePath() + "/VinylStore.json"))
+                File.Create(GameInfo.getProfilePath() + "/VinylStore.json").Close();
 
             //Mark first ~90 vinyl ids as taken by base game.
             for (int i = 0; i < baseTracks; i++)
@@ -43,21 +44,21 @@ namespace FP2Lib.Vinyl
         /// <param name="starCards">How many Star Cards are needed to unlock it</param>
         /// <param name="crystalsPrice">Price in crystals</param>
         /// <returns>Registered successfully?</returns>
-        public static bool RegisterVinyl(string uid,string name,AudioClip track, VAddToShop shop = VAddToShop.Naomi, int starCards = 0, int crystalsPrice = 300)
+        public static bool RegisterVinyl(string uid, string name, AudioClip track, VAddToShop shop = VAddToShop.Naomi, int starCards = 0, int crystalsPrice = 300)
         {
             if (!Vinyls.ContainsKey(uid))
             {
-                VinylData data = new VinylData(uid,name,track,shop,starCards,crystalsPrice);
+                VinylData data = new VinylData(uid, name, track, shop, starCards, crystalsPrice);
                 data.id = AssignVinylID(data);
-                Vinyls.Add(uid,data);
+                Vinyls.Add(uid, data);
                 return true;
-            } 
+            }
             else if (Vinyls.ContainsKey(uid) && Vinyls[uid].audioClip == null)
             {
                 Vinyls[uid].name = name;
                 Vinyls[uid].shopLocation = shop;
                 Vinyls[uid].starCards = starCards;
-                Vinyls[uid].crystalsPrice = crystalsPrice; 
+                Vinyls[uid].crystalsPrice = crystalsPrice;
                 Vinyls[uid].audioClip = track;
                 Vinyls[uid].id = AssignVinylID(Vinyls[uid]);
                 return true;
@@ -109,12 +110,12 @@ namespace FP2Lib.Vinyl
             if (Vinyls.ContainsKey(uid))
                 return Vinyls[uid];
             else return null;
-        } 
+        }
 
-        
+
         private static void LoadFromStorage()
         {
-            string json = File.ReadAllText(Paths.ConfigPath + "/VinylStore.json");
+            string json = File.ReadAllText(GameInfo.getProfilePath() + "/VinylStore.json");
             if (json.IsNullOrWhiteSpace()) return;
 
             string[] vinylJson = json.Split(new string[] { "<sep>" }, StringSplitOptions.None);
@@ -150,7 +151,7 @@ namespace FP2Lib.Vinyl
                 byte[] bytes = new UTF8Encoding().GetBytes(json);
                 using FileStream fileStream = new(string.Concat(new object[]
                 {
-                    Paths.ConfigPath,
+                    GameInfo.getProfilePath(),
                     "/",
                     "VinylStore",
                     ".json"
@@ -163,6 +164,6 @@ namespace FP2Lib.Vinyl
                 Debug.LogError(e);
             }
         }
-        
+
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace FP2Lib.Badge
 {
 
-    public enum FPBadgeType 
+    public enum FPBadgeType
     {
         GOLD,
         SILVER
@@ -27,7 +27,7 @@ namespace FP2Lib.Badge
         public FPBadgeType type;
         internal Sprite sprite;
 
-        public BadgeData (string uid, string name, string description, FPBadgeType type, FPBadgeVisible visible, Sprite sprite)
+        public BadgeData(string uid, string name, string description, FPBadgeType type, FPBadgeVisible visible, Sprite sprite)
         {
             this.uid = uid;
             this.name = name;

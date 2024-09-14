@@ -35,7 +35,7 @@ namespace FP2Lib.Patches
             if (__result != null)
             {
                 if (__result.width != 640 || __result.height != 360)
-                Resize(__result, 640, 360);
+                    Resize(__result, 640, 360);
             }
         }
 

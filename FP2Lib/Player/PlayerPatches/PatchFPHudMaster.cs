@@ -17,13 +17,13 @@ namespace FP2Lib.Player.PlayerPatches
                     {
                         Sprite heart = digit.digitFrames[5];
 
-                        for(int i = 5; i <= PlayerHandler.highestID; i++)
+                        for (int i = 5; i <= PlayerHandler.highestID; i++)
                         {
                             digit.digitFrames = digit.digitFrames.AddToArray(heart);
                         }
 
                         foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
-                        { 
+                        {
                             if (chara.registered)
                                 digit.digitFrames[chara.id] = chara.livesIconAnim[0];
                         }
@@ -31,7 +31,7 @@ namespace FP2Lib.Player.PlayerPatches
                 }
             }
         }
-         
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FPHudMaster), "LateUpdate", MethodType.Normal)]
         static void PatchHudMasterLateUpdate(FPHudMaster __instance, FPHudDigit[] ___hudLifeIcon, float ___lifeIconBlinkTimer)

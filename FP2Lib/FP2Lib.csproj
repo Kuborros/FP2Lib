@@ -4,12 +4,12 @@
     <TargetFramework>net35</TargetFramework>
     <AssemblyName>FP2Lib</AssemblyName>
     <Description>Freedom Planet 2 Modding Library</Description>
-    <Version>0.2.3.0</Version>
+    <Version>0.3.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Freedom Planet 2 Modding Library</Title>
-    <Authors>Kuborros</Authors>
+    <Authors>Kubo</Authors>
     <Company />
     <RepositoryUrl>https://github.com/Kuborros/FP2Lib</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Kuborros/FP2Lib</PackageProjectUrl>

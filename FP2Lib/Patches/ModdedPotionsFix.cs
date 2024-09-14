@@ -13,7 +13,7 @@ namespace FP2Lib.Patches
         [HarmonyPatch(typeof(FPSaveManager), "DrawPotion", new Type[] { typeof(FPPowerup[]), typeof(byte[]),
             typeof(SpriteRenderer[]),typeof(SpriteRenderer), typeof(Sprite[]), typeof(Sprite[]),
             typeof(Sprite[]), typeof(Sprite[])})]
-        public static Exception PatchDrawPotion(Exception __exception, FPPowerup[] powerups, SpriteRenderer[] potionSlot, Sprite[] spriteBottom,Sprite[] spriteMiddle, Sprite[] spriteTop)
+        public static Exception PatchDrawPotion(Exception __exception, FPPowerup[] powerups, SpriteRenderer[] potionSlot, Sprite[] spriteBottom, Sprite[] spriteMiddle, Sprite[] spriteTop)
         {
             if (__exception != null)
             {

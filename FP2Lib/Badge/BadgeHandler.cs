@@ -2,27 +2,26 @@
 using BepInEx.Logging;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.IO;
 using System.Text;
 using UnityEngine;
 
 namespace FP2Lib.Badge
 {
-    
+
     public class BadgeHandler
     {
         private static readonly ManualLogSource BadgeLogSource = FP2Lib.logSource;
 
         //64 is the top badge id, for now. The save manager allocates 99 badge slots by default.
 
-        public static Dictionary<string,BadgeData> Badges = new Dictionary<string,BadgeData>();
+        public static Dictionary<string, BadgeData> Badges = [];
         internal static bool[] takenIDs = new bool[256];
 
         internal static void InitialiseHandler()
         {
             //Load storage data
-            //TODO: Move to per-profile path
+            //Badges are global, and therefore their data is stored in config directory
             if (!File.Exists(Paths.ConfigPath + "/BadgeStore.json"))
                 File.Create(Paths.ConfigPath + "/BadgeStore.json").Close();
 
@@ -50,7 +49,7 @@ namespace FP2Lib.Badge
         {
             if (!Badges.ContainsKey(uid))
             {
-                BadgeData badgeData = new BadgeData(uid ,name, description, type, visibility, sprite);
+                BadgeData badgeData = new BadgeData(uid, name, description, type, visibility, sprite);
                 badgeData.id = AssignBadgeID(badgeData);
                 Badges.Add(uid, badgeData);
                 WriteToStorage();
@@ -81,7 +80,7 @@ namespace FP2Lib.Badge
                 takenIDs[badge.id] = true;
                 BadgeLogSource.LogDebug("Stored badge ID assigned (" + badge.uid + "): " + badge.id);
                 return badge.id;
-            } 
+            }
             else
             {
                 BadgeLogSource.LogDebug("Badge with unassigned ID registered! Running assignment process for " + badge.uid);
@@ -139,7 +138,7 @@ namespace FP2Lib.Badge
             {
                 FPSaveManager.ForceBadgeUnlock(id);
                 return true;
-            } 
+            }
             else return false;
         }
 

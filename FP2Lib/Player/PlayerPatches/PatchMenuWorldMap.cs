@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using System;
 using UnityEngine;
 
 namespace FP2Lib.Player.PlayerPatches

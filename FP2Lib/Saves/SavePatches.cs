@@ -8,11 +8,7 @@ namespace FP2Lib.Saves
 {
     internal class SavePatches
     {
-        /// <summary>
-        /// Returns path to current profile's save directory
-        /// </summary>
-        /// <returns>Save file path</returns>
-        public static string getSavesPath()
+        internal static string getSavesPath()
         {
             if (FP2Lib.configSaveRedirect.Value && FP2Lib.configSaveProfile.Value != 0)
             {
@@ -51,7 +47,7 @@ namespace FP2Lib.Saves
 
         //Override path from 'Application.persistentDataPath' to return value of 'getSavesPath()'
         [HarmonyTranspiler]
-        [HarmonyPatch(typeof(FPSaveManager),"SaveToFile",MethodType.Normal)]
+        [HarmonyPatch(typeof(FPSaveManager), "SaveToFile", MethodType.Normal)]
         static IEnumerable<CodeInstruction> PatchSaveWrite(IEnumerable<CodeInstruction> instructions, ILGenerator il)
         {
             List<CodeInstruction> codes = new List<CodeInstruction>(instructions);

@@ -30,7 +30,7 @@ namespace FP2Lib.Player.PlayerPatches
                 if (codes[i].opcode == OpCodes.Switch && codes[i - 1].opcode == OpCodes.Ldloc_2)
                 {
                     codes[i + 1].operand = patchStart;
-                    codes[i+4].labels.Add(patchEnd);
+                    codes[i + 4].labels.Add(patchEnd);
                 }
 
             }
@@ -38,7 +38,7 @@ namespace FP2Lib.Player.PlayerPatches
             spadCodeStart.labels.Add(patchStart);
 
             codes.Add(spadCodeStart);
-            codes.Add(new CodeInstruction(OpCodes.Call, m_getTutorialScene)); 
+            codes.Add(new CodeInstruction(OpCodes.Call, m_getTutorialScene));
             codes.Add(new CodeInstruction(OpCodes.Br, patchEnd));
 
             return codes;

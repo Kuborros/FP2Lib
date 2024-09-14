@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using FP2Lib.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -58,7 +59,7 @@ namespace FP2Lib.NPC
         internal static void InitialiseHandler()
         {
 
-            storePath = Path.Combine(Paths.ConfigPath, "NPCLibStore");
+            storePath = Path.Combine(GameInfo.getProfilePath(), "NPCLibStore");
             ezPath = Path.Combine(Paths.ConfigPath, "NPCLibEzNPC");
             Directory.CreateDirectory(storePath);
             Directory.CreateDirectory(ezPath);
@@ -67,11 +68,33 @@ namespace FP2Lib.NPC
             LoadEzModeNPC();
         }
 
+        /// <summary>
+        /// Register a single NPC.
+        /// </summary>
+        /// <param name="uID"></param>
+        /// <param name="Name"></param>
+        /// <param name="Scene"></param>
+        /// <param name="Prefab"></param>
+        /// <param name="Species"></param>
+        /// <param name="Home"></param>
+        /// <param name="DialogueTopics"></param>
+        /// <returns></returns>
         public static bool RegisterNPC(string uID, string Name, string Scene, GameObject Prefab, FPCharacterSpecies Species = FPCharacterSpecies.UNKNOWN, FPCharacterHome Home = FPCharacterHome.UNKNOWN, int DialogueTopics = 1)
         {
             return RegisterNPC(uID, Name, Scene, Prefab, (int)Species, (int)Home, DialogueTopics);
         }
 
+        /// <summary>
+        /// Register a single NPC - but using numbers instead of enums for species and hometown!
+        /// </summary>
+        /// <param name="uID"></param>
+        /// <param name="Name"></param>
+        /// <param name="Scene"></param>
+        /// <param name="Prefab"></param>
+        /// <param name="Species"></param>
+        /// <param name="Home"></param>
+        /// <param name="DialogueTopics"></param>
+        /// <returns></returns>
         public static bool RegisterNPC(string uID, string Name, string Scene, GameObject Prefab, int Species = 0, int Home = 0, int DialogueTopics = 1)
         {
             if (!HubNPCs.ContainsKey(uID))
@@ -90,11 +113,31 @@ namespace FP2Lib.NPC
             else return false;
         }
 
+        /// <summary>
+        /// Register a single NPC which shows up in multiple scenes.
+        /// </summary>
+        /// <param name="uID"></param>
+        /// <param name="Name"></param>
+        /// <param name="Prefabs"></param>
+        /// <param name="Species"></param>
+        /// <param name="Home"></param>
+        /// <param name="DialogueTopics"></param>
+        /// <returns></returns>
         public static bool RegisterNPCMultiScene(string uID, string Name, Dictionary<string, GameObject> Prefabs, FPCharacterSpecies Species = FPCharacterSpecies.UNKNOWN, FPCharacterHome Home = FPCharacterHome.UNKNOWN, int DialogueTopics = 1)
         {
             return RegisterNPCMultiScene(uID, Name, Prefabs, (int)Species, (int)Home, DialogueTopics);
         }
 
+        /// <summary>
+        /// Register a single NPC which shows up in multiple scenes - but using numbers instead of enums for species and hometown!
+        /// </summary>
+        /// <param name="uID"></param>
+        /// <param name="Name"></param>
+        /// <param name="Prefabs"></param>
+        /// <param name="Species"></param>
+        /// <param name="Home"></param>
+        /// <param name="DialogueTopics"></param>
+        /// <returns></returns>
         public static bool RegisterNPCMultiScene(string uID, string Name, Dictionary<string, GameObject> Prefabs, int Species = 0, int Home = 0, int DialogueTopics = 1)
         {
             if (!HubNPCs.ContainsKey(uID))
@@ -113,7 +156,11 @@ namespace FP2Lib.NPC
             else return false;
         }
 
-
+        /// <summary>
+        /// Get the HubNPC object of a registered character by their UID.
+        /// </summary>
+        /// <param name="UID">Character's UID</param>
+        /// <returns></returns>
         public static HubNPC GetNPCByUID(string UID)
         {
             return HubNPCs[UID];
@@ -131,7 +178,7 @@ namespace FP2Lib.NPC
                     try
                     {
                         gameObject = AssetBundle.LoadFromFile(data.bundlePath).LoadAllAssets<GameObject>()[0];
-                    } 
+                    }
                     catch (Exception ex)
                     {
                         NPCLogSource.LogError("Failed to load EzMode AssetBundle! " + ex.Message);

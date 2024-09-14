@@ -179,10 +179,6 @@ namespace FP2Lib.Player
         /// Game object containing your playable FPPlayer character.
         /// </summary>
         public GameObject prefab;
-        /// <summary>
-        /// Runtime copy of the player object.
-        /// </summary>
-        internal GameObject runtimeObject;
 
         /// <summary>
         /// Asset Bundle containing all the character data
@@ -190,8 +186,8 @@ namespace FP2Lib.Player
         public AssetBundle dataBundle;
 
 
-        public PlayableChara() {}
-        internal PlayableChara(string uid,string name, int id, CharacterGender gender)
+        public PlayableChara() { }
+        internal PlayableChara(string uid, string name, int id, CharacterGender gender)
         {
             this.uid = uid;
             Name = name;

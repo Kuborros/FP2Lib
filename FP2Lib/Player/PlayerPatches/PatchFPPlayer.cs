@@ -40,12 +40,12 @@ namespace FP2Lib.Player.PlayerPatches
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPPlayer), "Update", MethodType.Normal)]
-        static void PatchPlayerUpdate(FPPlayer __instance, float ___speedMultiplier)
+        static void PatchPlayerUpdate(FPPlayer __instance)
         {
             //Yeet the player instance for our own nefarious uses.
             player = __instance;
         }
-        
+
 
         //AutoGuard
         [HarmonyTranspiler]

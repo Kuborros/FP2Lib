@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection.Emit;
 
 namespace FP2Lib.Player.PlayerPatches
@@ -28,7 +27,7 @@ namespace FP2Lib.Player.PlayerPatches
             codeStart.labels.Add(patchStart);
 
             codes.Add(codeStart);
-            codes.Add(new CodeInstruction(OpCodes.Call,PatchMenuWorldMapConfirm.m_getTutorialScene));
+            codes.Add(new CodeInstruction(OpCodes.Call, PatchMenuWorldMapConfirm.m_getTutorialScene));
             codes.Add(new CodeInstruction(OpCodes.Br, patchEnd));
 
             return codes;

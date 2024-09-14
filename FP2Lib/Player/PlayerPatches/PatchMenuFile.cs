@@ -43,7 +43,7 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPrefix]
         [HarmonyWrapSafe]
         [HarmonyPatch(typeof(MenuFile), "GetFileInfo", MethodType.Normal)]
-        static void PatchMenuFileInfo(int fileSlot, MenuFile __instance, ref FPHudDigit[] ___characterIcons)
+        static void PatchMenuFileInfo(int fileSlot, ref FPHudDigit[] ___characterIcons)
         {
             if (___characterIcons[fileSlot - 1].digitFrames.Length < 8)
             {
@@ -65,7 +65,8 @@ namespace FP2Lib.Player.PlayerPatches
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuFile), "GetFileInfo", MethodType.Normal)]
-        static void PatchMenuFileInfoPost(int fileSlot, MenuFile __instance) {
+        static void PatchMenuFileInfoPost(int fileSlot, MenuFile __instance)
+        {
 
             if (__instance != null)
             {
@@ -112,7 +113,7 @@ namespace FP2Lib.Player.PlayerPatches
 
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(MenuFile),"State_Transition",MethodType.Normal)]
+        [HarmonyPatch(typeof(MenuFile), "State_Transition", MethodType.Normal)]
         static void PatchMenuTransition()
         {
             //Set the selected character as current character
