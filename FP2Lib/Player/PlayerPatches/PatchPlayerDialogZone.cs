@@ -81,7 +81,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (FPSaveManager.gameMode != FPGameMode.CLASSIC || __instance.playInClassicMode)
             {
-                if (___playerInRange && ___currentLine <= __instance.dialogSequence.Length - 1 && __instance.dialogSequence.Length != 1)
+                if (PlayerHandler.currentCharacter != null && ___playerInRange && ___currentLine <= __instance.dialogSequence.Length - 1 && __instance.dialogSequence.Length != 1)
                 {
                     if (!PlayerHandler.currentCharacter.useOwnCutsceneActivators)
                     {
