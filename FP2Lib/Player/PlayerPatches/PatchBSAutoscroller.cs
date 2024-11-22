@@ -16,7 +16,7 @@ namespace FP2Lib.Player.PlayerPatches
                     {
                         ___hudDistanceMarker.digitFrames = ___hudDistanceMarker.digitFrames.AddToArray(PlayerHandler.currentCharacter.livesIconAnim[0]);
                     }
-                    if (FPStage.currentStage.GetPlayerInstance_FPPlayer().characterID == (FPCharacterID)5)
+                    if (FPStage.currentStage.GetPlayerInstance_FPPlayer().characterID >= (FPCharacterID)5)
                     {
                         ___hudDistanceMarker.SetDigitValue(15);
                     }

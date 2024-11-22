@@ -17,6 +17,7 @@ namespace FP2Lib.Player.PlayerPatches
             return PlayerHandler.currentCharacter.TutorialScene;
         }
 
+        //Override the destination scene for tutorials, when playing as custom character
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(MenuWorldMapConfirm), "State_Transition", MethodType.Normal)]
         static IEnumerable<CodeInstruction> MWConfirmTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)

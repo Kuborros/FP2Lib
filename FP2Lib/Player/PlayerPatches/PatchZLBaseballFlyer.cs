@@ -13,6 +13,7 @@ namespace FP2Lib.Player.PlayerPatches
             spriteRenderer.sprite = PlayerHandler.currentCharacter.zaoBaseballSprite;
         }
 
+        //Set our own custom sprite for ZL Baseball passenger
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(ZLBaseballFlyer), "State_Target", MethodType.Normal)]
         static IEnumerable<CodeInstruction> ZLBaseballTargetTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)

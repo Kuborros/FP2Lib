@@ -40,6 +40,7 @@ namespace FP2Lib.Player.PlayerPatches
             }
         }
 
+        //Set the proper icons
         [HarmonyPrefix]
         [HarmonyWrapSafe]
         [HarmonyPatch(typeof(MenuFile), "GetFileInfo", MethodType.Normal)]
@@ -72,6 +73,7 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 int fpcharacterID = 0;
                 //Read the save file. Yes.
+                //There's no other easy way to read the ID this early - and by the time the game itself would load it, its already too late.
                 //The custom PlayerData object can be used to smuggle extra fields onto player data.
                 try
                 {
@@ -92,6 +94,8 @@ namespace FP2Lib.Player.PlayerPatches
                     PlayerHandler.PlayerLogSource.LogError(string.Format("An exception of type '{0}' has been caught!\nMessage: {1}\nStack Trace: {2}", ex.GetType().Name, ex.Message, ex.StackTrace));
                 }
 
+                //If we found a file with an ID of a character whose mod is not installed, block off that file.
+                //We have a local copy of basic character data used for ID assignments, the included name will be available even when mod is uninstalled so we can point the player to the right mod
                 if (!enabledChars[fpcharacterID])
                 {
                     MenuFilePanel menuFilePanel = __instance.files[fileSlot - 1]; ;
@@ -102,7 +106,10 @@ namespace FP2Lib.Player.PlayerPatches
                         digit.gameObject.SetActive(false);
                     }
                     menuFilePanel.error.SetActive(true);
+                    //Set placeholder name string
+                    //This is used when we have *no data at all* about the character ID in question. This should happen only on manual tinkering with files.
                     string name = "Data Deleted!\n(did you mess with the .json files?)";
+                    //Load the actual name
                     if (!PlayerHandler.GetPlayableCharaByRuntimeIdSafe(fpcharacterID).Name.IsNullOrWhiteSpace())
                         name = PlayerHandler.GetPlayableCharaByRuntimeId(fpcharacterID).Name;
 

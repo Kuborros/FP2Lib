@@ -66,6 +66,11 @@ namespace FP2Lib.Player
         /// Should the character be listed in Adventure Mode character select.
         /// </summary>
         public bool enabledInAventure;
+        /// <summary>
+        /// Should the character be listed in Classic Mode character select. Good for characters you want injected into game code, but not available to manually choose.
+        /// Defaults to true.
+        /// </summary>
+        public bool enabledInClassic = true;
 
         /// <summary>
         /// Method delegate which will get called on <c>Action_Character_AirMoves</c> in <c>FPPlayer</c>

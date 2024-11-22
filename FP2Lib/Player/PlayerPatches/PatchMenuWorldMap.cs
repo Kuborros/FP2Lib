@@ -45,7 +45,7 @@ namespace FP2Lib.Player.PlayerPatches
         }
 
         //TODO:
-        //Fix Battlesphere in story mode being dumb. It sends us to shadow realm instead of progressing story. Force flag maybe?
+        //Fix Battlesphere in story mode being dumb. It sends us to shadow realm (beta bsphere scene with no music) instead of progressing story. Force flag maybe?
         /*
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuWorldMap), "CutsceneCheck", MethodType.Normal)]

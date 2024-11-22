@@ -6,6 +6,7 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchMenuTutorialPrompt
     {
+        //Override the destination scene for tutorials, when playing as custom character
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(MenuTutorialPrompt), "State_Transition", MethodType.Normal)]
         static IEnumerable<CodeInstruction> MWConfirmTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)

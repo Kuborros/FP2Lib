@@ -53,16 +53,15 @@ namespace FP2Lib.Player.PlayerPatches
             //Inject all characters
             foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
             {
-                //No character file, skip them. Same for chars without adventure mode.
-                if (chara.prefab == null || (!chara.enabledInAventure && FPSaveManager.gameMode == FPGameMode.ADVENTURE)) continue;
+                //No character file, skip them. Same for chars without adventure/classic mode.
+                //While DEMO is also a valid game mode, character mods installed in demo builds are unlikely to work due to much older codebase of the demos.
+                if (chara.prefab == null || (!chara.enabledInAventure && FPSaveManager.gameMode == FPGameMode.ADVENTURE) || (!chara.enabledInClassic && FPSaveManager.gameMode == FPGameMode.CLASSIC)) continue;
 
                 GameObject charSelector = GameObject.Instantiate(chara.characterSelectPrefab);
                 MenuCharacterWheel wheel = charSelector.GetComponent<MenuCharacterWheel>();
                 wheelcharas++;
                 chara.wheelId = wheelcharas;
                 //Calculate offset for the wheel.
-                //Maybe this will just work?
-                //wheel.rotationOffset = 180 - (offset * chara.wheelId);
 
                 wheel.parentObject = __instance;
                 wheel.gameObject.transform.parent = __instance.transform;
@@ -79,7 +78,7 @@ namespace FP2Lib.Player.PlayerPatches
             int totalCharacters = wheelcharas + 1;
             int offset = 360 / totalCharacters;
 
-            //Strip nulls
+            //Strip nulls (should never happen, but their presence would cause unrecoverable crash)
             ___characterSprites = ___characterSprites.Where(x => x != null).ToArray();
             ___nameLabelSprites = ___nameLabelSprites.Where(x => x != null).ToArray();
 
@@ -112,7 +111,6 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(MenuCharacterSelect), "State_CharacterConfirm", MethodType.Normal)]
         static void PatchCharacterConfirm(MenuCharacterSelect __instance, ref FPHudDigit ___characterIcon)
         {
-            //Since BikeCarol is not counted here, all id's need to be +1'd
             if (__instance.character >= 4)
             {
                 ___characterIcon.digitFrames = ___characterIcon.digitFrames.AddToArray(GetPlayableCharaByWheelId(__instance.character).livesIconAnim[0]);
@@ -120,6 +118,7 @@ namespace FP2Lib.Player.PlayerPatches
             }
         }
 
+        //Set the proper character ID in FPSaveManafer and initialise selected character in PlayerHandler
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuCharacterSelect), "State_Go", MethodType.Normal)]
         static void PatchMenuCharacterSelectGo(int ___character)

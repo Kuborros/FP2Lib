@@ -11,6 +11,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (FPSaveManager.character >= (FPCharacterID)5)
             {
+                //Set name and icon to the shop's currency panel
                 ___playerName.GetComponent<TextMesh>().text = PlayerHandler.currentCharacter.Name;
                 ___playerSprite.sprite = PlayerHandler.currentCharacter.livesIconAnim[0];
             }

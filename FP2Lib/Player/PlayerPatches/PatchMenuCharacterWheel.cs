@@ -13,7 +13,7 @@ namespace FP2Lib.Player.PlayerPatches
         static bool ReplaceMenuCharacterUpdate(MenuCharacterWheel __instance, ref SpriteRenderer ___spriteRenderer)
         {
 
-            //Wheel can comfortably fit up to ~10 characters. Any more will go to shadow realm of "Other Characters" menu.
+            //Wheel can comfortably fit up to ~10 characters. Any more will start getting bit crowded!
             //Positions are based off Lilac, who is set at 180 degree offset. Add or remove calculated offset for others
             //Calculate offset - we skip anyone without initialised data
             int totalCharacters = PatchMenuCharacterSelect.wheelcharas + 1;
@@ -50,6 +50,7 @@ namespace FP2Lib.Player.PlayerPatches
                 __instance.rotation = (__instance.rotation * (num - 1f) + (float)__instance.parentObject.character * offset + __instance.rotationOffset) / num;
             }
 
+            //Skip the original method.
             return false;
         }
     }

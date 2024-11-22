@@ -33,6 +33,7 @@ namespace FP2Lib.Player.PlayerPatches
             }
         }
 
+        //Patch the check to on collision fire our custom character's code instead
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(ItemFuel), "CollisionCheck", MethodType.Normal)]
         static IEnumerable<CodeInstruction> ItemFuelTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)

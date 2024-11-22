@@ -112,7 +112,8 @@ namespace FP2Lib.Vinyl
             else return null;
         }
 
-
+        //Did you know, Unity's JSON parser detonates if the root object is an array? And that it struggles _so much_ with arrays?
+        //This cursed stuff is the easiest way to make it not break.
         private static void LoadFromStorage()
         {
             string json = File.ReadAllText(GameInfo.getProfilePath() + "/VinylStore.json");
