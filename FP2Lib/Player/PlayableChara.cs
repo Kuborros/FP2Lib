@@ -8,7 +8,7 @@ namespace FP2Lib.Player
         /// <summary>
         /// FPCharacterID. 
         /// </summary>
-        internal int id;
+        public int id { get; internal set; }
         /// <summary>
         /// ID used for the character select wheel. Internal, not set by modder.
         /// </summary>
