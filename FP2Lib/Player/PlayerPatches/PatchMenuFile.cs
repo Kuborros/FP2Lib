@@ -27,6 +27,10 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(MenuFile), "Start", MethodType.Normal)]
         static void PatchMenuFileStart()
         {
+            //Reset the current char to null.
+            //In case player loads built-in char and some overeager mod checks only the currentCharacter and not ID.
+            PlayerHandler.currentCharacter = null;
+
             enabledChars = new bool[255];
             //Set built-in characters
             enabledChars[0] = true;

@@ -9,7 +9,7 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(ArenaCameraFlash), "Start", MethodType.Normal)]
         static void PatchArenaFlash(ref int[] ___voicePlayerKO)
         {
-            if (SceneManager.GetActiveScene().name != "Cutscene_BattlesphereEnding")
+            if (SceneManager.GetActiveScene().name != "Cutscene_BattlesphereEnding" && FPSaveManager.character >= (FPCharacterID)5)
             {
                 if (___voicePlayerKO != null && PlayerHandler.currentCharacter.Gender == CharacterGender.MALE)
                 {

@@ -76,7 +76,7 @@ namespace FP2Lib.Vinyl
                     if (vinyl.id >= ___soundtrackOrder.Length)
                     {
                         for (int i = ___soundtrackOrder.Length; i <= (vinyl.id); i++)
-                            //This array also needs to match the lenght, but it can handle having 0 as location
+                            //This array also needs to match the length, but it can handle having 0 as location
                             ___soundtrackOrder = ___soundtrackOrder.AddToArray(0);
                     }
                     //Add the track at it's place.

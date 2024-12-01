@@ -60,8 +60,8 @@ namespace FP2Lib.Tools
         /// <returns>Path to current save profile path for mod config data</returns>
         public static string getProfilePath()
         {
-            Directory.CreateDirectory("Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString() + "\\ModData");
-            return "Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString() + "\\ModData";
+            Directory.CreateDirectory("Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString());
+            return "Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString();
 
         }
 

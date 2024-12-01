@@ -34,7 +34,7 @@ namespace FP2Lib.Vinyl
         }
 
         /// <summary>
-        /// Register the vinyl into FP2Lib's database. Badges registered will be assigned internal game id, and added to the game.
+        /// Register the vinyl into FP2Lib's database. Vinyls registered will be assigned internal game id, and added to the game.
         /// It can be later purchased at selected stores - or none, if so choosen, in which case You can add it manually to custom shops by the ID obtainable using <c>GetVinylDataByUid(uid)</c>.
         /// </summary>
         /// <param name="uid"></param>
