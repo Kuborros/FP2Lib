@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using FP2Lib.Badge;
 using FP2Lib.BepIn;
+using FP2Lib.Item;
 using FP2Lib.NPC;
 using FP2Lib.Patches;
 using FP2Lib.Player;
@@ -112,6 +113,7 @@ namespace FP2Lib
             playerPatches.PatchAll(typeof(PatchMenuShop));
             playerPatches.PatchAll(typeof(PatchPlayerDialogZone));
             playerPatches.PatchAll(typeof(PatchZLBaseballFlyer));
+            playerPatches.PatchAll(typeof(PatchItemStarCard));
 
             //Vinyls
             Logger.LogDebug("Vinyl Patch Init");
