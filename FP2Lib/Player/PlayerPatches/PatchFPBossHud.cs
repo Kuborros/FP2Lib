@@ -10,7 +10,7 @@ namespace FP2Lib.Player.PlayerPatches
         static void PatchFPBossHudStart(FPBossHud __instance)
         {
             //We fightin' everyone, so move the health bars
-            if (FPSaveManager.character <= (FPCharacterID)5)
+            if (FPSaveManager.character >= (FPCharacterID)5)
             {
                 switch (__instance.name)
                 {
