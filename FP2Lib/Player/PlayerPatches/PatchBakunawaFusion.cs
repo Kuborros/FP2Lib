@@ -8,7 +8,7 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(Bakunawa), "Activate", MethodType.Normal)]
         static void PatchBakunawaActivate(Bakunawa __instance)
         {
-            if (FPSaveManager.character <= (FPCharacterID)5)
+            if (FPSaveManager.character >= (FPCharacterID)5)
             {
                 //Everyone is here to help!
                 __instance.assistRoster.Add(Bakunawa.Assist.Milla);
