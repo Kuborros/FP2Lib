@@ -10,12 +10,12 @@ namespace FP2Lib.Map
 {
     internal class MapPatches
     {
-        private static readonly ManualLogSource BadgeLogSource = FP2Lib.logSource;
+        private static readonly ManualLogSource MapLogSource = FP2Lib.logSource;
 
         //Patching in the new maps
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuWorldMap), "Start", MethodType.Normal)]
-        static void PatchMenuWorldMap(ref FPMapScreen[] mapScreens)
+        static void PatchMenuWorldMap(ref FPMapScreen[] ___mapScreens)
         {
   
         }

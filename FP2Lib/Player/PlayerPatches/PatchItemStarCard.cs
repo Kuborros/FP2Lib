@@ -1,8 +1,7 @@
-﻿using FP2Lib.Player;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System.Linq;
 
-namespace FP2Lib.Item
+namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchItemStarCard
     {
