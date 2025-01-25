@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace FP2Lib.Map
 {
-    internal class MapHandler
+    public class MapHandler
     {
         private static readonly ManualLogSource MapLogSource = FP2Lib.logSource;
 
@@ -33,11 +33,11 @@ namespace FP2Lib.Map
             LoadFromStorage();
         }
 
-        public static bool RegisterWorldMap(string uid, string name, bool adventureMode, GameObject prefab)
+        public static bool RegisterWorldMap(string uid, string name, GameObject prefab)
         {
             if (!Maps.ContainsKey(uid))
             {
-                MapData data = new MapData(uid, name, adventureMode, prefab);
+                MapData data = new MapData(uid, name, prefab);
                 data.id = AssignMapID(data);
                 Maps.Add(uid, data);
                 return true;
@@ -45,7 +45,6 @@ namespace FP2Lib.Map
             else if (Maps.ContainsKey(uid) && Maps[uid].prefab == null)
             {
                 Maps[uid].name = name;
-                Maps[uid].adventureMap = adventureMode;
                 Maps[uid].prefab = prefab;
                 Maps[uid].id = AssignMapID(Maps[uid]);
                 return true;
@@ -72,7 +71,7 @@ namespace FP2Lib.Map
             {
                 MapLogSource.LogDebug("World Map with unassigned ID registered! Running assignment process for " + map.uid);
                 //Iterate over array, assign first non-taken slot
-                for (int i = 64; i < takenIDs.Length; i++)
+                for (int i = 10; i < takenIDs.Length; i++)
                 {
                     //First slot with false = empty space
                     //Filling empty id holes should rarely happen as that would mean uninstall of a mod AND messing with .json

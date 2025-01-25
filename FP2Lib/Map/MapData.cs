@@ -4,7 +4,7 @@ using UnityEngine;
 namespace FP2Lib.Map
 {
     [Serializable]
-    internal class MapData
+    public class MapData
     {
         /// <summary>
         /// Unique Identifier of the world map.
@@ -19,21 +19,16 @@ namespace FP2Lib.Map
         /// </summary>
         public string name;
         /// <summary>
-        /// Is the map used for Adventure Mode. Classic Mode maps follow different rules.
-        /// </summary>
-        public bool adventureMap = true;
-        /// <summary>
         /// GameObject prefab containing the map itself.
         /// </summary>
         internal GameObject prefab;
 
 
 
-        public MapData(string uid, string name, bool adventureMap, GameObject prefab)
+        public MapData(string uid, string name, GameObject prefab)
         {
             this.uid = uid;
             this.name = name;
-            this.adventureMap = adventureMap;
             this.prefab = prefab;
         }
 

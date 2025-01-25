@@ -1,5 +1,4 @@
 ﻿using BepInEx.Logging;
-using FP2Lib.Vinyl;
 using HarmonyLib;
 using UnityEngine;
 
@@ -34,6 +33,10 @@ namespace FP2Lib.Map
                         if (map.prefab != null)
                         {
                             ___mapScreens[map.id] = GameObject.Instantiate(map.prefab).GetComponent<FPMapScreen>();
+                            //Set the parent ID to the location in mapScreens array
+                            ___mapScreens[map.id].parentID = map.id;
+                            //Deactivate the object, it will get activated by the map itself when needed.
+                            ___mapScreens[map.id].gameObject.SetActive(false);
                         }
                     }
                 }
