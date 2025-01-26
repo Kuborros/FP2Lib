@@ -19,6 +19,10 @@ namespace FP2Lib.Stage
         /// Stage ID used in save files and world map warps
         /// </summary>
         public int id = 0;
+        /// <summary>
+        /// Is the stage a HUB location?
+        /// </summary>
+        public bool isHUB;
 
         public StageData() { }
         internal StageData(string uid, string name, int id)

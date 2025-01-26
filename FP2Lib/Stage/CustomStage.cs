@@ -17,7 +17,7 @@ namespace FP2Lib.Stage
         /// </summary>
         public string description;
         /// <summary>
-        /// Name of the author. Same as description in terms of showing.
+        /// Name of the author. Same as description in terms of being shown.
         /// </summary>
         public string author;
         /// <summary>
@@ -35,19 +35,34 @@ namespace FP2Lib.Stage
         /// </summary>
         public string sceneName;
         /// <summary>
+        /// Is the stage a HUB stage? These follow different rules with ID assignments.
+        /// Hubs also do not track score, time, and such.
+        /// </summary>
+        public bool isHUB;
+        /// <summary>
         /// Stage ID used in save files and world map warps
         /// </summary>
         public int id = 0;
         /// <summary>
         /// Id of the vinyl collectable on the stage.
-        /// -1 for no vinyl.
+        /// FPMusicTrack.NONE for none.
+        /// Ignored when vinylUID is set.
         /// </summary>
-        public int vinylID;
+        public FPMusicTrack vinylID;
         /// <summary>
         /// Item collectable on the stage.
         /// <c>FPPowerup.NONE</c> for no item.
+        /// Ignored when itemUID is set.
         /// </summary>
         public FPPowerup itemID;
+        /// <summary>
+        /// Set to UID of a custom track to automatically assign right vinylID at runtime.
+        /// </summary>
+        public string vinylUID;
+        /// <summary>
+        /// Set to UID of a custom item to automatically assign right itemID at runtime. (WIP)
+        /// </summary>
+        public string itemUID;
         /// <summary>
         /// Menu/Map preview sprite.
         /// </summary>
@@ -57,7 +72,7 @@ namespace FP2Lib.Stage
         /// </summary>
         internal bool registered = false;
 
-        public CustomStage(string uid, string name, string description, string author, string version, int parTime, string sceneName, int id, int vinylID, FPPowerup itemID, Sprite sprite)
+        public CustomStage(string uid, string name, string description, string author, string version, int parTime, string sceneName, int id, FPMusicTrack vinylID, FPPowerup itemID, Sprite sprite)
         {
             this.uid = uid;
             this.name = name;
