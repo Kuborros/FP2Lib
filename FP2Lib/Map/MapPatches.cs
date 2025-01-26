@@ -1,4 +1,6 @@
-﻿using BepInEx.Logging;
+﻿using BepInEx;
+using BepInEx.Logging;
+using FP2Lib.Stage;
 using HarmonyLib;
 using UnityEngine;
 
@@ -40,7 +42,6 @@ namespace FP2Lib.Map
                         }
                     }
                 }
-                //TODO: Once all maps are done loaded, iterate over maps to fix exit and stage pointers.
                 //We know we have at least one to go over.
                 for (int i = 10; i < ___mapScreens.Length; ++i)
                 {
@@ -49,12 +50,51 @@ namespace FP2Lib.Map
                     {
                         foreach (FPMapLocation location in ___mapScreens[i].map.locations)
                         {
-
+                            //Skip processing invisible nodes, they should not have level/map exits on them
+                            if (location.type != FPMapLocationType.NONE && location.icon != null)
+                            {
+                                //Get the menuText
+                                MenuText menuText = location.icon.GetComponent<MenuText>();
+                                string destination;
+                                //Is it a stage/boss?
+                                //These have 3 lines of existing data, so target ends in 4th line
+                                if (menuText != null && (location.type == FPMapLocationType.STAGE || location.type == FPMapLocationType.BATTLE) && menuText.paragraph.Length > 3)
+                                {
+                                    destination = menuText.paragraph[3];
+                                    if (!destination.IsNullOrWhiteSpace()) {
+                                        MapLogSource.LogDebug("Creating link to stage with uid:" + destination + " for Exit: " + location.icon.name);
+                                        location.pointers.stageID = StageHandler.getCustomStageByUid(destination).id;
+                                    }
+                                }
+                                //Not a stage - it's an exit or hub
+                                //Just their name here, so our target uid is in line 2
+                                else if (menuText != null && (location.type == FPMapLocationType.HUB) && menuText.paragraph.Length > 1)
+                                {
+                                    destination = menuText.paragraph[1];
+                                    if (!destination.IsNullOrWhiteSpace())
+                                    {
+                                        MapLogSource.LogDebug("Creating link to hub with uid:" + destination + " for Exit: " + location.icon.name);
+                                        location.pointers.stageID = StageHandler.getCustomStageByUid(destination).id;
+                                    }
+                                }
+                                //Exits lead to maps, so we need a map id
+                                else if (menuText != null && (location.type == FPMapLocationType.EXIT || location.type == FPMapLocationType.EXIT_PROMPT) && menuText.paragraph.Length > 1)
+                                {
+                                    destination=menuText.paragraph[1];
+                                    if (!destination.IsNullOrWhiteSpace())
+                                    {
+                                        MapLogSource.LogDebug("Creating link to map with uid:" + destination + " for Exit: " + location.icon.name);
+                                        location.pointers.mapID = MapHandler.getWorldMapByUid(destination).id; 
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-                MapHandler.WriteToStorage();
             }
         }
+        //TODO: The current map might wish to disable the background water object. Do it here.
+
+
     }
 }

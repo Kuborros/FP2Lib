@@ -6,11 +6,10 @@ using System.IO;
 using System.Text;
 using System;
 using UnityEngine;
-using FP2Lib.Badge;
 
 namespace FP2Lib.Stage
 {
-    internal class StageHandler
+    public class StageHandler
     {
         internal static Dictionary<string, CustomStage> Stages = new();
         internal static bool[] takenStageIDs = new bool[1024];
@@ -85,6 +84,35 @@ namespace FP2Lib.Stage
         }
         */
 
+
+        public static bool RegisterStage(CustomStage stage)
+        {
+            if (!Stages.ContainsKey(stage.uid))
+            {
+                stage.id = AssignStageID(stage, stage.isHUB);
+                Stages.Add(stage.uid, stage);
+                WriteToStorage();
+                return true;
+            }
+            else if (Stages.ContainsKey(stage.uid) && !Stages[stage.uid].registered)
+            {
+                Stages[stage.uid] = stage;
+                Stages[stage.uid].id = AssignStageID(stage, stage.isHUB);
+                Stages[stage.uid].registered = true;
+                WriteToStorage();
+                return true;
+            }
+            return false;
+        }
+
+        internal static CustomStage getCustomStageByUid(string uid)
+        {
+            if (Stages.ContainsKey(uid))
+                return Stages[uid];
+            else return null;
+        }
+
+
         private static int AssignStageID(CustomStage stage, bool isHub)
         {
             //Badge already has ID
@@ -155,7 +183,7 @@ namespace FP2Lib.Stage
                     StageLogSource.LogDebug("Loaded Stage from storage: " + data.name + "(" + data.uid + ")");
                     if (!Stages.ContainsKey(data.uid))
                     {
-                        Stages.Add(data.uid, new CustomStage(data.uid,data.name,data.id));
+                        Stages.Add(data.uid, new CustomStage(data.uid,data.name,data.isHUB,data.id));
                     }
                 }
             }

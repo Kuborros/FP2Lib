@@ -4,7 +4,7 @@ using UnityEngine;
 namespace FP2Lib.Stage
 {
     [Serializable]
-    internal class StageData
+    public class StageData
     {
 
         /// <summary>
@@ -23,12 +23,17 @@ namespace FP2Lib.Stage
         /// Is the stage a HUB location?
         /// </summary>
         public bool isHUB;
+        /// <summary>
+        /// Record time.
+        /// </summary>
+        public int bestTime;
 
         public StageData() { }
-        internal StageData(string uid, string name, int id)
+        public StageData(string uid, string name,bool isHUB, int id)
         {
             this.uid = uid;
             this.name = name;
+            this.isHUB = isHUB;
             this.id = id;
         }
 

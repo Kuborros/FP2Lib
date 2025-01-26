@@ -2,7 +2,7 @@
 
 namespace FP2Lib.Stage
 {
-    internal class CustomStage
+    public class CustomStage
     {
         /// <summary>
         /// Unique Identifier string for the stage.
@@ -66,13 +66,28 @@ namespace FP2Lib.Stage
         /// <summary>
         /// Menu/Map preview sprite.
         /// </summary>
-        public Sprite sprite;
+        public Sprite preview;
         /// <summary>
         /// Is the stage fully initialised, or only pulled from storage?
         /// </summary>
         internal bool registered = false;
 
-        public CustomStage(string uid, string name, string description, string author, string version, int parTime, string sceneName, int id, FPMusicTrack vinylID, FPPowerup itemID, Sprite sprite)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        /// <param name="author"></param>
+        /// <param name="version"></param>
+        /// <param name="parTime"></param>
+        /// <param name="sceneName"></param>
+        /// <param name="isHUB"></param>
+        /// <param name="id"></param>
+        /// <param name="vinylID"></param>
+        /// <param name="itemID"></param>
+        /// <param name="preview"></param>
+        public CustomStage(string uid, string name, string description, string author, string version, int parTime, string sceneName, bool isHUB, int id, FPMusicTrack vinylID, FPPowerup itemID, Sprite preview)
         {
             this.uid = uid;
             this.name = name;
@@ -81,22 +96,40 @@ namespace FP2Lib.Stage
             this.version = version;
             this.parTime = parTime;
             this.sceneName = sceneName;
+            this.isHUB = isHUB;
             this.id = id;
             this.vinylID = vinylID;
             this.itemID = itemID;
-            this.sprite = sprite;
+            this.preview = preview;
         }
 
-        public CustomStage(string uid, string name, int id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="isHUB"></param>
+        /// <param name="id"></param>
+        public CustomStage(string uid, string name,bool isHUB, int id)
         {
             this.uid = uid;
             this.name = name;
+            this.isHUB = isHUB;
             this.id = id;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public CustomStage() { }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public StageData getStageData()
         {
-            return new StageData(uid,name,id);
+            return new StageData(uid,name,isHUB,id);
         }
     }
 }

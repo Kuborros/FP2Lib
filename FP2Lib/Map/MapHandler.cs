@@ -33,6 +33,13 @@ namespace FP2Lib.Map
             LoadFromStorage();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid">Unique Identifier for the map.</param>
+        /// <param name="name">Name of the map.</param>
+        /// <param name="prefab">GameObject containing the map itself.</param>
+        /// <returns></returns>
         public static bool RegisterWorldMap(string uid, string name, GameObject prefab)
         {
             if (!Maps.ContainsKey(uid))
@@ -52,6 +59,12 @@ namespace FP2Lib.Map
             return false;
         }
 
+        internal static MapData getWorldMapByUid(string uid)
+        {
+            if (Maps.ContainsKey(uid))
+                return Maps[uid];
+            else return null;
+        }
 
         private static int AssignMapID(MapData map)
         {
