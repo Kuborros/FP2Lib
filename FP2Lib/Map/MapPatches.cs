@@ -46,45 +46,83 @@ namespace FP2Lib.Map
                 for (int i = 10; i < ___mapScreens.Length; ++i)
                 {
                     //Skip if map not set up
-                    if (___mapScreens[i] != null)
+                    //Map screen might also be broken and have no map, check to be sure.
+                    if (___mapScreens[i] != null && ___mapScreens[i].map != null)
                     {
                         foreach (FPMapLocation location in ___mapScreens[i].map.locations)
                         {
                             //Skip processing invisible nodes, they should not have level/map exits on them
-                            if (location.type != FPMapLocationType.NONE && location.icon != null)
-                            {
-                                //Get the menuText
-                                MenuText menuText = location.icon.GetComponent<MenuText>();
-                                string destination;
-                                //Is it a stage/boss?
-                                //These have 3 lines of existing data, so target ends in 4th line
-                                if (menuText != null && (location.type == FPMapLocationType.STAGE || location.type == FPMapLocationType.BATTLE) && menuText.paragraph.Length > 3)
+                            //Broken locations can exist if modder is not caucious, skip these to not break all the other maps.
+                            if (location != null) {
+                                if (location.type != FPMapLocationType.NONE && location.icon != null)
                                 {
-                                    destination = menuText.paragraph[3];
-                                    if (!destination.IsNullOrWhiteSpace()) {
-                                        MapLogSource.LogDebug("Creating link to stage with uid:" + destination + " for Exit: " + location.icon.name);
-                                        location.pointers.stageID = StageHandler.getCustomStageByUid(destination).id;
-                                    }
-                                }
-                                //Not a stage - it's an exit or hub
-                                //Just their name here, so our target uid is in line 2
-                                else if (menuText != null && (location.type == FPMapLocationType.HUB) && menuText.paragraph.Length > 1)
-                                {
-                                    destination = menuText.paragraph[1];
-                                    if (!destination.IsNullOrWhiteSpace())
+                                    //Get the menuText
+                                    MenuText menuText = location.icon.GetComponent<MenuText>();
+                                    string destination;
+                                    //Is it a stage/boss?
+                                    //These have 3 lines of existing data, so target ends in 4th line
+                                    if (menuText != null && (location.type == FPMapLocationType.STAGE || location.type == FPMapLocationType.BATTLE) && menuText.paragraph.Length > 3)
                                     {
-                                        MapLogSource.LogDebug("Creating link to hub with uid:" + destination + " for Exit: " + location.icon.name);
-                                        location.pointers.stageID = StageHandler.getCustomStageByUid(destination).id;
+                                        destination = menuText.paragraph[3];
+                                        if (!destination.IsNullOrWhiteSpace())
+                                        {
+                                            MapLogSource.LogDebug("Creating link to stage with uid: " + destination + " for marker: " + location.icon.name);
+                                            CustomStage target = StageHandler.getCustomStageByUid(destination);
+                                            //Check if target stage exists.
+                                            if ( target != null)
+                                            {
+                                                location.pointers.stageID = StageHandler.getCustomStageByUid(destination).id;
+                                            }
+                                            else
+                                            {
+                                                MapLogSource.LogError("Found a link to non-existent target stage! Bad! Check if uid is valid: " + destination);
+                                                //Fallback to Dragon Valley
+                                                location.pointers.stageID = 1;
+                                            }
+                                        }
                                     }
-                                }
-                                //Exits lead to maps, so we need a map id
-                                else if (menuText != null && (location.type == FPMapLocationType.EXIT || location.type == FPMapLocationType.EXIT_PROMPT) && menuText.paragraph.Length > 1)
-                                {
-                                    destination=menuText.paragraph[1];
-                                    if (!destination.IsNullOrWhiteSpace())
+                                    //Not a stage - it's an exit or hub
+                                    //Just their name here, so our target uid is in line 2
+                                    else if (menuText != null && (location.type == FPMapLocationType.HUB) && menuText.paragraph.Length > 1)
                                     {
-                                        MapLogSource.LogDebug("Creating link to map with uid:" + destination + " for Exit: " + location.icon.name);
-                                        location.pointers.mapID = MapHandler.getWorldMapByUid(destination).id; 
+                                        destination = menuText.paragraph[1];
+                                        if (!destination.IsNullOrWhiteSpace())
+                                        {
+                                            MapLogSource.LogDebug("Creating link to hub with uid: " + destination + " for marker: " + location.icon.name);
+                                            CustomStage target = StageHandler.getCustomStageByUid(destination);
+                                            //Make sure we actually found a valid stage!
+                                            if (target != null)
+                                            {
+                                                location.pointers.stageID = StageHandler.getCustomStageByUid(destination).id;
+                                            }
+                                            else
+                                            {
+                                                MapLogSource.LogError("Found a link to non-existent target hub! Bad! Check if uid is valid: " + destination);
+                                                //Fallback to first hub.
+                                                location.pointers.stageID = 1;
+                                            }
+                                        }
+                                    }
+                                    //Exits lead to maps, so we need a map id
+                                    else if (menuText != null && (location.type == FPMapLocationType.EXIT || location.type == FPMapLocationType.EXIT_PROMPT) && menuText.paragraph.Length > 1)
+                                    {
+                                        destination = menuText.paragraph[1];
+                                        if (!destination.IsNullOrWhiteSpace())
+                                        {
+                                            MapLogSource.LogDebug("Creating link to map with uid: " + destination + " for exit: " + location.icon.name);
+                                            MapData target = MapHandler.getWorldMapByUid(destination);
+                                            if (target != null)
+                                            {
+                                                location.pointers.mapID = MapHandler.getWorldMapByUid(destination).id;
+                                            }
+                                            else
+                                            {
+                                                MapLogSource.LogError("Found a link to non-existent target map! That's no good! Check if uid is valid: " + destination);
+                                                //Fallback to first map.
+                                                location.pointers.mapID = 1;
+                                            }
+                                            
+                                        }
                                     }
                                 }
                             }
