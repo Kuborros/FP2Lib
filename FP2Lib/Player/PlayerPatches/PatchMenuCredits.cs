@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Linq;
 using UnityEngine;
 
 namespace FP2Lib.Player.PlayerPatches
@@ -9,20 +10,15 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(MenuCredits), "Start", MethodType.Normal)]
         static void PatchMenuCreditsStart(ref AudioClip[] ___bgmCredits, ref Sprite[] ___characterSprites)
         {
-            //Load per-character ending art
-            for (int i = 5; i < PlayerHandler.highestID; i++)
+            // Loop through each custom player character.
+            for (int i = 0; i < PlayerHandler.PlayableChars.Values.Count; i++)
             {
-                ___bgmCredits = ___bgmCredits.AddToArray(null);
-                ___characterSprites = ___characterSprites.AddToArray(null);
-            }
+                // Get the player value at this index.
+                var entry = PlayerHandler.PlayableChars.ElementAt(i).Value;
 
-            foreach (PlayableChara chara in PlayerHandler.PlayableChars.Values)
-            {
-                if (chara.registered)
-                {
-                    ___bgmCredits[chara.id] = chara.endingTrack;
-                    ___characterSprites[chara.id] = chara.endingKeyArtSprite;
-                }
+                // Add their ending track and key art to the approriate arrays.
+                ___bgmCredits = ___bgmCredits.AddToArray(entry.endingTrack);
+                ___characterSprites = ___characterSprites.AddToArray(entry.endingKeyArtSprite);
             }
         }
     }

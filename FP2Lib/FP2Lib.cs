@@ -114,6 +114,7 @@ namespace FP2Lib
             playerPatches.PatchAll(typeof(PatchPlayerDialogZone));
             playerPatches.PatchAll(typeof(PatchZLBaseballFlyer));
             playerPatches.PatchAll(typeof(PatchItemStarCard));
+            playerPatches.PatchAll(typeof(PatchPlayerBossMerga));
 
             //Vinyls
             Logger.LogDebug("Vinyl Patch Init");
