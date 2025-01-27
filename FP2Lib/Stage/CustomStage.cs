@@ -68,6 +68,20 @@ namespace FP2Lib.Stage
         /// </summary>
         public Sprite preview;
         /// <summary>
+        /// Prefab used for the quickshop menu in the world maps.
+        /// Null means no shop.
+        /// Used only for Hubs.
+        /// </summary>
+        public GameObject quickShop;
+        /// <summary>
+        /// NPC to take the shop from.
+        /// This will also copy the shop over from the one in NPC's prefab.
+        /// Used very scarcely (a single time) in the base game, as usually the shop menu just has the NPC sprite embedded in it instead.
+        /// If you do that, then just leave this at Null.
+        /// Used only for Hubs.
+        /// </summary>
+        public FPHubNPC shopkeeper;
+        /// <summary>
         /// Is the stage fully initialised, or only pulled from storage?
         /// </summary>
         internal bool registered = false;

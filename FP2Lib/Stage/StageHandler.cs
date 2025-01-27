@@ -105,13 +105,30 @@ namespace FP2Lib.Stage
             return false;
         }
 
-        internal static CustomStage getCustomStageByUid(string uid)
+        public static CustomStage getCustomStageByUid(string uid)
         {
             if (Stages.ContainsKey(uid))
                 return Stages[uid];
             else return null;
         }
 
+        public static CustomStage getCustomStageByRuntimeId(int id)
+        {
+            foreach (CustomStage stage in Stages.Values)
+            {
+                if (stage.id == id && !stage.isHUB) return stage;
+            }
+            return null;
+        }
+
+        public static CustomStage getCustomHubByRuntimeId(int id)
+        {
+            foreach (CustomStage stage in Stages.Values)
+            {
+                if (stage.id == id && stage.isHUB) return stage;
+            }
+            return null;
+        }
 
         private static int AssignStageID(CustomStage stage, bool isHub)
         {

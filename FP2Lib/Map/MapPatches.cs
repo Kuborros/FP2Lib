@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using FP2Lib.Stage;
+using FP2Lib.Vinyl;
 using HarmonyLib;
 using UnityEngine;
 
@@ -53,7 +54,8 @@ namespace FP2Lib.Map
                         {
                             //Skip processing invisible nodes, they should not have level/map exits on them
                             //Broken locations can exist if modder is not caucious, skip these to not break all the other maps.
-                            if (location != null) {
+                            if (location != null)
+                            {
                                 if (location.type != FPMapLocationType.NONE && location.icon != null)
                                 {
                                     //Get the menuText
@@ -69,14 +71,27 @@ namespace FP2Lib.Map
                                             MapLogSource.LogDebug("Creating link to stage with uid: " + destination + " for marker: " + location.icon.name);
                                             CustomStage target = StageHandler.getCustomStageByUid(destination);
                                             //Check if target stage exists.
-                                            if ( target != null)
+                                            if (target != null)
                                             {
-                                                location.pointers.stageID = StageHandler.getCustomStageByUid(destination).id;
+                                                location.pointers.stageID = target.id;
+                                                //If we have a custom Vinyl present, replace the id so it shows properly on the map.
+                                                if (!target.vinylUID.IsNullOrWhiteSpace())
+                                                {
+                                                    VinylData vinyl = VinylHandler.GetVinylDataByUid(target.vinylUID);
+                                                    if (vinyl != null)
+                                                        location.pointers.hudVinylID = vinyl.id;
+                                                }
+                                                //Same for item!
+                                                if (!target.itemUID.IsNullOrWhiteSpace())
+                                                {
+                                                    //TODO: Add item code when that feature is done!
+                                                }
                                             }
                                             else
                                             {
                                                 MapLogSource.LogError("Found a link to non-existent target stage! Bad! Check if uid is valid: " + destination);
                                                 //Fallback to Dragon Valley
+                                                //Skipping all the item and vinyl logic because yea.
                                                 location.pointers.stageID = 1;
                                             }
                                         }
@@ -118,10 +133,11 @@ namespace FP2Lib.Map
                                             else
                                             {
                                                 MapLogSource.LogError("Found a link to non-existent target map! That's no good! Check if uid is valid: " + destination);
-                                                //Fallback to first map.
+                                                //Fallback to first map. Location id also has to be set to a number that exists there.
                                                 location.pointers.mapID = 1;
+                                                location.pointers.locationID = 0;
                                             }
-                                            
+
                                         }
                                     }
                                 }
@@ -132,7 +148,5 @@ namespace FP2Lib.Map
             }
         }
         //TODO: The current map might wish to disable the background water object. Do it here.
-
-
     }
 }
