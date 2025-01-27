@@ -6,6 +6,8 @@ namespace FP2Lib.Stage
 {
     internal class StagePatches
     {
+        //TODO: Where needed, append logic for Classic Mode world map.
+
         //Patch World Map "Go to level" menu. This *actualy* handles whole logic for sending you to right level.
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuWorldMapConfirm), "Start", MethodType.Normal)]
@@ -89,6 +91,15 @@ namespace FP2Lib.Stage
                     }
                 }
             }
+        }
+
+        //Set the proper stageID for the stage
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(FPStage), "Start", MethodType.Normal)]
+        static void PatchFPStageStart(ref int ___stageID)
+        {
+            //This should *just work*, as the value is set by MenuConfirm miliseconds before this
+            ___stageID = FPSaveManager.debugStageID;
         }
 
         //Add stage name
