@@ -19,11 +19,6 @@ namespace FP2Lib.Map
         /// </summary>
         public string name;
         /// <summary>
-        /// Disables an extra background object which acts as background colour on some maps.
-        /// It uses a sprite resembling daytime water, and does not look good on nightime maps with water distortion, where it can leak trough
-        /// </summary>
-        public bool disableBackingWater;
-        /// <summary>
         /// GameObject prefab containing the map itself.
         /// </summary>
         internal GameObject prefab;

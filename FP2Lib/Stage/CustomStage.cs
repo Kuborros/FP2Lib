@@ -13,7 +13,7 @@ namespace FP2Lib.Stage
         /// </summary>
         public string name;
         /// <summary>
-        /// Description of the stage. Not shown in vanila game UI, but Zao's VR Arcade Mod (WIP) and other map loaders can show it.
+        /// Description of the stage. Not shown in vanila game UI (it used to be during the beta!), but Zao's VR Arcade Mod (WIP) and other map loaders can show it.
         /// </summary>
         public string description;
         /// <summary>

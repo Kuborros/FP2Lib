@@ -147,6 +147,5 @@ namespace FP2Lib.Map
                 }
             }
         }
-        //TODO: The current map might wish to disable the background water object. Do it here.
     }
 }
