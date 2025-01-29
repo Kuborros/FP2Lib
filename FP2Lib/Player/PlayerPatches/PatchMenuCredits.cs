@@ -10,7 +10,7 @@ namespace FP2Lib.Player.PlayerPatches
         static void PatchMenuCreditsStart(ref AudioClip[] ___bgmCredits, ref Sprite[] ___characterSprites)
         {
             //Load per-character ending art
-            for (int i = 5; i < PlayerHandler.highestID; i++)
+            for (int i = 5; i <= PlayerHandler.highestID; i++)
             {
                 ___bgmCredits = ___bgmCredits.AddToArray(null);
                 ___characterSprites = ___characterSprites.AddToArray(null);
