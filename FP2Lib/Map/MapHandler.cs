@@ -68,8 +68,8 @@ namespace FP2Lib.Map
 
         private static int AssignMapID(MapData map)
         {
-            //Vinyl already has ID
-            if (map.id != 0)
+            //Map already has ID, which is not taken
+            if (map.id != 0 && !takenIDs[map.id])
             {
                 //Extend array if needed
                 //I question how we would get over 256 world maps, but better make sure it wont explode.

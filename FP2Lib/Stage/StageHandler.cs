@@ -132,8 +132,9 @@ namespace FP2Lib.Stage
 
         private static int AssignStageID(CustomStage stage, bool isHub)
         {
-            //Badge already has ID
-            if (stage.id != 0)
+            //Stage already has ID and it's free
+            //Since id 0 is both always taken *and* given to stages with no id, it also works as a check if stage is registered.
+            if ((isHub && !takenHubIDs[stage.id]) || (!isHub && !takenStageIDs[stage.id]))
             {
                 //Extend array if needed
                 if (isHub)

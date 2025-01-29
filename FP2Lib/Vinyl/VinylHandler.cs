@@ -69,7 +69,7 @@ namespace FP2Lib.Vinyl
         private static int AssignVinylID(VinylData vinyl)
         {
             //Vinyl already has ID
-            if (vinyl.id != 0)
+            if (vinyl.id != 0 && !takenIDs[vinyl.id])
             {
                 //Extend array if needed
                 if (vinyl.id > takenIDs.Length)
