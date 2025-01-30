@@ -75,6 +75,13 @@ namespace FP2Lib.Stage
             }
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
+        static void PatchFPSaveManagerLoad()
+        {
+            StageHandler.WriteToStorage();
+        }
+
         //Extend time records array if needed
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPSaveManager), "Awake", MethodType.Normal)]
@@ -98,7 +105,7 @@ namespace FP2Lib.Stage
         [HarmonyPatch(typeof(FPStage), "Start", MethodType.Normal)]
         static void PatchFPStageStart(ref int ___stageID)
         {
-            //This should *just work*, as the value is set by MenuConfirm miliseconds before this
+            //This should *just work*, as the value is set by MenuWorldMapConfirm miliseconds before this
             ___stageID = FPSaveManager.debugStageID;
         }
 

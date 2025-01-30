@@ -147,5 +147,12 @@ namespace FP2Lib.Map
                 }
             }
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
+        static void PatchFPSaveManagerLoad()
+        {
+            MapHandler.WriteToStorage();
+        }
     }
 }

@@ -96,6 +96,8 @@ namespace FP2Lib.Stage
             }
             else if (Stages.ContainsKey(stage.uid) && !Stages[stage.uid].registered)
             {
+                //Copy over existing id first
+                stage.id = Stages[stage.uid].id;
                 Stages[stage.uid] = stage;
                 Stages[stage.uid].id = AssignStageID(stage, stage.isHUB);
                 Stages[stage.uid].registered = true;
