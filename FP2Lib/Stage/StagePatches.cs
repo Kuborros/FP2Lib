@@ -75,11 +75,22 @@ namespace FP2Lib.Stage
             }
         }
 
+        //Extend the story flag array if custom stage has id higher than the array size
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
         static void PatchFPSaveManagerLoad()
         {
-            StageHandler.WriteToStorage();
+            //Don't run code if there is nothing to add.
+            if (StageHandler.Stages.Count > 0)
+            {
+                //Load in custom stages.
+                foreach (CustomStage stage in StageHandler.Stages.Values)
+                {
+                    if (stage.storyFlag >= FPSaveManager.storyFlag.Length)
+                        FPSaveManager.storyFlag = FPSaveManager.ExpandByteArray(FPSaveManager.storyFlag, stage.storyFlag);
+                }
+                StageHandler.WriteToStorage();
+            }
         }
 
         //Extend time records array if needed
@@ -119,6 +130,32 @@ namespace FP2Lib.Stage
                 CustomStage customStage = StageHandler.getCustomStageByRuntimeId(stage);
                 if (customStage != null)
                     __result = customStage.name;
+            }
+        }
+
+        //Add stage par time
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FPSaveManager), "GetStageParTime", MethodType.Normal)]
+        static void PatchGetStageParTime(int stage, ref int __result)
+        {
+            if (stage > 32)
+            {
+                CustomStage customStage = StageHandler.getCustomStageByRuntimeId(stage);
+                if (customStage != null)
+                    __result = customStage.parTime;
+            }
+        }
+
+        //Add stage's story flag
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FPSaveManager), "GetStoryFlag", MethodType.Normal)]
+        static void PatchGetStageStoryFlag(int stage, ref int __result)
+        {
+            if (stage > 32)
+            {
+                CustomStage customStage = StageHandler.getCustomStageByRuntimeId(stage);
+                if (customStage != null)
+                    __result = customStage.storyFlag;
             }
         }
 

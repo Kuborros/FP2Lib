@@ -134,8 +134,8 @@ namespace FP2Lib.Badge
         [HarmonyPatch(typeof(FPSaveManager), "BadgeOnlineSync", MethodType.Normal)]
         static bool PatchBadgeOnlineSync()
         {
-            //Skip sending badges to Steam if we detect modded ones.
-            if (BadgeHandler.Badges.Values.Count > 0)
+            //Skip sending badges to Steam if we detect modded ones. Unless the user wants us to!
+            if (BadgeHandler.Badges.Values.Count > 0 && !FP2Lib.configForceSteamSync.Value)
             {
                 BadgeLogSource.LogInfo("Mod badges installed, skipping Steam online sync!");
                 //Skip execution of the original method, since we would send dumb badge IDs to Steam.

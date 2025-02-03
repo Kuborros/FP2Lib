@@ -43,8 +43,9 @@ namespace FP2Lib.Map
                         }
                     }
                 }
-                //We know we have at least one to go over.
-                for (int i = 10; i < ___mapScreens.Length; ++i)
+                //Run over _all_ the maps, except the leftovers of the globe map in slot 0
+                //After all, links to custom maps and stages could be appended to built-in maps too!
+                for (int i = 1; i < ___mapScreens.Length; ++i)
                 {
                     //Skip if map not set up
                     //Map screen might also be broken and have no map, check to be sure.

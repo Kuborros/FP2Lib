@@ -40,6 +40,10 @@ namespace FP2Lib.Stage
         /// </summary>
         public bool isHUB;
         /// <summary>
+        /// The story flag belonging to the stage. Gets set on stage completion.
+        /// </summary>
+        public int storyFlag = 0;
+        /// <summary>
         /// Stage ID used in save files and world map warps
         /// </summary>
         public int id = 0;

@@ -59,7 +59,12 @@ namespace FP2Lib.Map
             return false;
         }
 
-        internal static MapData getWorldMapByUid(string uid)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public static MapData getWorldMapByUid(string uid)
         {
             if (Maps.ContainsKey(uid))
                 return Maps[uid];
@@ -99,7 +104,6 @@ namespace FP2Lib.Map
                 }
             }
             MapLogSource.LogWarning("Map: " + map.uid + " failed ID assignment! That's *very* bad, make a bug report! Falling back to ID 0!");
-            //This will harmlessly overwrite scrapped overwold map.
             return 0;
         }
 
