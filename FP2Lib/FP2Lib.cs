@@ -28,7 +28,6 @@ namespace FP2Lib
         internal static ConfigEntry<string> configLanguageForce;
 
         public static ConfigEntry<bool> configCowabunga;
-        public static ConfigEntry<bool> configForceSteamSync;
 
         public static GameInfo gameInfo;
         public static string language = "english";
@@ -50,9 +49,6 @@ namespace FP2Lib
             configCowabunga = Config.Bind("Debug", "Cowabunga", false, new ConfigDescription("Engages cowabunga mode. No sanity checks will be run, will attempt to hook in on any FP2 version.\n" +
                 "Yes, this includes 2015 Sample Versions. Your mileage might vary and bug reports with this mode on will *not* be accepted!\n" +
                 "Some mods might read this value to skip their own checks.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-
-            configForceSteamSync = Config.Bind("Debug", "Force Steam Badge Sync", false, new ConfigDescription("Force enable syncing badges to Steam, even if mod badges are present.\n" +
-                "While it should not cause anything, you have been warned if Valve does anything due to the game spamming non-existent achievements.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
 
             if (!configLanguageForce.Value.IsNullOrWhiteSpace())
             {

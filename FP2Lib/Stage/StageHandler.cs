@@ -11,7 +11,7 @@ namespace FP2Lib.Stage
 {
     public class StageHandler
     {
-        internal static Dictionary<string, CustomStage> Stages = new();
+        public static Dictionary<string, CustomStage> Stages { get; internal set; } = new();
         internal static bool[] takenStageIDs = new bool[1024];
         internal static bool[] takenHubIDs = new bool[1024];
 

@@ -4,7 +4,7 @@
     <TargetFramework>net35</TargetFramework>
     <AssemblyName>FP2Lib</AssemblyName>
     <Description>Freedom Planet 2 Modding Library</Description>
-    <Version>0.3.0.2</Version>
+    <Version>0.4.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>

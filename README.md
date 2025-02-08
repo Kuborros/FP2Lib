@@ -40,6 +40,12 @@ Example config file contains following options which can be edited by hand:
 # Default value: false
 Cowabunga = false
 
+## Force enable syncing badges to Steam, even if mod badges are present.
+## While it should not cause anything, you *have been warned* if Valve actually does anything due to the game spamming non-existent achievements.
+# Setting type: Boolean
+# Default value: false
+Force Steam Badge Sync = false
+
 [Language Settings]
 
 ## Force specific language on launch. Leave empty for default behaviour. 

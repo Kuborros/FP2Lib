@@ -111,6 +111,27 @@ namespace FP2Lib.Stage
             }
         }
 
+        //Extend time records array if needed
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(MenuGlobalPause), "Start", MethodType.Normal)]
+        static void PatchMenuGlobalPauseRecords(ref Sprite[] ___stageIconSprites)
+        {
+            //Don't run code if there is nothing to add.
+            if (StageHandler.Stages.Count > 0)
+            {
+                foreach (CustomStage stage in StageHandler.Stages.Values)
+                {
+                    if (stage.id >= ___stageIconSprites.Length)
+                    {
+                        for (int i = ___stageIconSprites.Length; i <= (stage.id); i++)
+                            //Default icon will use the "?" from Weapon's Core (in case stage lacks the needed sprite, or we have id hole.
+                            ___stageIconSprites = ___stageIconSprites.AddToArray(___stageIconSprites[30]);
+                    }
+                    ___stageIconSprites[stage.id] = stage.preview;
+                }
+            }
+        }
+
         //Set the proper stageID for the stage
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FPStage), "Start", MethodType.Normal)]

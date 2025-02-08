@@ -1,7 +1,9 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using UnityEngine;
 
 namespace FP2Lib.Badge
@@ -130,19 +132,36 @@ namespace FP2Lib.Badge
             }
         }
 
-        [HarmonyPrefix]
+        [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPSaveManager), "BadgeOnlineSync", MethodType.Normal)]
-        static bool PatchBadgeOnlineSync()
+        static IEnumerable<CodeInstruction> PatchBadgeOnlineSync(IEnumerable<CodeInstruction> instructions)
+        //Only sync 64 built-in achievos.
+        /*
+         * Swaps:
+         * IL_0040: ldloc.0
+		 * IL_0041: ldsfld uint8[] FPSaveManager::badges
+         * IL_0046: ldlen
+         * IL_0047: conv.i4
+         * IL_0048: blt IL_0012
+         * 
+         * To:
+         * IL_0031: ldloc.0
+		 * IL_0032: ldc.i4.s  65
+		 * IL_0034: blt.s IL_000C
+		 */
         {
-            //Skip sending badges to Steam if we detect modded ones. Unless the user wants us to!
-            if (BadgeHandler.Badges.Values.Count > 0 && !FP2Lib.configForceSteamSync.Value)
+            List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+            for (var i = 1; i < codes.Count; i++)
             {
-                BadgeLogSource.LogInfo("Mod badges installed, skipping Steam online sync!");
-                //Skip execution of the original method, since we would send dumb badge IDs to Steam.
-                return false;
+                if (codes[i].opcode == OpCodes.Ldsfld && codes[i - 1].opcode == OpCodes.Ldloc_0)
+                {
+                    codes[i].opcode = OpCodes.Ldc_I4;
+                    codes[i].operand = 65;
+                    codes[i + 1].opcode = OpCodes.Nop;
+                    codes[i + 2].opcode = OpCodes.Nop;
+                }
             }
-            else
-                return true;
+            return codes;
         }
     }
 }
