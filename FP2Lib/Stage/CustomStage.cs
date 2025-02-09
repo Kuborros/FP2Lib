@@ -54,22 +54,24 @@ namespace FP2Lib.Stage
         public int id = 0;
         /// <summary>
         /// Id of the vinyl collectable on the stage.
-        /// FPMusicTrack.NONE for none.
+        /// <c>FPMusicTrack.NONE</c> for none.
         /// Ignored when vinylUID is set.
         /// </summary>
-        public FPMusicTrack vinylID;
+        public FPMusicTrack vinylID = FPMusicTrack.NONE;
         /// <summary>
         /// Item collectable on the stage.
         /// <c>FPPowerup.NONE</c> for no item.
         /// Ignored when itemUID is set.
         /// </summary>
-        public FPPowerup itemID;
+        public FPPowerup itemID = FPPowerup.NONE;
         /// <summary>
         /// Set to UID of a custom track to automatically assign right vinylID at runtime.
+        /// Has to be registered before the stage.
         /// </summary>
         public string vinylUID;
         /// <summary>
         /// Set to UID of a custom item to automatically assign right itemID at runtime. (WIP)
+        /// Has to be already registered.
         /// </summary>
         public string itemUID;
         /// <summary>

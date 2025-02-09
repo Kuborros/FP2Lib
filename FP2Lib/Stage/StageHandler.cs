@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System;
 using UnityEngine;
+using FP2Lib.Vinyl;
 
 namespace FP2Lib.Stage
 {
@@ -90,6 +91,9 @@ namespace FP2Lib.Stage
             if (!Stages.ContainsKey(stage.uid))
             {
                 stage.id = AssignStageID(stage, stage.isHUB);
+                stage.itemID = GetStageItem(stage);
+                stage.vinylID = GetStageMusic(stage);
+                stage.registered = true;
                 Stages.Add(stage.uid, stage);
                 WriteToStorage();
                 return true;
@@ -100,6 +104,8 @@ namespace FP2Lib.Stage
                 stage.id = Stages[stage.uid].id;
                 Stages[stage.uid] = stage;
                 Stages[stage.uid].id = AssignStageID(stage, stage.isHUB);
+                Stages[stage.uid].itemID = GetStageItem(stage);
+                Stages[stage.uid].vinylID = GetStageMusic(stage);
                 Stages[stage.uid].registered = true;
                 WriteToStorage();
                 return true;
@@ -130,6 +136,32 @@ namespace FP2Lib.Stage
                 if (stage.id == id && stage.isHUB) return stage;
             }
             return null;
+        }
+
+        private static FPMusicTrack GetStageMusic(CustomStage stage)
+        {
+            if (!stage.vinylUID.IsNullOrWhiteSpace())
+            {
+                VinylData vinyl = VinylHandler.GetVinylDataByUid(stage.vinylUID);
+                if (vinyl != null)
+                {
+                    return (FPMusicTrack)vinyl.id;
+                }
+            }
+            return stage.vinylID;
+        }
+
+        private static FPPowerup GetStageItem(CustomStage stage)
+        {
+            if (!stage.itemUID.IsNullOrWhiteSpace())
+            {
+                //TODO: Implement code once ItemHandler is done
+                return FPPowerup.NONE;
+            } 
+            else
+            {
+                return stage.itemID;
+            }
         }
 
         private static int AssignStageID(CustomStage stage, bool isHub)
