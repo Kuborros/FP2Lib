@@ -1,13 +1,12 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using System.Linq;
 using UnityEngine;
 
 namespace FP2Lib.Stage
 {
     internal class StagePatches
     {
-        //TODO: Where needed, append logic for Classic Mode world map.
-
         //Patch World Map "Go to level" menu. This *actualy* handles whole logic for sending you to right level.
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuWorldMapConfirm), "Start", MethodType.Normal)]
@@ -96,25 +95,29 @@ namespace FP2Lib.Stage
         //Extend time records array if needed
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPSaveManager), "Awake", MethodType.Normal)]
-        static void PatchFPSaveManagerAwake(ref int[] ___timeRecord)
+        static void PatchFPSaveManagerAwake(ref int[] ___timeRecord, ref byte[] ___timeRank)
         {
             //Don't run code if there is nothing to add.
             if (StageHandler.Stages.Count > 0)
             {
                 foreach (CustomStage stage in StageHandler.Stages.Values)
                 {
-                    if (stage.id > ___timeRecord.Length)
+                    if (stage.id >= ___timeRecord.Length)
                     {
                         FPSaveManager.ExpandIntArray(___timeRecord, stage.id + 1);
+                    }
+                    if (stage.id >= ___timeRank.Length)
+                    {
+                        FPSaveManager.ExpandByteArray(___timeRank, stage.id + 1);
                     }
                 }
             }
         }
 
-        //Extend time records array if needed
+        //Extend time records to include the stage icon and collectibles
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuGlobalPause), "Start", MethodType.Normal)]
-        static void PatchMenuGlobalPauseRecords(ref Sprite[] ___stageIconSprites)
+        static void PatchMenuGlobalPauseRecords(ref Sprite[] ___stageIconSprites, ref FPMusicTrack[] ___hudVinylID, ref FPPowerup[] ___hudChestItem)
         {
             //Don't run code if there is nothing to add.
             if (StageHandler.Stages.Count > 0)
@@ -127,7 +130,46 @@ namespace FP2Lib.Stage
                             //Default icon will use the "?" from Weapon's Core (in case stage lacks the needed sprite, or we have id hole.
                             ___stageIconSprites = ___stageIconSprites.AddToArray(___stageIconSprites[30]);
                     }
+                    if (stage.id >= ___hudVinylID.Length)
+                    {
+                        for (int i = ___hudVinylID.Length; i <= (stage.id); i++)
+                            //Default is no music.
+                            ___hudVinylID = ___hudVinylID.AddToArray(FPMusicTrack.NONE);
+                    }
+                    if (stage.id >= ___hudChestItem.Length)
+                    {
+                        for (int i = ___hudChestItem.Length; i <= (stage.id); i++)
+                            //Default is no item.
+                            //Fun fact! On old 1.0.0 era save files, Bakunawa Chase lacks this value which causes funny bugs!
+                            ___hudChestItem = ___hudChestItem.AddToArray(FPPowerup.NONE);
+                    }
                     ___stageIconSprites[stage.id] = stage.preview;
+                    ___hudVinylID[stage.id] = stage.vinylID;
+                    ___hudChestItem[stage.id] = stage.itemID;
+                }
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(MenuCredits), "Start", MethodType.Normal)]
+        static void PatchMenuCreditsStart(ref int[] ___stageOrder, ref Sprite[] ___spriteStageIcon)
+        {
+            //Don't run code if there is nothing to add.
+            if (StageHandler.Stages.Count > 0)
+            {
+                foreach (CustomStage stage in StageHandler.Stages.Values)
+                {
+                    if (stage.id >= ___spriteStageIcon.Length)
+                    {
+                        for (int i = ___spriteStageIcon.Length; i <= (stage.id); i++)
+                            //Default icon will use the "?" from Weapon's Core (in case stage lacks the needed sprite, or we have id hole.
+                            ___spriteStageIcon = ___spriteStageIcon.AddToArray(___spriteStageIcon[30]);
+                    }
+                    if (!___stageOrder.Contains(stage.id))
+                    {
+                        ___stageOrder = ___stageOrder.AddToArray(stage.id);
+                        ___spriteStageIcon[___stageOrder.Length - 1] = stage.preview;
+                    }
                 }
             }
         }

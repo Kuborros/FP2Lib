@@ -25,6 +25,11 @@ namespace FP2Lib.Stage
         /// </summary>
         public string version = "1.0.0";
         /// <summary>
+        /// Should this stage be shown in other mods that list custom stages. 
+        /// It's not *enforced*, and is therefore just a suggestion to other mod that you wish to show this stage or not.
+        /// </summary>
+        public bool showInCustomStageLoaders = true;
+        /// <summary>
         /// Par time for the stage.
         /// Stored in format used by FPStage.TimeToString();
         /// </summary>

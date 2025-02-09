@@ -135,19 +135,21 @@ namespace FP2Lib.Badge
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPSaveManager), "BadgeOnlineSync", MethodType.Normal)]
         static IEnumerable<CodeInstruction> PatchBadgeOnlineSync(IEnumerable<CodeInstruction> instructions)
-        //Only sync 64 built-in achievos.
+        //Only sync 64 built-in achievos. Game itself uses the array lenght of the badge list, but we can hardcode the number instead - there will be no updates changing it according to the devs.
         /*
          * Swaps:
-         * IL_0040: ldloc.0
-		 * IL_0041: ldsfld uint8[] FPSaveManager::badges
-         * IL_0046: ldlen
-         * IL_0047: conv.i4
-         * IL_0048: blt IL_0012
+         * ldloc.0
+		 * ldsfld uint8[] FPSaveManager::badges
+         * ldlen
+         * conv.i4
+         * blt
          * 
          * To:
-         * IL_0031: ldloc.0
-		 * IL_0032: ldc.i4.s  65
-		 * IL_0034: blt.s IL_000C
+         * ldloc.0
+		 * ldc.i4  65
+		 * NOP
+		 * NOP
+		 * blt
 		 */
         {
             List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
