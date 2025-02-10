@@ -23,10 +23,6 @@ namespace FP2Lib.Stage
         /// Is the stage a HUB location?
         /// </summary>
         public bool isHUB;
-        /// <summary>
-        /// Record time.
-        /// </summary>
-        public int bestTime;
 
         public StageData() { }
         public StageData(string uid, string name,bool isHUB, int id)

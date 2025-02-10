@@ -1,4 +1,6 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
+using FP2Lib.Vinyl;
 using HarmonyLib;
 using System.Linq;
 using UnityEngine;
@@ -7,6 +9,7 @@ namespace FP2Lib.Stage
 {
     internal class StagePatches
     {
+        private static readonly ManualLogSource StageLogSource = FP2Lib.logSource;
         //Patch World Map "Go to level" menu. This *actualy* handles whole logic for sending you to right level.
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuWorldMapConfirm), "Start", MethodType.Normal)]
@@ -75,6 +78,7 @@ namespace FP2Lib.Stage
         }
 
         //Extend the story flag array if custom stage has id higher than the array size
+        //Also set Item and Vinyl IDs from their uids
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
         static void PatchFPSaveManagerLoad()
@@ -85,10 +89,48 @@ namespace FP2Lib.Stage
                 //Load in custom stages.
                 foreach (CustomStage stage in StageHandler.Stages.Values)
                 {
+                    //Create story flags as needed
                     if (stage.storyFlag >= FPSaveManager.storyFlag.Length)
                         FPSaveManager.storyFlag = FPSaveManager.ExpandByteArray(FPSaveManager.storyFlag, stage.storyFlag);
+
+                    //If custom Vinyl is defined, set it here
+                    stage.vinylID = GetStageMusic(stage);
+                    //Same for items
+                    stage.itemID = GetStageItem(stage);
                 }
                 StageHandler.WriteToStorage();
+            }
+        }
+
+        private static FPMusicTrack GetStageMusic(CustomStage stage)
+        {
+            //Check if a custom uid is even set
+            if (!stage.vinylUID.IsNullOrWhiteSpace())
+            {
+                StageLogSource.LogDebug("Linking vinyl with uid: " + stage.vinylUID + " for stage:" + stage.uid);
+                VinylData vinyl = VinylHandler.GetVinylDataByUid(stage.vinylUID);
+                //Is the uid pointing to a vinyl that exists
+                if (vinyl != null)
+                {
+                    StageLogSource.LogDebug("Got id:" + vinyl.id + " for track name: " + vinyl.name);
+                    return (FPMusicTrack)vinyl.id;
+                }
+            }
+            return stage.vinylID;
+        }
+
+        private static FPPowerup GetStageItem(CustomStage stage)
+        {
+            if (!stage.itemUID.IsNullOrWhiteSpace())
+            {
+                StageLogSource.LogDebug("Linking item with uid: " + stage.itemUID + " for stage:" + stage.uid);
+                //TODO: Implement code once ItemHandler is done
+                StageLogSource.LogDebug("Item linking is not available yet!");
+                return FPPowerup.NONE;
+            }
+            else
+            {
+                return stage.itemID;
             }
         }
 
