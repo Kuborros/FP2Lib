@@ -155,6 +155,7 @@ namespace FP2Lib.Map
             {
                 if (___mapScreens[FPSaveManager.lastMap] == null)
                 {
+                    MapLogSource.LogWarning("Attempted to load a null map! Warping out to 1:0!");
                     FPSaveManager.lastMap = 1;
                     FPSaveManager.lastMapLocation = 0;
                 }
@@ -162,6 +163,7 @@ namespace FP2Lib.Map
             //The array might be shorter, so we catch that too
             catch (IndexOutOfRangeException)
             {
+                MapLogSource.LogWarning("Attempted to load an invalid map ID! Warping out to 1:0!");
                 FPSaveManager.lastMap = 1;
                 FPSaveManager.lastMapLocation = 0;
             }
