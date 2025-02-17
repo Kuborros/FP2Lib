@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using FP2Lib.Stage;
 using FP2Lib.Vinyl;
 using HarmonyLib;
+using System;
 using UnityEngine;
 
 namespace FP2Lib.Map
@@ -147,12 +148,30 @@ namespace FP2Lib.Map
                     }
                 }
             }
+            //In case the mod with the map is removed, the save file could lead to a non-existent (or unloaded) map
+            //When that happens, we make an emergency warp to known safe location (Dragon Valley)
+            //Better than softlocking the file.
+            try
+            {
+                if (___mapScreens[FPSaveManager.lastMap] == null)
+                {
+                    FPSaveManager.lastMap = 1;
+                    FPSaveManager.lastMapLocation = 0;
+                }
+            } 
+            //The array might be shorter, so we catch that too
+            catch (IndexOutOfRangeException)
+            {
+                FPSaveManager.lastMap = 1;
+                FPSaveManager.lastMapLocation = 0;
+            }
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
         static void PatchFPSaveManagerLoad()
         {
+            //Commit the map IDs
             MapHandler.WriteToStorage();
         }
     }
