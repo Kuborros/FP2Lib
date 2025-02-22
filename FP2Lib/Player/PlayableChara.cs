@@ -179,7 +179,11 @@ namespace FP2Lib.Player
         /// </summary>
         public MenuPhotoPose menuPhotoPose;
 
+        /// <summary>
+        /// GameObject containing the character select wheel preview
+        /// </summary>
         public GameObject characterSelectPrefab;
+
         /// <summary>
         /// Game object containing your playable FPPlayer character.
         /// </summary>

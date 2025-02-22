@@ -110,7 +110,7 @@ namespace FP2Lib.Map
 
         //Did you know, Unity's JSON parser detonates if the root object is an array? And that it struggles _so much_ with arrays?
         //This cursed stuff is the easiest way to make it not break.
-        //TODO: 3 classes use this same code, maybe deduplicate it?
+        //TODO: 3 classes use this same code, maybe deduplicate it? Consider inclusion of SimpleJson in the library.
         private static void LoadFromStorage()
         {
             string json = File.ReadAllText(GameInfo.getProfilePath() + "/WorldMapStore.json");

@@ -39,6 +39,17 @@ namespace FP2Lib.Player
 
         /// <summary>
         /// Register a playable character into the system. Takes already cooked PlayableChara object.
+        /// Functionally identical to <c>RegisterPlayableCharacterDirect</c> but with naming convention of other RegisterX
+        /// </summary>
+        /// <param name="character">Prepared PlayableChara object</param>
+        /// <returns></returns>
+        public static bool RegisterPlayableCharacter(PlayableChara character)
+        {
+            return RegisterPlayableCharacterDirect(character);
+        }
+
+        /// <summary>
+        /// Register a playable character into the system. Takes already cooked PlayableChara object.
         /// </summary>
         /// <param name="character">Prepared PlayableChara object</param>
         /// <returns></returns>

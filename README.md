@@ -30,6 +30,7 @@ If you wish to use it _without_ the mod manager, you can install it from the Rel
 While it's main functionality is handled internally, depending on other installed mods which depend on it some of the functions can be managed by the config file. 
 
 Example config file contains following options which can be edited by hand:
+
 ```ini
 [Debug]
 
@@ -39,12 +40,6 @@ Example config file contains following options which can be edited by hand:
 # Setting type: Boolean
 # Default value: false
 Cowabunga = false
-
-## Force enable syncing badges to Steam, even if mod badges are present.
-## While it should not cause anything, you *have been warned* if Valve actually does anything due to the game spamming non-existent achievements.
-# Setting type: Boolean
-# Default value: false
-Force Steam Badge Sync = false
 
 [Language Settings]
 
@@ -84,3 +79,4 @@ The basic required dependencies should be automatically loaded from nuGet, you w
 After that is added, the project should build without a hitch. 
 
 Packaging release .zip follows the same steps as a normal mod, with exception of the path and modified modinfo.json (here named fp2lib.json).
+Since this library is preinstalled by default with every FP2MM modded game install, you will need to bump the version number if you do not wish to replace existing one.
