@@ -13,6 +13,8 @@ A library intended to simplify most common parts of modding **Freedom Planet 2**
 * Provides framework to easily instance new NPC.
 * Provides framework to easily add new Vinyls and Badges.
 * Provides framework to add new playable characters into the game.
+* Provides framework to add new stages into the game.
+* Provides framework to add new world maps into the game.
 * Provides framework to instance NPC from json and AssetBundle pair.
 * Provides patches for issues caused by workings of mods and game.
 * Provides game build information.
@@ -21,13 +23,14 @@ You can read documentation of specific parts on the [Wiki](https://github.com/Ku
 
 ### Usage:
 
-This library is auto-installed by the mod manager, and exposes no player-visible components in-game.
+This library is auto-installed by the mod manager, and exposes no player-visible components in-game by default.
 
 If you wish to use it _without_ the mod manager, you can install it from the Releases tab like any other mod.
 
-While it's main functionality is handled internally, depending on other installed mods which depend on it, some of the functions can be managed by the config file. 
+While it's main functionality is handled internally, depending on other installed mods which depend on it some of the functions can be managed by the config file. 
 
 Example config file contains following options which can be edited by hand:
+
 ```ini
 [Debug]
 
@@ -67,6 +70,7 @@ Fancy Json = true
 # Acceptable value range: From 0 to 9
 Profile = 0
 ```
+If you wish to edit them, you _need_ to make sure you change them _before_ the player chose a save, preferraby even before they opened the save select menu. 
 
 ### Compilation:
 
@@ -75,3 +79,4 @@ The basic required dependencies should be automatically loaded from nuGet, you w
 After that is added, the project should build without a hitch. 
 
 Packaging release .zip follows the same steps as a normal mod, with exception of the path and modified modinfo.json (here named fp2lib.json).
+Since this library is preinstalled by default with every FP2MM modded game install, you will need to bump the version number if you do not wish to replace existing one.

@@ -1,5 +1,6 @@
 ﻿using BepInEx.Logging;
 using FP2Lib.Tools;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,12 +11,15 @@ namespace FP2Lib.Player
 {
     public static class PlayerHandler
     {
-        internal static Dictionary<string, PlayableChara> PlayableChars = new();
+        public static Dictionary<string, PlayableChara> PlayableChars { get; internal set; } = new();
         //The wheel can only handle 24 positions without becoming wonky, so this is the soft limit for now.
         internal static bool[] takenIDs = new bool[23];
         internal static int highestID = 4;
         private static string storePath;
-        public static PlayableChara currentCharacter;
+        /// <summary>
+        /// Current custom playable character. Will be null if the character played is a built-in one.
+        /// </summary>
+        [CanBeNull] public static PlayableChara currentCharacter;
 
         internal static readonly ManualLogSource PlayerLogSource = FP2Lib.logSource;
 
@@ -31,6 +35,17 @@ namespace FP2Lib.Player
             Directory.CreateDirectory(storePath);
 
             LoadFromStorage();
+        }
+
+        /// <summary>
+        /// Register a playable character into the system. Takes already cooked PlayableChara object.
+        /// Functionally identical to <c>RegisterPlayableCharacterDirect</c> but with naming convention of other RegisterX
+        /// </summary>
+        /// <param name="character">Prepared PlayableChara object</param>
+        /// <returns></returns>
+        public static bool RegisterPlayableCharacter(PlayableChara character)
+        {
+            return RegisterPlayableCharacterDirect(character);
         }
 
         /// <summary>
@@ -72,7 +87,6 @@ namespace FP2Lib.Player
         {
             for (int i = 0; i <= highestID; i++)
             {
-                //VERY BAD
                 if (!takenIDs[i])
                 {
                     PlayerLogSource.LogError("Very bad thing boss, there's a hole in the Player ID's! Investigate!");
@@ -107,6 +121,7 @@ namespace FP2Lib.Player
         /// </summary>
         /// <param name="id">Character's assigned ID</param>
         /// <returns>Character object, or null if none found</returns>
+        [CanBeNull]
         public static PlayableChara GetPlayableCharaByRuntimeId(int id)
         {
             foreach (PlayableChara chara in PlayableChars.Values)
@@ -129,6 +144,30 @@ namespace FP2Lib.Player
             }
             //Return non-null value with placeholder data. Technically should be never triggered in normal scenarios but..
             return new PlayableChara();
+        }
+
+        /// <summary>
+        /// Switches the current character in the save file to the specified custom character.
+        /// You should *really* force a scene reset afterwards to maintain a sane gamestate.
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns>Returns false if the switch fails. 
+        /// This can happen either by the UID not being valid, or the target character not being initialised.</returns>
+        public static bool SwitchToCharacterByUID(string uid)
+        {
+            if (PlayableChars.ContainsKey(uid))
+            {
+                PlayableChara character = PlayableChars[uid];
+                if (character.registered)
+                {
+                    FPSaveManager.character = (FPCharacterID)character.id;
+                    if (FPSaveManager.targetPlayer != null)
+                        FPSaveManager.targetPlayer.characterID = (FPCharacterID)character.id;
+                    currentCharacter = character;
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static int AssignPlayerID(PlayableChara character)

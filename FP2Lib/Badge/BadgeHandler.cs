@@ -72,7 +72,7 @@ namespace FP2Lib.Badge
         private static int AssignBadgeID(BadgeData badge)
         {
             //Badge already has ID
-            if (badge.id != 0)
+            if (badge.id != 0 && !takenIDs[badge.id])
             {
                 //Extend array if needed
                 if (badge.id > takenIDs.Length)

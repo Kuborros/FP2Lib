@@ -3,19 +3,20 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using FP2Lib.Badge;
 using FP2Lib.BepIn;
-using FP2Lib.Item;
+using FP2Lib.Map;
 using FP2Lib.NPC;
 using FP2Lib.Patches;
 using FP2Lib.Player;
 using FP2Lib.Player.PlayerPatches;
 using FP2Lib.Saves;
+using FP2Lib.Stage;
 using FP2Lib.Tools;
 using FP2Lib.Vinyl;
 using HarmonyLib;
 
 namespace FP2Lib
 {
-    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.3.0.2")]
+    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.4.0.0")]
     [BepInProcess("FP2.exe")]
     public class FP2Lib : BaseUnityPlugin
     {
@@ -43,7 +44,7 @@ namespace FP2Lib
             configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, new ConfigDescription("Enable save file redirection.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, new ConfigDescription("Makes JSON files more human-readable.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, new ConfigDescription("Select save redirection profile.", new AcceptableValueRange<int>(0, 9), new ConfigurationManagerAttributes { IsAdvanced = true }));
-            configLanguageForce = Config.Bind("Language Settings", "Force Language", "", new ConfigDescription("Force specific language on launch. Leave empty for default behaviour.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
+            configLanguageForce = Config.Bind("Language Settings", "Force Language", "", new ConfigDescription("Force specific language on launch. Leave empty for default behaviour. Does nothing till language update comes out.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
 
             configCowabunga = Config.Bind("Debug", "Cowabunga", false, new ConfigDescription("Engages cowabunga mode. No sanity checks will be run, will attempt to hook in on any FP2 version.\n" +
                 "Yes, this includes 2015 Sample Versions. Your mileage might vary and bug reports with this mode on will *not* be accepted!\n" +
@@ -58,6 +59,8 @@ namespace FP2Lib
             PlayerHandler.InitialiseHandler();
             VinylHandler.InitialiseHandler();
             BadgeHandler.InitialiseHandler();
+            MapHandler.InitialiseHandler();
+            StageHandler.InitialiseHandler();
 
             Logger.LogMessage("Running FP2 Version: " + gameInfo.getVersionString());
             if (gameInfo.build == GameRelease.SAMPLE && !configCowabunga.Value)
@@ -75,6 +78,9 @@ namespace FP2Lib
 
         private void SetupHarmonyPatches()
         {
+            //Patches are separate to allow for hooking-in even if one set of them fails.
+            //This also allows for selective unpatching of library's features.
+
             //NPC
             Logger.LogDebug("NPC Patch Init");
             Harmony npcPatches = new("000.kuborro.libraries.fp2.fp2lib.npc");
@@ -126,6 +132,16 @@ namespace FP2Lib
             Harmony badgePatches = new("000.kuborro.libraries.fp2.fp2lib.badge");
             badgePatches.PatchAll(typeof(BadgePatches));
 
+            //World Maps
+            Logger.LogDebug("World Map Patch Init");
+            Harmony mapPatches = new("000.kuborro.libraries.fp2.fp2lib.worldmap");
+            mapPatches.PatchAll(typeof(MapPatches));
+
+            //Levels
+            Logger.LogDebug("Stage Patch Init");
+            Harmony stagePatches = new("000.kuborro.libraries.fp2.fp2lib.stage");
+            stagePatches.PatchAll(typeof(StagePatches));
+
             //Save Redirection
             Logger.LogDebug("Saves Patch Init");
             Harmony savePatches = new("000.kuborro.libraries.fp2.fp2lib.saves");
@@ -137,7 +153,8 @@ namespace FP2Lib
             generalPatches.PatchAll(typeof(ScreenshotFix));
             generalPatches.PatchAll(typeof(PotionSizeFix));
             generalPatches.PatchAll(typeof(ModdedPotionsFix));
-            generalPatches.PatchAll(typeof(LanguageExpander));
+            //Still no language update for PC :(
+            //generalPatches.PatchAll(typeof(LanguageExpander));
 
             Logger.LogInfo("Init done!");
         }
