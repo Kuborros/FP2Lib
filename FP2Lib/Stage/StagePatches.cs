@@ -269,7 +269,8 @@ namespace FP2Lib.Stage
         [HarmonyPatch(typeof(FPSaveManager), "GetHubName", MethodType.Normal)]
         static void PatchGetHubName(int hub, ref string __result)
         {
-            if (hub > 14 && __result.IsNullOrWhiteSpace())
+            //For reasons unknown to Man, the result can be "0" on missing Hubs
+            if (hub > 14 && (__result == "0" || __result.IsNullOrWhiteSpace()))
             {
                 CustomStage customStage = StageHandler.getCustomHubByRuntimeId(hub);
                 if (customStage != null)
