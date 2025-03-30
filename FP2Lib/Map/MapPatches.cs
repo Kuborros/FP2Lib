@@ -167,6 +167,14 @@ namespace FP2Lib.Map
                 FPSaveManager.lastMap = 1;
                 FPSaveManager.lastMapLocation = 0;
             }
+
+            //Similar case can occur when the file indicates we should go to a tile that does not exist.
+            //In this case, revert to tile 0 for the current map.
+            if (FPSaveManager.lastMapLocation > ___mapScreens[FPSaveManager.lastMap].map.locations.Length)
+            {
+                FPSaveManager.lastMapLocation = 0;
+            }
+
         }
 
         [HarmonyPostfix]
