@@ -27,11 +27,11 @@ namespace FP2Lib.Map
                     if (map.id != 0)
                     {
                         //If the Map ID is higher than the current screen array size, extend it and fill the empty spaces.
-                        //World map will handle null GameObjects fine.
+                        //World map will handle empty GameObjects fine. Maybe not try to warp to them tho.
                         if (map.id >= ___mapScreens.Length)
                         {
                             for (int i = ___mapScreens.Length; i <= (map.id); i++)
-                                ___mapScreens = ___mapScreens.AddToArray(null);
+                                ___mapScreens = ___mapScreens.AddToArray(new FPMapScreen());
                         }
                         //Add the map at it's place.
                         if (map.prefab != null)
@@ -153,7 +153,7 @@ namespace FP2Lib.Map
             //Better than softlocking the file.
             try
             {
-                if (___mapScreens[FPSaveManager.lastMap] == null)
+                if (___mapScreens[FPSaveManager.lastMap] == null || ___mapScreens[FPSaveManager.lastMap].map == null)
                 {
                     MapLogSource.LogWarning("Attempted to load a null map! Warping out to 1:0!");
                     FPSaveManager.lastMap = 1;
@@ -182,10 +182,17 @@ namespace FP2Lib.Map
         [HarmonyPatch(typeof(MenuClassic), "Start", MethodType.Normal)]
         static void PatchMenuClassicStart(MenuClassic __instance)
         {
-            if (FPSaveManager.lastMapLocation >= __instance.stages.Length)
+            try
             {
-                MapLogSource.LogWarning("Attempted to load to invalid location ID! Resetting to 0!");
-                FPSaveManager.lastMapLocation = 0;
+                if (FPSaveManager.lastMapLocation > __instance.stages.Length)
+                {
+                    MapLogSource.LogWarning("Attempted to load to invalid location ID! Resetting to 0!");
+                    FPSaveManager.lastMapLocation = 0;
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                MapLogSource.LogError("Something went veeery wrooong~. Check it!\n" +  ex.Message);
             }
         }
 
