@@ -170,11 +170,23 @@ namespace FP2Lib.Map
 
             //Similar case can occur when the file indicates we should go to a tile that does not exist.
             //In this case, revert to tile 0 for the current map.
-            if (FPSaveManager.lastMapLocation > ___mapScreens[FPSaveManager.lastMap].map.locations.Length)
+            if (FPSaveManager.lastMapLocation >= ___mapScreens[FPSaveManager.lastMap].map.locations.Length)
             {
+                MapLogSource.LogWarning("Attempted to load to invalid location ID! Resetting to 0!");
                 FPSaveManager.lastMapLocation = 0;
             }
 
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(MenuClassic), "Start", MethodType.Normal)]
+        static void PatchMenuClassicStart(MenuClassic __instance)
+        {
+            if (FPSaveManager.lastMapLocation >= __instance.stages.Length)
+            {
+                MapLogSource.LogWarning("Attempted to load to invalid location ID! Resetting to 0!");
+                FPSaveManager.lastMapLocation = 0;
+            }
         }
 
         [HarmonyPostfix]
