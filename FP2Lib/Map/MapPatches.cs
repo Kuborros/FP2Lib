@@ -175,7 +175,6 @@ namespace FP2Lib.Map
                 MapLogSource.LogWarning("Attempted to load to invalid location ID! Resetting to 0!");
                 FPSaveManager.lastMapLocation = 0;
             }
-
         }
 
         [HarmonyPrefix]

@@ -2,6 +2,7 @@
 using BepInEx.Logging;
 using FP2Lib.Vinyl;
 using HarmonyLib;
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -275,6 +276,40 @@ namespace FP2Lib.Stage
                 CustomStage customStage = StageHandler.getCustomHubByRuntimeId(hub);
                 if (customStage != null)
                     __result = customStage.name;
+            }
+        }
+
+        //Patch the map to add dialog for extra hubIDs
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(MenuWorldMap), "Start", MethodType.Normal)]
+        static void PatchMenuWorldMap(ref FPMapDialog[] ___hubDialog)
+        {
+            int id = 14;
+            //Get the highest hubID.
+            foreach (CustomStage stage in StageHandler.Stages.Values)
+            {
+                if (stage.isHUB &&  stage.id > id)
+                {
+                    id = stage.id;  
+                }
+            }
+            //If our ID is out of the array's bounds extend it
+            //Should be non-destructive in case a mod adds their own dialogue
+            if (id >= ___hubDialog.Length)
+            {
+                FPMapDialog[] array2 = new FPMapDialog[id + 1];
+                //Copy data over
+                for (int i = 0; i < ___hubDialog.Length; i++)
+                {
+                    array2[i] = ___hubDialog[i];
+                }
+                //Any nulls need a clean empty object.
+                for (int i = 0; i < array2.Length; i++)
+                {
+                    if (array2[i] == null)
+                        array2[i] = new FPMapDialog { dialogSequence = [], sceneID = 0, storyFlagValue = 0, disableAtStoryFlag = 0 };
+                }
+                ___hubDialog = array2;
             }
         }
     }
