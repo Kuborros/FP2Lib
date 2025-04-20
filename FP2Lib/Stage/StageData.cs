@@ -25,7 +25,7 @@ namespace FP2Lib.Stage
         public bool isHUB;
 
         public StageData() { }
-        public StageData(string uid, string name,bool isHUB, int id)
+        public StageData(string uid, string name, bool isHUB, int id)
         {
             this.uid = uid;
             this.name = name;

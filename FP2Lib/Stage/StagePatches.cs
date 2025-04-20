@@ -2,7 +2,6 @@
 using BepInEx.Logging;
 using FP2Lib.Vinyl;
 using HarmonyLib;
-using System;
 using System.Linq;
 using UnityEngine;
 
@@ -43,7 +42,7 @@ namespace FP2Lib.Stage
                             for (int i = ___hubIcon.Length; i < stage.id + 1; i++)
                             {
                                 ___hubIcon = ___hubIcon.AddToArray(null);
-                            }                         
+                            }
                         }
                         //Normal stages
                         else
@@ -288,9 +287,9 @@ namespace FP2Lib.Stage
             //Get the highest hubID.
             foreach (CustomStage stage in StageHandler.Stages.Values)
             {
-                if (stage.isHUB &&  stage.id > id)
+                if (stage.isHUB && stage.id > id)
                 {
-                    id = stage.id;  
+                    id = stage.id;
                 }
             }
             //If our ID is out of the array's bounds extend it

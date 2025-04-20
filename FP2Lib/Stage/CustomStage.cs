@@ -135,7 +135,7 @@ namespace FP2Lib.Stage
         /// <param name="name"></param>
         /// <param name="isHUB"></param>
         /// <param name="id"></param>
-        public CustomStage(string uid, string name,bool isHUB, int id)
+        public CustomStage(string uid, string name, bool isHUB, int id)
         {
             this.uid = uid;
             this.name = name;
@@ -154,7 +154,7 @@ namespace FP2Lib.Stage
         /// <returns></returns>
         public StageData getStageData()
         {
-            return new StageData(uid,name,isHUB,id);
+            return new StageData(uid, name, isHUB, id);
         }
     }
 }

@@ -1,12 +1,11 @@
-﻿using BepInEx.Logging;
-using BepInEx;
+﻿using BepInEx;
+using BepInEx.Logging;
 using FP2Lib.Tools;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System;
 using UnityEngine;
-using FP2Lib.Vinyl;
 
 namespace FP2Lib.Stage
 {
@@ -205,7 +204,7 @@ namespace FP2Lib.Stage
                     StageLogSource.LogDebug("Loaded Stage from storage: " + data.name + "(" + data.uid + ")");
                     if (!Stages.ContainsKey(data.uid))
                     {
-                        Stages.Add(data.uid, new CustomStage(data.uid,data.name,data.isHUB,data.id));
+                        Stages.Add(data.uid, new CustomStage(data.uid, data.name, data.isHUB, data.id));
                     }
                 }
             }
