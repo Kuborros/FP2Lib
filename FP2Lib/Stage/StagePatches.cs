@@ -13,7 +13,7 @@ namespace FP2Lib.Stage
         //Patch World Map "Go to level" menu. This *actualy* handles whole logic for sending you to right level.
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuWorldMapConfirm), "Start", MethodType.Normal)]
-        static void PatchMenuWorldMapConfirm(ref string[] ___hubSceneToLoad, ref string[] ___sceneToLoad, ref FPHubNPC[] ___shopkeepers, ref GameObject[] ___shopMenus, ref Sprite[] ___stageIcon, ref Sprite[] ___hubIcon)
+        static void PatchMenuWorldMapConfirm(ref string[] ___hubSceneToLoad, ref string[] ___sceneToLoad, ref FPHubNPC[] ___shopkeepers, ref GameObject[] ___shopMenus, ref Sprite[] ___stageIcon, ref Sprite[] ___hubIcon, ref int[] ___shopStoryFlagRequirement)
         {
             //Don't run code if there is nothing to add.
             if (StageHandler.Stages.Count > 0)
@@ -43,6 +43,10 @@ namespace FP2Lib.Stage
                             {
                                 ___hubIcon = ___hubIcon.AddToArray(null);
                             }
+                            for (int i = ___shopStoryFlagRequirement.Length; i < stage.id + 1; i++)
+                            {
+                                ___shopStoryFlagRequirement = ___shopStoryFlagRequirement.AddToArray(0);
+                            }
                         }
                         //Normal stages
                         else
@@ -61,6 +65,7 @@ namespace FP2Lib.Stage
                         {
                             if (stage.isHUB)
                             {
+                                ___shopStoryFlagRequirement[stage.id] = stage.quickShopStoryFlag;
                                 ___hubSceneToLoad[stage.id] = stage.sceneName;
                                 ___shopkeepers[stage.id] = stage.shopkeeper;
                                 ___shopMenus[stage.id] = stage.quickShop;

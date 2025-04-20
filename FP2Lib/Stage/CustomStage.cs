@@ -85,6 +85,13 @@ namespace FP2Lib.Stage
         /// </summary>
         public GameObject quickShop;
         /// <summary>
+        /// On which story flag should the quickshop unlock.
+        /// Default value of 0 will have it essentially always unlocked.
+        /// If there is no shop set, this value is ignored.
+        /// Used only for Hubs.
+        /// </summary>
+        public int quickShopStoryFlag = 0;
+        /// <summary>
         /// NPC to take the shop from.
         /// This will also copy the shop over from the one in NPC's prefab.
         /// Used very scarcely (a single time) in the base game, as usually the shop menu just has the NPC sprite embedded in it instead.
