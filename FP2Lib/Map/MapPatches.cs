@@ -179,7 +179,7 @@ namespace FP2Lib.Map
         {
             try
             {
-                if (FPSaveManager.lastMapLocation > __instance.stages.Length)
+                if (FPSaveManager.lastMapLocation >= __instance.stages.Length)
                 {
                     MapLogSource.LogWarning("Attempted to load to invalid location ID! Resetting to 0!");
                     FPSaveManager.lastMapLocation = 0;
