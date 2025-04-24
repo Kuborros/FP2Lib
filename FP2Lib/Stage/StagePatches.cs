@@ -226,8 +226,9 @@ namespace FP2Lib.Stage
         [HarmonyPatch(typeof(FPStage), "Start", MethodType.Normal)]
         static void PatchFPStageStart(ref int ___stageID)
         {
-            //This should *just work*, as the value is set by MenuWorldMapConfirm miliseconds before this
-            ___stageID = FPSaveManager.debugStageID;
+            //If debug stage ID is 0, ignore the value. It's likely broken.
+            if (FPSaveManager.debugStageID != 0)
+                ___stageID = FPSaveManager.debugStageID;
         }
 
         //Add stage name
