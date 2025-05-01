@@ -171,6 +171,9 @@ namespace FP2Lib.Stage
             {
                 foreach (CustomStage stage in StageHandler.Stages.Values)
                 {
+                    //Skip adding hubs
+                    if (stage.isHUB) continue;
+
                     if (stage.id >= ___stageIconSprites.Length)
                     {
                         for (int i = ___stageIconSprites.Length; i <= (stage.id); i++)
@@ -206,6 +209,9 @@ namespace FP2Lib.Stage
             {
                 foreach (CustomStage stage in StageHandler.Stages.Values)
                 {
+                    //Skip hubs
+                    if (stage.isHUB) continue;
+
                     if (stage.id >= ___spriteStageIcon.Length)
                     {
                         for (int i = ___spriteStageIcon.Length; i <= (stage.id); i++)
