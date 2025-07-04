@@ -234,8 +234,8 @@ namespace FP2Lib.Stage
         [HarmonyPatch(typeof(FPStage), "Start", MethodType.Normal)]
         static void PatchFPStageStart(ref int ___stageID)
         {
-            //If debug stage ID is 0, ignore the value. It's likely broken.
-            if (FPSaveManager.debugStageID != 0)
+            //Set IDs only for custom stages
+            if (FPSaveManager.debugStageID > 32)
                 ___stageID = FPSaveManager.debugStageID;
         }
 
@@ -283,7 +283,7 @@ namespace FP2Lib.Stage
         [HarmonyPatch(typeof(FPSaveManager), "GetHubName", MethodType.Normal)]
         static void PatchGetHubName(int hub, ref string __result)
         {
-            //For reasons unknown to Man, the result can be "0" on missing Hubs
+            //Unlike stages, invalid hub names are returned as "0". Not int 0, but string "0".
             if (hub > 14 && (__result == "0" || __result.IsNullOrWhiteSpace()))
             {
                 CustomStage customStage = StageHandler.getCustomHubByRuntimeId(hub);
