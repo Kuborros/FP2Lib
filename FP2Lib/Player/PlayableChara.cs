@@ -101,7 +101,9 @@ namespace FP2Lib.Player
         /// </summary>
         public FPCharacterID eventActivatorCharacter;
         /// <summary>
-        /// Gender of your character, for purpose of dialogue and other mod logic. 
+        /// Gender identity of your character, for purpose of dialogue and other mod logic. 
+        /// By default it changes how the Battlesphere Announcer refers to your character.
+        /// Defaults to Non-Binary they/them.
         /// </summary>
         public CharacterGender Gender = CharacterGender.NON_BINARY;
 
@@ -111,8 +113,9 @@ namespace FP2Lib.Player
         public Sprite profilePic;
         /// <summary>
         /// Big Sprite used on character select wheel.
+        /// Technically optional as you provide your own GameObject there, but some mods might wish to be able to load that sprite.
         /// </summary>
-        public Sprite keyArtSprite;
+        public Sprite keyArtSprite = null;
         /// <summary>
         /// Big Sprite used in the credits.
         /// </summary>

@@ -13,6 +13,7 @@ using FP2Lib.Stage;
 using FP2Lib.Tools;
 using FP2Lib.Vinyl;
 using HarmonyLib;
+using System;
 
 namespace FP2Lib
 {
@@ -65,8 +66,13 @@ namespace FP2Lib
             Logger.LogMessage("Running FP2 Version: " + gameInfo.getVersionString());
             if (gameInfo.build == GameRelease.SAMPLE && !configCowabunga.Value)
             {
-                Logger.LogWarning("Running within Sample Version! Aborting hook-in.");
+                Logger.LogError("Running within Sample Version! Aborting hook-in.");
                 return;
+            }
+            //1.2.6r adds major changes to the game's code, and many mods will not work on older builds.
+            if (gameInfo.gameVersion < new System.Version("1.2.6"))
+            {
+                Logger.LogWarning("You are running an older version of FP2! Not all mods might be compatible!");
             }
 
             if (configCowabunga.Value)
@@ -83,44 +89,61 @@ namespace FP2Lib
 
             //NPC
             Logger.LogDebug("NPC Patch Init");
+            //Code can handle older game builds.
             Harmony npcPatches = new("000.kuborro.libraries.fp2.fp2lib.npc");
             npcPatches.PatchAll(typeof(NPCPatches));
 
             //Player
             Logger.LogDebug("Player Patch Init");
-            Harmony playerPatches = new("000.kuborro.libraries.fp2.fp2lib.player");
-            playerPatches.PatchAll(typeof(PatchFPPlayer));
-            playerPatches.PatchAll(typeof(PatchItemFuel));
-            playerPatches.PatchAll(typeof(PatchPlayerSpawnPoint));
-            playerPatches.PatchAll(typeof(PatchFPStage));
-            playerPatches.PatchAll(typeof(PatchMenuFile));
-            playerPatches.PatchAll(typeof(PatchFPEventSequence));
-            playerPatches.PatchAll(typeof(PatchParentActivator));
-            playerPatches.PatchAll(typeof(PatchArenaRace));
-            playerPatches.PatchAll(typeof(PatchMenuCharacterSelect));
-            playerPatches.PatchAll(typeof(PatchMenuCharacterWheel));
-            playerPatches.PatchAll(typeof(PatchMenuTutorialPrompt));
-            playerPatches.PatchAll(typeof(PatchMenuGlobalPause));
-            playerPatches.PatchAll(typeof(PatchMenuPhoto));
-            playerPatches.PatchAll(typeof(PatchBFFCombiner));
-            playerPatches.PatchAll(typeof(PatchFPHudDigit));
-            playerPatches.PatchAll(typeof(PatchFPHudMaster));
-            playerPatches.PatchAll(typeof(PatchSBBeaconCutscene));
-            playerPatches.PatchAll(typeof(PatchBakunawaFusion));
-            playerPatches.PatchAll(typeof(PatchBFWallRunZone));
-            playerPatches.PatchAll(typeof(PatchBSAutoscroller));
-            playerPatches.PatchAll(typeof(PatchArenaCameraFlash));
-            playerPatches.PatchAll(typeof(PatchMenuCredits));
-            playerPatches.PatchAll(typeof(PatchMenuWorldMap));
-            playerPatches.PatchAll(typeof(PatchFPBossHud));
-            playerPatches.PatchAll(typeof(PatchMenuWorldMapConfirm));
-            playerPatches.PatchAll(typeof(PatchSaga));
-            playerPatches.PatchAll(typeof(PatchAcrabellePieTrap));
-            playerPatches.PatchAll(typeof(PatchMenuShop));
-            playerPatches.PatchAll(typeof(PatchPlayerDialogZone));
-            playerPatches.PatchAll(typeof(PatchZLBaseballFlyer));
-            playerPatches.PatchAll(typeof(PatchItemStarCard));
-            playerPatches.PatchAll(typeof(PatchPlayerBossMerga));
+            //Player patches *will* break on anything older than 1.2.6 due to changes in guard code.
+            if (gameInfo.gameVersion >= new Version("1.2.6") || configCowabunga.Value)
+            {
+                try
+                {
+                    Harmony playerPatches = new("000.kuborro.libraries.fp2.fp2lib.player");
+                    playerPatches.PatchAll(typeof(PatchFPPlayer));
+                    playerPatches.PatchAll(typeof(PatchItemFuel));
+                    playerPatches.PatchAll(typeof(PatchPlayerSpawnPoint));
+                    playerPatches.PatchAll(typeof(PatchFPStage));
+                    playerPatches.PatchAll(typeof(PatchMenuFile));
+                    playerPatches.PatchAll(typeof(PatchFPEventSequence));
+                    playerPatches.PatchAll(typeof(PatchParentActivator));
+                    playerPatches.PatchAll(typeof(PatchArenaRace));
+                    playerPatches.PatchAll(typeof(PatchMenuCharacterSelect));
+                    playerPatches.PatchAll(typeof(PatchMenuCharacterWheel));
+                    playerPatches.PatchAll(typeof(PatchMenuTutorialPrompt));
+                    playerPatches.PatchAll(typeof(PatchMenuGlobalPause));
+                    playerPatches.PatchAll(typeof(PatchMenuPhoto));
+                    playerPatches.PatchAll(typeof(PatchBFFCombiner));
+                    playerPatches.PatchAll(typeof(PatchFPHudDigit));
+                    playerPatches.PatchAll(typeof(PatchFPHudMaster));
+                    playerPatches.PatchAll(typeof(PatchSBBeaconCutscene));
+                    playerPatches.PatchAll(typeof(PatchBakunawaFusion));
+                    playerPatches.PatchAll(typeof(PatchBFWallRunZone));
+                    playerPatches.PatchAll(typeof(PatchBSAutoscroller));
+                    playerPatches.PatchAll(typeof(PatchArenaCameraFlash));
+                    playerPatches.PatchAll(typeof(PatchMenuCredits));
+                    playerPatches.PatchAll(typeof(PatchMenuWorldMap));
+                    playerPatches.PatchAll(typeof(PatchFPBossHud));
+                    playerPatches.PatchAll(typeof(PatchMenuWorldMapConfirm));
+                    playerPatches.PatchAll(typeof(PatchSaga));
+                    playerPatches.PatchAll(typeof(PatchAcrabellePieTrap));
+                    playerPatches.PatchAll(typeof(PatchMenuShop));
+                    playerPatches.PatchAll(typeof(PatchPlayerDialogZone));
+                    playerPatches.PatchAll(typeof(PatchZLBaseballFlyer));
+                    playerPatches.PatchAll(typeof(PatchItemStarCard));
+                    playerPatches.PatchAll(typeof(PatchPlayerBossMerga));
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("Something went wrong while patching player code! Info:\n" + ex.Message);
+                    Logger.LogDebug(ex);
+                }
+            } 
+            else
+            {
+                Logger.LogWarning("Player patches are not functional in FP2 builds older than 1.2.6! Sorry!\nMods dependent on these *will* be broken!");
+            }
 
             //Vinyls
             Logger.LogDebug("Vinyl Patch Init");

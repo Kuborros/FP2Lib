@@ -147,8 +147,10 @@ namespace FP2Lib.Player
         }
 
         /// <summary>
-        /// Switches the current character in the save file to the specified custom character.
-        /// You should *really* force a scene reset afterwards to maintain a sane gamestate.
+        /// Switches the current character in the running save file to the specified custom character.
+        /// You should *really* force a scene reset afterwards to maintain a sane gamestate. 
+        /// Please be aware that it's not a guaranteed solution - some mods like Sonic initialize their properties at initial file load and don't expect to be loaded in later on.
+        /// If you are making a character mod, you might wish to consider handling such scenario. I also take suggestions on handling this better on fp2lib's side.
         /// </summary>
         /// <param name="uid"></param>
         /// <returns>Returns false if the switch fails. 

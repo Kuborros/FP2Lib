@@ -14,6 +14,7 @@ namespace FP2Lib.Map
 
         //Patching in the new maps. Has to be ran before the init code in Start method.
         [HarmonyPrefix]
+        [HarmonyPriority(Priority.LowerThanNormal)] //Run after other mods, to ensure they got to add their thingies.
         [HarmonyPatch(typeof(MenuWorldMap), "Start", MethodType.Normal)]
         static void PatchMenuWorldMap(ref FPMapScreen[] ___mapScreens)
         {
@@ -174,6 +175,7 @@ namespace FP2Lib.Map
         }
 
         [HarmonyPrefix]
+        [HarmonyPriority(Priority.Last)] //Run after other mods, to ensure they got to add their tiles in peace.
         [HarmonyPatch(typeof(MenuClassic), "Start", MethodType.Normal)]
         static void PatchMenuClassicStart(MenuClassic __instance)
         {

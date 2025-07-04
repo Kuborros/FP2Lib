@@ -88,6 +88,8 @@ namespace FP2Lib.Stage
         [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
         static void PatchFPSaveManagerLoad()
         {
+            //Reset the debug stage value to zero, in case it got stuck.
+            FPSaveManager.debugStageID = 0;
             //Don't run code if there is nothing to add.
             if (StageHandler.Stages.Count > 0)
             {
