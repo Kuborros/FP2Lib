@@ -147,6 +147,20 @@ namespace FP2Lib.Player
         }
 
         /// <summary>
+        /// Gets the character based on the character wheel postion in the main menu. Useful if you need to get that data _now_, the moment the player hovers over the character sprite.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Character object, or null if none found</returns>
+        public static PlayableChara GetPlayableCharaByWheelId(int id)
+        {
+            foreach (PlayableChara chara in PlayableChars.Values)
+            {
+                if (chara.wheelId == id) return chara;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Switches the current character in the running save file to the specified custom character.
         /// You should *really* force a scene reset afterwards to maintain a sane gamestate. 
         /// Please be aware that it's not a guaranteed solution - some mods like Sonic initialize their properties at initial file load and don't expect to be loaded in later on.
