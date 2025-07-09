@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
@@ -189,9 +190,8 @@ namespace FP2Lib.Player
         private static int AssignPlayerID(PlayableChara character)
         {
             //Character has ID
-            if (character.id != 0 && !takenIDs[character.id])
+            if (character.id != 0 && PlayableChars.ContainsKey(character.uid))
             {
-                takenIDs[character.id] = true;
                 PlayerLogSource.LogDebug("Stored playable character ID assigned (" + character.uid + "): " + character.id);
                 if (character.id > highestID) highestID = character.id;
                 return character.id;
@@ -229,6 +229,7 @@ namespace FP2Lib.Player
                     if (!PlayableChars.ContainsKey(data.UID))
                     {
                         PlayableChara chara = new PlayableChara(data.UID, data.name, data.runtimeID, data.gender);
+                        takenIDs[data.runtimeID] = true;
                         chara.registered = false;
                         PlayableChars.Add(data.UID, chara);
                     }

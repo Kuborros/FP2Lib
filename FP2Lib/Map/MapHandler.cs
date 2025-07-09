@@ -74,14 +74,8 @@ namespace FP2Lib.Map
         private static int AssignMapID(MapData map)
         {
             //Map already has ID, which is not taken
-            if (map.id != 0 && !takenIDs[map.id])
+            if (map.id != 0 && Maps.ContainsKey(map.uid))
             {
-                //Extend array if needed
-                //I question how we would get over 256 world maps, but better make sure it wont explode.
-                if (map.id > takenIDs.Length)
-                    takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, map.id);
-                //Mark id as taken
-                takenIDs[map.id] = true;
                 MapLogSource.LogDebug("Stored World Map ID assigned (" + map.uid + "): " + map.id);
                 return map.id;
             }
@@ -125,6 +119,11 @@ namespace FP2Lib.Map
                 if (!Maps.ContainsKey(map.uid))
                 {
                     Maps.Add(map.uid, map);
+                    //Extend array if needed
+                    //I question how we would get over 256 world maps, but better make sure it wont explode.
+                    if (map.id > takenIDs.Length)
+                        takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, map.id);
+                    takenIDs[map.id] = true;
                 }
             }
         }

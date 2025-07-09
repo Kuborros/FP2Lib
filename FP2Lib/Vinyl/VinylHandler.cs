@@ -69,13 +69,8 @@ namespace FP2Lib.Vinyl
         private static int AssignVinylID(VinylData vinyl)
         {
             //Vinyl already has ID
-            if (vinyl.id != 0 && !takenIDs[vinyl.id])
+            if (vinyl.id != 0 && Vinyls.ContainsKey(vinyl.uid))
             {
-                //Extend array if needed
-                if (vinyl.id > takenIDs.Length)
-                    takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, vinyl.id);
-                //Mark id as taken
-                takenIDs[vinyl.id] = true;
                 VinylLogSource.LogDebug("Stored vinyl ID assigned (" + vinyl.uid + "): " + vinyl.id);
                 return vinyl.id;
             }
@@ -128,6 +123,11 @@ namespace FP2Lib.Vinyl
                 if (!Vinyls.ContainsKey(vinyl.uid))
                 {
                     Vinyls.Add(vinyl.uid, vinyl);
+                    //Extend array if needed
+                    if (vinyl.id > takenIDs.Length)
+                        takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, vinyl.id);
+                    //Mark id as taken
+                    takenIDs[vinyl.id] = true;
                 }
             }
         }

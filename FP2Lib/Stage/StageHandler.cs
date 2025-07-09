@@ -136,24 +136,14 @@ namespace FP2Lib.Stage
         private static int AssignStageID(CustomStage stage, bool isHub)
         {
             //Stage already has ID and it's free
-            //Since id 0 is both always taken *and* given to stages with no id, it also works as a check if stage is registered.
-            if ((isHub && !takenHubIDs[stage.id]) || (!isHub && !takenStageIDs[stage.id]))
+            if (Stages.ContainsKey(stage.uid) && stage.id != 0)
             {
                 //Extend array if needed
                 if (isHub)
-                {
-                    if (stage.id > takenHubIDs.Length)
-                        takenHubIDs = FPSaveManager.ExpandBoolArray(takenHubIDs, stage.id);
-                    takenHubIDs[stage.id] = true;
                     StageLogSource.LogDebug("Stored Hub ID assigned (" + stage.uid + "): " + stage.id);
-                }
                 else
-                {
-                    if (stage.id > takenStageIDs.Length)
-                        takenStageIDs = FPSaveManager.ExpandBoolArray(takenStageIDs, stage.id);
-                    takenStageIDs[stage.id] = true;
                     StageLogSource.LogDebug("Stored Stage ID assigned (" + stage.uid + "): " + stage.id);
-                }
+
                 return stage.id;
             }
             else
@@ -189,6 +179,7 @@ namespace FP2Lib.Stage
                     }
                 }
             }
+            //Can occur if there are somehow 1024 custom stages, which is an unlikely scenario.
             StageLogSource.LogWarning("Scene: " + stage.uid + " failed ID assignment! That's bad!");
             return 0;
         }
@@ -205,6 +196,18 @@ namespace FP2Lib.Stage
                     if (!Stages.ContainsKey(data.uid))
                     {
                         Stages.Add(data.uid, new CustomStage(data.uid, data.name, data.isHUB, data.id));
+                        if (data.isHUB)
+                        {
+                            if (data.id > takenHubIDs.Length)
+                                takenHubIDs = FPSaveManager.ExpandBoolArray(takenHubIDs, data.id);
+                            takenHubIDs[data.id] = true;
+                        }
+                        else
+                        {
+                            if (data.id > takenStageIDs.Length)
+                                takenStageIDs = FPSaveManager.ExpandBoolArray(takenStageIDs, data.id);
+                            takenStageIDs[data.id] = true;
+                        }
                     }
                 }
             }

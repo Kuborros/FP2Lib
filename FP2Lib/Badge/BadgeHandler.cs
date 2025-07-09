@@ -72,12 +72,8 @@ namespace FP2Lib.Badge
         private static int AssignBadgeID(BadgeData badge)
         {
             //Badge already has ID
-            if (badge.id != 0 && !takenIDs[badge.id])
+            if (badge.id != 0 && Badges.ContainsKey(badge.uid))
             {
-                //Extend array if needed
-                if (badge.id > takenIDs.Length)
-                    takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, badge.id);
-                takenIDs[badge.id] = true;
                 BadgeLogSource.LogDebug("Stored badge ID assigned (" + badge.uid + "): " + badge.id);
                 return badge.id;
             }
@@ -157,6 +153,10 @@ namespace FP2Lib.Badge
                 if (!Badges.ContainsKey(badge.uid))
                 {
                     Badges.Add(badge.uid, badge);
+                    //Extend array if needed
+                    if (badge.id > takenIDs.Length)
+                        takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, badge.id);
+                    takenIDs[badge.id] = true;
                 }
             }
         }
