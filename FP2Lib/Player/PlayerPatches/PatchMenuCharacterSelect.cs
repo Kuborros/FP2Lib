@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -28,7 +29,7 @@ namespace FP2Lib.Player.PlayerPatches
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuCharacterSelect), "Start", MethodType.Normal)]
-        static void PatchCharacterSelectStart(MenuCharacterSelect __instance, ref MenuCharacterWheel[] ___characterSprites, ref Sprite[] ___nameLabelSprites, ref MenuText[] ___infoText)
+        static void PatchCharacterSelectStart(MenuCharacterSelect __instance, ref MenuCharacterWheel[] ___characterSprites, ref Sprite[] ___nameLabelSprites, ref MenuText[] ___infoText, ref FPHudDigit ___characterIcon)
         {
             //Reset character number for the wheel
             wheelcharas = 3;
@@ -46,6 +47,7 @@ namespace FP2Lib.Player.PlayerPatches
                 ___infoText[2].paragraph = ___infoText[2].paragraph.AddToArray("");
                 ___infoText[3].paragraph = ___infoText[3].paragraph.AddToArray("");
                 ___infoText[4].paragraph = ___infoText[4].paragraph.AddToArray("");
+                ___characterIcon.digitFrames = ___characterIcon.digitFrames.AddRangeToArray([null,null,null]);
             }
 
 
@@ -66,6 +68,11 @@ namespace FP2Lib.Player.PlayerPatches
                 wheel.gameObject.transform.parent = __instance.transform;
                 ___characterSprites[chara.wheelId] = wheel;
                 ___nameLabelSprites[chara.wheelId] = chara.charSelectName;
+
+                int iconOffset = (chara.wheelId - 4) * 3;
+                ___characterIcon.digitFrames[15 + iconOffset] = chara.livesIconAnim[0];
+                ___characterIcon.digitFrames[16 + iconOffset] = chara.livesIconAnim[1];
+                ___characterIcon.digitFrames[17 + iconOffset] = chara.livesIconAnim[2];
 
                 ___infoText[0].paragraph[chara.wheelId] = chara.characterType;
                 ___infoText[1].paragraph[chara.wheelId] = chara.skill1;
@@ -108,12 +115,12 @@ namespace FP2Lib.Player.PlayerPatches
         //Patch digitframes to show live icon of selected character
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuCharacterSelect), "State_CharacterConfirm", MethodType.Normal)]
-        static void PatchCharacterConfirm(MenuCharacterSelect __instance, ref FPHudDigit ___characterIcon)
+        static void PatchCharacterConfirm(MenuCharacterSelect __instance, ref FPHudDigit ___characterIcon, float ___lifeIconBlinkTimer)
         {
             if (__instance.character >= 4)
             {
-                ___characterIcon.digitFrames = ___characterIcon.digitFrames.AddToArray(GetPlayableCharaByWheelId(__instance.character).livesIconAnim[0]);
-                ___characterIcon.SetDigitValue(16);
+                int animStart = 15 + (__instance.character - 4) * 3;
+                ___characterIcon.SetDigitValue(Mathf.Max(animStart, animStart + (int)___lifeIconBlinkTimer % 3));
             }
         }
 
