@@ -52,6 +52,10 @@ namespace FP2Lib.Player
         /// Fourth button skill
         /// </summary>
         public string skill4;
+        /// <summary>
+        /// Description shown in the item menus for the "Powerup Start" item.
+        /// </summary>
+        public string powerupStartDescription = "You begin the stage with your character's unique powerup.";
 
         /// <summary>
         /// Has the character been fully loaded? Internal, not set by modder.
@@ -106,6 +110,12 @@ namespace FP2Lib.Player
         /// Defaults to Non-Binary they/them.
         /// </summary>
         public CharacterGender Gender = CharacterGender.NON_BINARY;
+        /// <summary>
+        /// Element your character represents. 
+        /// Affects what damage type Element Burst generates.
+        /// Defaults to "Fire" as this is the base game behaviour.
+        /// </summary>
+        public CharacterElement element = CharacterElement.FIRE;
 
         /// <summary>
         /// Character profile picture shown in File Select, Menu, and Pause screen
@@ -191,6 +201,37 @@ namespace FP2Lib.Player
         /// Game object containing your playable FPPlayer character.
         /// </summary>
         public GameObject prefab;
+
+        /// <summary>
+        /// Default acceleration value for your character. Should be the same as set in the prefab.
+        /// All base characters but Neera use 0.110625 here. Can be usually left at default.
+        /// </summary>
+        public float StatDefaultAcceleration = 0.110625f;
+        /// <summary>
+        /// Default air acceleration for your character. Should be the same as set in the prefab.
+        /// All base-game characters use 0.22125 here. Can be usually left at default.
+        /// </summary>
+        public float StatDefaultAirAcceleration = 0.22125f;
+        /// <summary>
+        /// Default deceleration of your character. Should be the same as set in the prefab.
+        /// The most common value is 0.110625. Can be usually left at default.
+        /// </summary>
+        public float StatDefaultDeceleration = 0.110625f;
+        /// <summary>
+        /// Default initial jump speed. Should be the same as set in the prefab.
+        /// All base-game characters use 4.5 here. Can be usually left at default.
+        /// </summary>
+        public float StatDefaultJumpRelease = 4.5f;
+        /// <summary>
+        /// Set the default jump strength of your character here.
+        /// All base-game characters use 10.5 here. Can be usually left at default.
+        /// </summary>
+        public float StatDefaultJumpStrength = 10.5f;
+        /// <summary>
+        /// Set the top speed value for your character. Should be the same as set in the prefab.
+        /// All base-game characters use 7.5 here. Can be usually left at default.
+        /// </summary>
+        public float StatDefaultTopSpeed = 7.5f;
 
         /// <summary>
         /// Asset Bundle containing all the character data

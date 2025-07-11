@@ -105,7 +105,10 @@ namespace FP2Lib.Badge
         /// <returns>BadgeData object</returns>
         public static BadgeData GetBadgeDataByUid(string uid)
         {
-            return Badges[uid];
+            if (Badges.ContainsKey(uid))
+                return Badges[uid];
+            else 
+                return null;
         }
 
         /// <summary>

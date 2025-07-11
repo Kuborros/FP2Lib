@@ -17,7 +17,7 @@ using System;
 
 namespace FP2Lib
 {
-    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.4.2.1")]
+    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.4.3.0")]
     [BepInProcess("FP2.exe")]
     public class FP2Lib : BaseUnityPlugin
     {
@@ -133,6 +133,9 @@ namespace FP2Lib
                     playerPatches.PatchAll(typeof(PatchZLBaseballFlyer));
                     playerPatches.PatchAll(typeof(PatchItemStarCard));
                     playerPatches.PatchAll(typeof(PatchPlayerBossMerga));
+                    playerPatches.PatchAll(typeof(PatchGetPlayerStat));
+                    playerPatches.PatchAll(typeof(PatchFPSaveManager));
+                    playerPatches.PatchAll(typeof(PatchFPBaseEnemy));
                 }
                 catch (Exception ex)
                 {
