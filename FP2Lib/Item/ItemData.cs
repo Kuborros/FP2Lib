@@ -30,7 +30,6 @@ namespace FP2Lib.Item
         /// </summary>
         public int goldGemsPrice;
 
-        internal int id;
-        internal bool registered;
+        internal int id = 0;
     }
 }

@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using BepInEx;
+using HarmonyLib;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -9,6 +10,9 @@ namespace FP2Lib.NPC
     {
         static RuntimeAnimatorController npcRenderer;
         private static int selectedNPC = 0;
+
+        private static string customSpeciesDisplay = "";
+        private static string customHomeDisplay = "";
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPSaveManager), nameof(FPSaveManager.LoadFromFile), MethodType.Normal)]
@@ -135,7 +139,7 @@ namespace FP2Lib.NPC
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuGlobalPause), "UpdateNPCList", MethodType.Normal)]
-        static void PatchUpdateNPCList(MenuGlobalPause __instance, ref SpriteRenderer ___npcPreviewSprite, int ___currentNPC, int ___npcListOffset, ref int ___npcListLength)
+        static void PatchUpdateNPCList(MenuGlobalPause __instance, ref SpriteRenderer ___npcPreviewSprite, int ___currentNPC, int ___npcListOffset, ref int ___npcListLength, ref MenuText ___npcSpecies, ref MenuText ___npcHome)
         {
             if (npcRenderer == null)
             {
@@ -205,6 +209,8 @@ namespace FP2Lib.NPC
             {
                 ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npcRenderer;
                 selectedNPC = id;
+                customHomeDisplay = string.Empty;
+                customSpeciesDisplay = string.Empty;
 
                 Animator component = __instance.npcPreviewSprite.gameObject.GetComponent<Animator>();
 
@@ -212,11 +218,29 @@ namespace FP2Lib.NPC
                 {
                     if (npc.ID == id)
                     {
+                        //Set custom preview
                         ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npc.Prefabs.Values.First().GetComponent<Animator>().runtimeAnimatorController;
                         component.Play("Default", 0);
+                        //Set custom home and species if needed.
+                        if (!npc.customSpecies.IsNullOrWhiteSpace())
+                        {
+                            customSpeciesDisplay = npc.customSpecies;
+                        }
+                        if (!npc.customHome.IsNullOrWhiteSpace())
+                        {
+                            customHomeDisplay = npc.customHome;
+                        }
                         return;
                     }
                 }
+            }
+            if (!customSpeciesDisplay.IsNullOrWhiteSpace())
+            {
+                ___npcSpecies.GetComponent<TextMesh>().text = customSpeciesDisplay;
+            }
+            if (!customHomeDisplay.IsNullOrWhiteSpace())
+            {
+                ___npcHome.GetComponent<TextMesh>().text = customHomeDisplay;
             }
         }
     }

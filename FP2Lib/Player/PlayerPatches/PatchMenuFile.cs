@@ -11,9 +11,9 @@ namespace FP2Lib.Player.PlayerPatches
     [Serializable]
     internal class PlayerData
     {
-        public float versionID;
-        public FPGameMode gameMode;
-        public int character;
+        public float versionID = 1;
+        public FPGameMode gameMode = FPGameMode.ADVENTURE;
+        public int character = 0;
     }
 
     internal class PatchMenuFile

@@ -99,13 +99,29 @@ namespace FP2Lib.NPC
         {
             if (!HubNPCs.ContainsKey(uID))
             {
-                HubNPC npc = new HubNPC(uID, Name, Scene, Prefab, Species, Home, DialogueTopics);
+                HubNPC npc = new HubNPC
+                {
+                    UID = uID,
+                    Name = Name,
+                    Prefabs = new Dictionary<string, GameObject> { { Scene, Prefab } },
+                    Species = Species,
+                    Home = Home,
+                    DialogueTopics = DialogueTopics,
+                };
                 HubNPCs.Add(uID, npc);
                 return true;
             }
             else if (HubNPCs.ContainsKey(uID) && HubNPCs[uID].Prefabs.Count == 0)
             {
-                HubNPC npc = new HubNPC(uID, Name, Scene, Prefab, Species, Home, DialogueTopics);
+                HubNPC npc = new HubNPC
+                {
+                    UID = uID,
+                    Name = Name,
+                    Prefabs = new Dictionary<string, GameObject> { { Scene, Prefab } },
+                    Species = Species,
+                    Home = Home,
+                    DialogueTopics = DialogueTopics,
+                };
                 npc.ID = HubNPCs[uID].ID;
                 HubNPCs[uID] = npc;
                 return true;
@@ -163,13 +179,29 @@ namespace FP2Lib.NPC
         {
             if (!HubNPCs.ContainsKey(uID))
             {
-                HubNPC npc = new HubNPC(uID, Name, Prefabs, Species, Home, DialogueTopics);
+                HubNPC npc = new HubNPC
+                {
+                    UID = uID,
+                    Name = Name,
+                    Prefabs = Prefabs,
+                    Species = Species,
+                    Home = Home,
+                    DialogueTopics = DialogueTopics,
+                };
                 HubNPCs.Add(uID, npc);
                 return true;
             }
             else if (HubNPCs.ContainsKey(uID) && HubNPCs[uID].Prefabs.Count == 0)
             {
-                HubNPC npc = new HubNPC(uID, Name, Prefabs, Species, Home, DialogueTopics);
+                HubNPC npc = new HubNPC
+                {
+                    UID = uID,
+                    Name = Name,
+                    Prefabs = Prefabs,
+                    Species = Species,
+                    Home = Home,
+                    DialogueTopics = DialogueTopics,
+                };
                 npc.ID = HubNPCs[uID].ID;
                 HubNPCs[uID] = npc;
                 return true;
@@ -211,12 +243,32 @@ namespace FP2Lib.NPC
 
                     if (!HubNPCs.ContainsKey(data.UID))
                     {
-                        HubNPC npc = new HubNPC(data.UID, data.name, data.scene, gameObject, data.species, data.home, data.dialogue);
+                        HubNPC npc = new HubNPC
+                        {
+                            UID = data.UID,
+                            Name = data.name,
+                            Prefabs = new Dictionary<string, GameObject> { { data.scene, gameObject } },
+                            Species = data.species,
+                            customSpecies = data.customSpecies,
+                            Home = data.home,
+                            customHome = data.customHome,
+                            DialogueTopics = data.dialogue,
+                        };
                         HubNPCs.Add(data.UID, npc);
                     }
                     else if (HubNPCs.ContainsKey(data.UID) && HubNPCs[data.UID].Prefabs.Count == 0)
                     {
-                        HubNPC npc = new HubNPC(data.UID, data.name, data.scene, gameObject, data.species, data.home, data.dialogue);
+                        HubNPC npc = new HubNPC
+                        {
+                            UID = data.UID,
+                            Name = data.name,
+                            Prefabs = new Dictionary<string, GameObject> { { data.scene, gameObject } },
+                            Species = data.species,
+                            customSpecies = data.customSpecies,
+                            Home = data.home,
+                            customHome = data.customHome,
+                            DialogueTopics = data.dialogue,
+                        };
                         npc.ID = HubNPCs[data.UID].ID;
                         HubNPCs[data.UID] = npc;
                     }
@@ -234,7 +286,12 @@ namespace FP2Lib.NPC
                     NPCLogSource.LogDebug("Loaded NPC from storage: " + data.name + "(" + data.UID + ")");
                     if (!HubNPCs.ContainsKey(data.UID))
                     {
-                        HubNPC npc = new HubNPC(data.UID, data.name, data.runtimeID);
+                        HubNPC npc = new HubNPC
+                        {
+                            UID = data.UID,
+                            Name = data.name,
+                            ID = data.runtimeID,
+                        };
                         HubNPCs.Add(data.UID, npc);
                     }
                 }

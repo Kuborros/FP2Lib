@@ -6,7 +6,6 @@ namespace FP2Lib.NPC
 {
     public class HubNPC
     {
-        internal bool registered = false;
         /// <summary>
         /// Unique Identifier of the NPC
         /// </summary>
@@ -50,33 +49,11 @@ namespace FP2Lib.NPC
         /// </summary>
         public GameObject RuntimeObject { get; internal set; }
 
-        public HubNPC(string uID, string name, string scene, GameObject prefab, int species = 0, int home = 0, int topics = 1)
-        {
-            this.UID = uID;
-            this.Name = name;
-            Prefabs.Add(scene, prefab);
-            this.Species = species;
-            this.Home = home;
-            this.DialogueTopics = topics;
-            this.registered = true;
-        }
-
-        public HubNPC(string uID, string name, Dictionary<string, GameObject> prefabs, int species = 0, int home = 0, int topics = 1)
-        {
-            this.UID = uID;
-            this.Name = name;
-            this.Prefabs = prefabs;
-            this.Species = species;
-            this.Home = home;
-            this.DialogueTopics = topics;
-            this.registered = true;
-        }
-
         public HubNPC(string uID, string name, int id)
         {
-            this.UID = uID;
-            this.Name = name;
-            this.ID = id;
+            UID = uID;
+            Name = name;
+            ID = id;
         }
 
         public HubNPC() { }
