@@ -52,6 +52,10 @@ namespace FP2Lib.NPC
     public static class NPCHandler
     {
         internal static Dictionary<string, HubNPC> HubNPCs = new();
+
+        internal static bool[] takenIDs = new bool[1024];
+        internal static readonly int highestBaseID = 120;
+
         private static string storePath, ezPath;
         private static readonly ManualLogSource NPCLogSource = FP2Lib.logSource;
 
@@ -63,6 +67,11 @@ namespace FP2Lib.NPC
             ezPath = Path.Combine(Paths.ConfigPath, "NPCLibEzNPC");
             Directory.CreateDirectory(storePath);
             Directory.CreateDirectory(ezPath);
+
+            for (int i = 0; i < highestBaseID; i++)
+            {
+                takenIDs[i] = true;
+            }
 
             LoadFromStorage();
             LoadEzModeNPC();
@@ -108,6 +117,7 @@ namespace FP2Lib.NPC
                     Home = Home,
                     DialogueTopics = DialogueTopics,
                 };
+                npc.ID = AssignNPCID(npc);
                 HubNPCs.Add(uID, npc);
                 return true;
             }
@@ -123,6 +133,7 @@ namespace FP2Lib.NPC
                     DialogueTopics = DialogueTopics,
                 };
                 npc.ID = HubNPCs[uID].ID;
+                npc.ID = AssignNPCID(npc);
                 HubNPCs[uID] = npc;
                 return true;
             }
@@ -138,12 +149,14 @@ namespace FP2Lib.NPC
         {
             if (!HubNPCs.ContainsKey(npc.UID))
             {
+                npc.ID = AssignNPCID(npc);
                 HubNPCs.Add(npc.UID, npc);
                 return true;
             }
             else if (HubNPCs.ContainsKey(npc.UID) && HubNPCs[npc.UID].Prefabs.Count == 0)
             {
                 npc.ID = HubNPCs[npc.UID].ID;
+                npc.ID = AssignNPCID(npc);
                 HubNPCs[npc.UID] = npc;
                 return true;
             }
@@ -188,6 +201,7 @@ namespace FP2Lib.NPC
                     Home = Home,
                     DialogueTopics = DialogueTopics,
                 };
+                npc.ID = AssignNPCID(npc);
                 HubNPCs.Add(uID, npc);
                 return true;
             }
@@ -203,6 +217,7 @@ namespace FP2Lib.NPC
                     DialogueTopics = DialogueTopics,
                 };
                 npc.ID = HubNPCs[uID].ID;
+                npc.ID = AssignNPCID(npc);
                 HubNPCs[uID] = npc;
                 return true;
             }
@@ -254,6 +269,7 @@ namespace FP2Lib.NPC
                             customHome = data.customHome,
                             DialogueTopics = data.dialogue,
                         };
+                        npc.ID = AssignNPCID(npc);
                         HubNPCs.Add(data.UID, npc);
                     }
                     else if (HubNPCs.ContainsKey(data.UID) && HubNPCs[data.UID].Prefabs.Count == 0)
@@ -270,10 +286,40 @@ namespace FP2Lib.NPC
                             DialogueTopics = data.dialogue,
                         };
                         npc.ID = HubNPCs[data.UID].ID;
+                        npc.ID = AssignNPCID(npc);
                         HubNPCs[data.UID] = npc;
                     }
                 }
             }
+        }
+
+        private static int AssignNPCID(HubNPC npc)
+        {
+            //Character has ID
+            if (npc.ID != 0 && HubNPCs.ContainsKey(npc.UID))
+            {
+                NPCLogSource.LogDebug("Stored NPC ID assigned (" + npc.UID + "): " + npc.ID);
+                return npc.ID;
+            }
+            else
+            {
+                NPCLogSource.LogDebug("NPC with unassigned ID registered! Running assignment process for " + npc.UID);
+                //Iterate over array, assign first non-taken slot
+                for (int i = highestBaseID; i < takenIDs.Length; i++)
+                {
+                    //First slot with false = empty space
+                    if (!takenIDs[i])
+                    {
+                        npc.ID = i;
+                        takenIDs[i] = true;
+                        NPCLogSource.LogDebug("Assigned ID: " + npc.ID);
+                        //Will also break loop
+                        return npc.ID;
+                    }
+                }
+            }
+            NPCLogSource.LogWarning("NPC: " + npc.UID + " failed ID assignment! That's *very* bad!");
+            return 0;
         }
 
         private static void LoadFromStorage()
@@ -292,6 +338,7 @@ namespace FP2Lib.NPC
                             Name = data.name,
                             ID = data.runtimeID,
                         };
+                        takenIDs[data.runtimeID] = true;
                         HubNPCs.Add(data.UID, npc);
                     }
                 }

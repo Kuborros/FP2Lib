@@ -40,41 +40,12 @@ namespace FP2Lib.NPC
                     }
                     else
                     {
-                        //Collision found, set ID to 0 so the next step assigns us new one.
-                        FP2Lib.logSource.LogDebug("NPC " + npc.UID + " conflicts with ID = " + npc.ID);
-                        npc.ID = 0;
+                        //Likely collision found (someone messing with NPCs?), do not overwrite.
+                        FP2Lib.logSource.LogWarning("NPC " + npc.UID + " conflicts with ID = " + npc.ID);
+                        FP2Lib.logSource.LogWarning("Notify owner of: \"" + ___npcNames[npc.ID] + "\" that their setup causes badness!");
                     }
                 }
             }
-
-            //Handling of NPC with no ID assigned
-            foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
-            {
-                if (npc.ID == 0 && !(___npcNames.Contains(npc.getNpcString())))
-                {
-                    FP2Lib.logSource.LogDebug("Found NPC with no ID: " + npc.UID);
-                    //Zero ID + Not existing within array == new NPC, add it.
-                    //First try to repurpose blank ID's
-                    for (int i = 1; i < ___npcNames.Length; i++)
-                    {
-                        if (___npcNames[i] == "00 00 Data Missing")
-                        {
-                            ___npcNames[i] = npc.getNpcString();
-                            FP2Lib.logSource.LogDebug("Assigned empty ID = " + i);
-                            //Cursed but does what needed.
-                            goto END;
-                        }
-                    }
-                    //If nothing was found, append at the end
-                    FP2Lib.logSource.LogDebug("No empty ID found, adding at end of array.");
-                    ___npcNames = ___npcNames.AddToArray(npc.getNpcString());
-                }
-            END:
-                npc.ID = FPSaveManager.GetNPCNumber(npc.Name);
-                FP2Lib.logSource.LogDebug("ID for NPC " + npc.Name + " = " + npc.ID);
-            }
-
-
 
             //Resize other arrays accordingly
 
