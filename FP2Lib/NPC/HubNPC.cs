@@ -20,9 +20,19 @@ namespace FP2Lib.NPC
         /// </summary>
         public int Species;
         /// <summary>
+        /// Custom species string for the character.
+        /// Leave as null to use species ID instead.
+        /// </summary>
+        public string customSpecies = null;
+        /// <summary>
         /// Hometown ID for the NPC
         /// </summary>
         public int Home;
+        /// <summary>
+        /// Custom home region for the NPC
+        /// Leave null to use Hometown ID instead.
+        /// </summary>
+        public string customHome = null;
         /// <summary>
         /// Internal ID of the character
         /// </summary>
@@ -68,6 +78,8 @@ namespace FP2Lib.NPC
             this.Name = name;
             this.ID = id;
         }
+
+        public HubNPC() { }
 
         internal string getNpcString()
         {

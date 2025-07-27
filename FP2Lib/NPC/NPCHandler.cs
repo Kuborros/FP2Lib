@@ -114,6 +114,27 @@ namespace FP2Lib.NPC
         }
 
         /// <summary>
+        /// Register a single NPC, using premade HubNPC object.
+        /// </summary>
+        /// <param name="npc"></param>
+        /// <returns></returns>
+        public static bool RegisterNPCDirect(HubNPC npc)
+        {
+            if (!HubNPCs.ContainsKey(npc.UID))
+            {
+                HubNPCs.Add(npc.UID, npc);
+                return true;
+            }
+            else if (HubNPCs.ContainsKey(npc.UID) && HubNPCs[npc.UID].Prefabs.Count == 0)
+            {
+                npc.ID = HubNPCs[npc.UID].ID;
+                HubNPCs[npc.UID] = npc;
+                return true;
+            }
+            else return false;
+        }
+
+        /// <summary>
         /// Register a single NPC which shows up in multiple scenes.
         /// </summary>
         /// <param name="uID"></param>
@@ -154,7 +175,7 @@ namespace FP2Lib.NPC
                 return true;
             }
             else return false;
-        }
+        }  
 
         /// <summary>
         /// Get the HubNPC object of a registered character by their UID.
