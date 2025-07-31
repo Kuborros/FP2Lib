@@ -136,6 +136,7 @@ namespace FP2Lib
                     playerPatches.PatchAll(typeof(PatchGetPlayerStat));
                     playerPatches.PatchAll(typeof(PatchFPSaveManager));
                     playerPatches.PatchAll(typeof(PatchFPBaseEnemy));
+                    playerPatches.PatchAll(typeof(PatchFPPauseMenu));
                 }
                 catch (Exception ex)
                 {

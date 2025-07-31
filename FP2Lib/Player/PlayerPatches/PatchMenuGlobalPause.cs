@@ -5,9 +5,6 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchMenuGlobalPause
     {
-
-        //internal static MenuInstructions guideMenu;
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuGlobalPause), "Start", MethodType.Normal)]
         static void PatchMenuGlobalPauseStart(ref MenuGlobalPause __instance)
@@ -27,10 +24,11 @@ namespace FP2Lib.Player.PlayerPatches
                 __instance.playerInfoSprite.sprite = __instance.playerSprites[4];
                 __instance.playerInfoName.GetComponent<TextMesh>().text = chara.Name;
 
-                //No touchie for now
-                //The guide menu is *hardcoded* into the menus, so simple disabling will not do anything.
-                //TODO: Give option to nuke it properly, in case the mod is not interested in adding 8 pages of custom guides.
-                //__instance.menuOptions[2].locked = true;
+                //Replace instruction menu with custom one
+                if (chara.menuInstructionPrefab != null)
+                {
+                    __instance.menuGuide = chara.menuInstructionPrefab.GetComponent<MenuInstructions>();
+                }
 
             }
         }

@@ -10,7 +10,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (character > FPCharacterID.NEERA)
             {
-                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).StatDefaultAcceleration;
+                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).statDefaultAcceleration;
             }
         }
 
@@ -21,7 +21,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (character > FPCharacterID.NEERA)
             {
-                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).StatDefaultAirAcceleration;
+                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).statDefaultAirAcceleration;
             }
         }
 
@@ -31,7 +31,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (character > FPCharacterID.NEERA)
             {
-                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).StatDefaultDeceleration;
+                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).statDefaultDeceleration;
             }
         }
 
@@ -41,7 +41,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (character > FPCharacterID.NEERA)
             {
-                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).StatDefaultJumpRelease;
+                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).statDefaultJumpRelease;
             }
         }
 
@@ -51,7 +51,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (character > FPCharacterID.NEERA)
             {
-                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).StatDefaultJumpStrength;
+                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).statDefaultJumpStrength;
             }
         }
 
@@ -61,7 +61,7 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (character > FPCharacterID.NEERA)
             {
-                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).StatDefaultTopSpeed;
+                __result = PlayerHandler.GetPlayableCharaByRuntimeIdSafe((int)character).statDefaultTopSpeed;
             }
         }
     }

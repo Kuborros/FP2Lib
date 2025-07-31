@@ -191,47 +191,52 @@ namespace FP2Lib.Player
         /// MenuPhotoPose object with all your photo pose sprites set-up.
         /// </summary>
         public MenuPhotoPose menuPhotoPose;
-
         /// <summary>
         /// GameObject containing the character select wheel preview
         /// </summary>
         public GameObject characterSelectPrefab;
-
         /// <summary>
         /// Game object containing your playable FPPlayer character.
         /// </summary>
         public GameObject prefab;
 
         /// <summary>
+        /// The MenuInstruction prefab, consisting of complete MenuInstructions menu.
+        /// This can be copied from existing MenuInstruction prefab for convenience
+        /// Null here disables replacing of the menu, and lets you handle the implementation yourself (or not at all).
+        /// </summary>
+        public GameObject menuInstructionPrefab = null;
+
+        /// <summary>
         /// Default acceleration value for your character. Should be the same as set in the prefab.
         /// All base characters but Neera use 0.110625 here. Can be usually left at default.
         /// </summary>
-        public float StatDefaultAcceleration = 0.110625f;
+        public float statDefaultAcceleration = 0.110625f;
         /// <summary>
         /// Default air acceleration for your character. Should be the same as set in the prefab.
         /// All base-game characters use 0.22125 here. Can be usually left at default.
         /// </summary>
-        public float StatDefaultAirAcceleration = 0.22125f;
+        public float statDefaultAirAcceleration = 0.22125f;
         /// <summary>
         /// Default deceleration of your character. Should be the same as set in the prefab.
         /// The most common value is 0.110625. Can be usually left at default.
         /// </summary>
-        public float StatDefaultDeceleration = 0.110625f;
+        public float statDefaultDeceleration = 0.110625f;
         /// <summary>
         /// Default initial jump speed. Should be the same as set in the prefab.
         /// All base-game characters use 4.5 here. Can be usually left at default.
         /// </summary>
-        public float StatDefaultJumpRelease = 4.5f;
+        public float statDefaultJumpRelease = 4.5f;
         /// <summary>
         /// Set the default jump strength of your character here.
         /// All base-game characters use 10.5 here. Can be usually left at default.
         /// </summary>
-        public float StatDefaultJumpStrength = 10.5f;
+        public float statDefaultJumpStrength = 10.5f;
         /// <summary>
         /// Set the top speed value for your character. Should be the same as set in the prefab.
         /// All base-game characters use 7.5 here. Can be usually left at default.
         /// </summary>
-        public float StatDefaultTopSpeed = 7.5f;
+        public float statDefaultTopSpeed = 7.5f;
 
         /// <summary>
         /// Asset Bundle containing all the character data
