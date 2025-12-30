@@ -15,7 +15,7 @@ namespace FP2Lib.Item
         [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
         static void PatchFPSaveManagerLoad(ref byte[] ___inventory)
         {
-            //Calculate how many tracks we have
+            //Calculate how many items we have
             int totalItems = ItemHandler.baseItems + ItemHandler.Items.Count;
             foreach (ItemData item in ItemHandler.Items.Values)
             {
@@ -25,10 +25,11 @@ namespace FP2Lib.Item
                     totalItems = item.id;
                 }
             }
-            //Add slots in file for extra items.
+            //Add slots in file for extra items. 
+            //Potion seller already does 99, so we should start at 100 to not mess with it
             ___inventory = FPSaveManager.ExpandByteArray(___inventory, totalItems);
 
-            //ItemHandler.WriteToStorage();
+            ItemHandler.WriteToStorage();
         }
 
         [HarmonyPostfix]
@@ -77,8 +78,12 @@ namespace FP2Lib.Item
                                 break;
                             default:
                                 if (FPSaveManager.character > FPCharacterID.NEERA) {
-                                    if (itemData.descriptionCustom.ContainsKey(PlayerHandler.currentCharacter.uid))
-                                        __result = itemData.descriptionCustom[PlayerHandler.currentCharacter.uid];
+                                    if (PlayerHandler.currentCharacter != null)
+                                    {
+                                        if (itemData.descriptionCustom.ContainsKey(PlayerHandler.currentCharacter.uid))
+                                            __result = itemData.descriptionCustom[PlayerHandler.currentCharacter.uid];
+                                        else __result = itemData.descriptionGeneric;
+                                    }
                                     else __result = itemData.descriptionGeneric;
                                 }
                                 else __result = itemData.descriptionGeneric;
