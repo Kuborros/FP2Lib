@@ -11,16 +11,18 @@ namespace FP2Lib.Player
         public int id { get; internal set; }
         /// <summary>
         /// ID used for the character select wheel. Internal, not set by modder.
+        /// Will differ from characterID since not every character (ex. Bike Carol) is on the wheel!
         /// </summary>
         internal int wheelId;
         /// <summary>
-        /// 0 - Zao's Aiship, 1 - Cargo Airship,
+        /// 0 - Zao's Aiship, 1 - Cargo Airship. Also affects plane/submarine but base game fills the array with identical sprites in each slot.
         /// Anything else - Sprite provided by modder and added to vehicle array under said id.
         /// </summary>
         public int airshipSprite = 0;
 
         /// <summary>
         /// Unique Identifier
+        /// This is how your character is identified internally, so pick something unique!
         /// </summary>
         public string uid;
         /// <summary>
@@ -106,8 +108,8 @@ namespace FP2Lib.Player
         public FPCharacterID eventActivatorCharacter;
         /// <summary>
         /// Gender identity of your character, for purpose of dialogue and other mod logic. 
-        /// By default it changes how the Battlesphere Announcer refers to your character.
-        /// Defaults to Non-Binary they/them.
+        /// By default it changes how the Battlesphere Announcer refers to your character. Other mods might use it to change dialogue.
+        /// Defaults to Non-Binary they/them which should avoid gendered lines.
         /// </summary>
         public CharacterGender Gender = CharacterGender.NON_BINARY;
         /// <summary>
@@ -192,6 +194,11 @@ namespace FP2Lib.Player
         /// </summary>
         public MenuPhotoPose menuPhotoPose;
         /// <summary>
+        /// PlayerBoss version of your character, if you have one. Can be used by a mod (yours, or someone else's) for adding your character in Battlesphere or Dojos.
+        /// Optional, as it's not used automatically. You might wish to set it up in a way that works both as an ally and enemy for the player.
+        /// </summary>
+        public PlayerBoss playerBoss = null;
+        /// <summary>
         /// GameObject containing the character select wheel preview
         /// </summary>
         public GameObject characterSelectPrefab;
@@ -234,12 +241,15 @@ namespace FP2Lib.Player
         public float statDefaultJumpStrength = 10.5f;
         /// <summary>
         /// Set the top speed value for your character. Should be the same as set in the prefab.
-        /// All base-game characters use 7.5 here. Can be usually left at default.
+        /// All base-game characters use 7.5 here. Carol on a Bike has top speed of 15. Can be usually left at default. 
+        /// The hard limit is 24 for ground speed, enforced by other parts of the game's code.
+        /// While it can be patched out, this limit exists due to collision starting to misbehave at higher speeds so patch it only if you know what your doing.
         /// </summary>
         public float statDefaultTopSpeed = 7.5f;
 
         /// <summary>
-        /// Asset Bundle containing all the character data
+        /// Asset Bundle containing all the character data.
+        /// Can be used to pull out any extra assets if needed.
         /// </summary>
         public AssetBundle dataBundle;
 

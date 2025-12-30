@@ -3,11 +3,13 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using FP2Lib.Badge;
 using FP2Lib.BepIn;
+using FP2Lib.Item;
 using FP2Lib.Map;
 using FP2Lib.NPC;
 using FP2Lib.Patches;
 using FP2Lib.Player;
 using FP2Lib.Player.PlayerPatches;
+using FP2Lib.Potion;
 using FP2Lib.Saves;
 using FP2Lib.Stage;
 using FP2Lib.Tools;
@@ -17,7 +19,7 @@ using System;
 
 namespace FP2Lib
 {
-    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.4.3.0")]
+    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.4.3.1")]
     [BepInProcess("FP2.exe")]
     public class FP2Lib : BaseUnityPlugin
     {
@@ -26,17 +28,12 @@ namespace FP2Lib
         public static ConfigEntry<bool> configSaveFancy;
         public static ConfigEntry<int> configSaveProfile;
 
-        internal static ConfigEntry<string> configLanguageForce;
-
         public static ConfigEntry<bool> configCowabunga;
 
         public static GameInfo gameInfo;
-        public static string language = "english";
         internal static ManualLogSource logSource;
 
-#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
-#pragma warning restore IDE0051 // Remove unused private members
         {
 
             gameInfo = new GameInfo();
@@ -45,16 +42,10 @@ namespace FP2Lib
             configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, new ConfigDescription("Enable save file redirection.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, new ConfigDescription("Makes JSON files more human-readable.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, new ConfigDescription("Select save redirection profile.", new AcceptableValueRange<int>(0, 9), new ConfigurationManagerAttributes { IsAdvanced = true }));
-            configLanguageForce = Config.Bind("Language Settings", "Force Language", "", new ConfigDescription("Force specific language on launch. Leave empty for default behaviour. Does nothing till language update comes out.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
 
             configCowabunga = Config.Bind("Debug", "Cowabunga", false, new ConfigDescription("Engages cowabunga mode. No sanity checks will be run, will attempt to hook in on any FP2 version.\n" +
                 "Yes, this includes 2015 Sample Versions. Your mileage might vary and bug reports with this mode on will *not* be accepted!\n" +
                 "Some mods might read this value to skip their own checks.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
-
-            if (!configLanguageForce.Value.IsNullOrWhiteSpace())
-            {
-                language = configLanguageForce.Value;
-            }
 
             NPCHandler.InitialiseHandler();
             PlayerHandler.InitialiseHandler();
@@ -159,6 +150,16 @@ namespace FP2Lib
             Harmony badgePatches = new("000.kuborro.libraries.fp2.fp2lib.badge");
             badgePatches.PatchAll(typeof(BadgePatches));
 
+            //Items
+            Logger.LogDebug("Item Patch Init");
+            Harmony itemPatches = new("000.kuborro.libraries.fp2.fp2lib.item");
+            itemPatches.PatchAll(typeof(ItemPatches));
+
+            //Potions
+            Logger.LogDebug("Potion Patch Init");
+            Harmony potionPatches = new("000.kuborro.libraries.fp2.fp2lib.potion");
+            badgePatches.PatchAll(typeof(PotionPatches));
+
             //World Maps
             Logger.LogDebug("World Map Patch Init");
             Harmony mapPatches = new("000.kuborro.libraries.fp2.fp2lib.worldmap");
@@ -180,8 +181,6 @@ namespace FP2Lib
             generalPatches.PatchAll(typeof(ScreenshotFix));
             generalPatches.PatchAll(typeof(PotionSizeFix));
             generalPatches.PatchAll(typeof(ModdedPotionsFix));
-            //Still no language update for PC :(
-            //generalPatches.PatchAll(typeof(LanguageExpander));
 
             Logger.LogInfo("Init done!");
         }
