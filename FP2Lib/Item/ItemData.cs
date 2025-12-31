@@ -86,7 +86,7 @@ namespace FP2Lib.Item
         /// <summary>
         /// Which shop should the item appear in
         /// </summary>
-        public IAddToShop shopLocation;
+        public IAddToShop shopLocation = IAddToShop.None;
 
         internal int id = 0;
 

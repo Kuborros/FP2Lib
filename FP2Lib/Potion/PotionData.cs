@@ -29,18 +29,22 @@ namespace FP2Lib.Potion
         /// <summary>
         /// Inventory sprite (shops and item list)
         /// </summary>
+        [NonSerialized]
         public Sprite inventorySprite;
         /// <summary>
         /// Sprite for the middle slots in the bottle preview.
         /// </summary>
+        [NonSerialized]
         public Sprite spriteBottleMid;
         /// <summary>
         /// Sprite for the top (last) slot in the bottle.
         /// </summary>
+        [NonSerialized]
         public Sprite spriteBottleTop;
         /// <summary>
         /// Sprite for the bottom (first) slot in the bottle.
         /// </summary>
+        [NonSerialized]
         public Sprite spriteBottleBottom;
         /// <summary>
         /// How many Star Cards are needed to unlock it in shops.
@@ -56,7 +60,7 @@ namespace FP2Lib.Potion
         /// Which shop should the potion appear in
         /// </summary>
         [NonSerialized]
-        public PAddToShop shop;
+        public PAddToShop shopLocation = PAddToShop.None;
 
         internal int id = 0;
 
@@ -64,7 +68,7 @@ namespace FP2Lib.Potion
         {
         }
 
-        public PotionData(string uid, string name, string description, Sprite inventorySprite, Sprite spriteBottleMid, Sprite spriteBottleTop, Sprite spriteBottleBottom, int starCards, int goldGemsPrice, PAddToShop shop)
+        public PotionData(string uid, string name, string description, Sprite inventorySprite, Sprite spriteBottleMid, Sprite spriteBottleTop, Sprite spriteBottleBottom, int starCards, int goldGemsPrice, PAddToShop shopLocation)
         {
             this.uid = uid;
             this.name = name;
@@ -75,7 +79,7 @@ namespace FP2Lib.Potion
             this.spriteBottleBottom = spriteBottleBottom;
             this.starCards = starCards;
             this.goldGemsPrice = goldGemsPrice;
-            this.shop = shop;
+            this.shopLocation = shopLocation;
         }
 
         internal static PotionData LoadFromJson(string json)

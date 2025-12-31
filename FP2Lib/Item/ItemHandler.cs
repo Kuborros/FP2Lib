@@ -12,6 +12,7 @@ namespace FP2Lib.Item
     internal class ItemHandler
     {
         private static readonly ManualLogSource ItemLogSource = FP2Lib.logSource;
+        internal static bool isPotionSellerInstalled = false;
 
         //First empty slot with Potion Seller installed is 100
         public static readonly int baseItems = 100;
@@ -97,15 +98,15 @@ namespace FP2Lib.Item
 
         private static int AssignItemID(ItemData item)
         {
-            //Vinyl already has ID
+            //Item already has ID
             if (item.id != 0 && Items.ContainsKey(item.uid))
             {
-                ItemLogSource.LogDebug("Stored vinyl ID assigned (" + item.uid + "): " + item.id);
+                ItemLogSource.LogDebug("Stored item ID assigned (" + item.uid + "): " + item.id);
                 return item.id;
             }
             else
             {
-                ItemLogSource.LogDebug("Vinyl with unassigned ID registered! Running assignment process for " + item.uid);
+                ItemLogSource.LogDebug("Item with unassigned ID registered! Running assignment process for " + item.uid);
                 //Iterate over array, assign first non-taken slot
                 for (int i = 64; i < takenIDs.Length; i++)
                 {

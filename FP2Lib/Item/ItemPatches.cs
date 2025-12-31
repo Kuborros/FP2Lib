@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using FP2Lib.Player;
 using HarmonyLib;
@@ -9,6 +10,15 @@ namespace FP2Lib.Item
     internal class ItemPatches
     {
         private static readonly ManualLogSource ItemLogSource = FP2Lib.logSource;
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
+        static void PotionSellerRadar()
+        {
+            //Detect if Potion Seller is installed. Needed to adjust inventory clean up ranges.
+            ItemHandler.isPotionSellerInstalled = Chainloader.PluginInfos.ContainsKey("com.eps.plugin.fp2.potion-seller");
+        }
+
 
         //Update save file to account for extra Items
         [HarmonyPostfix]
@@ -29,6 +39,9 @@ namespace FP2Lib.Item
             //Potion seller already does 99, so we should start at 100 to not mess with it
             ___inventory = FPSaveManager.ExpandByteArray(___inventory, totalItems);
 
+            //Perform inventory clean-up. Items which do not have their sprites (and as such, belong to not installed mod, are set to not owned).
+
+
             ItemHandler.WriteToStorage();
         }
 
@@ -42,7 +55,8 @@ namespace FP2Lib.Item
                 {
                     if (itemData.id == (int)item)
                     {
-                        if (itemData.name.IsNullOrWhiteSpace()) __result = "Deleted Mod Item!";
+                        //Even uninstalled items keep their name, so to see this the item must be turbo broken.
+                        if (itemData.name.IsNullOrWhiteSpace()) __result = "Missing Item! You should not be seeing this!";
                         else if (itemData.sprite == null) __result = itemData.name + " - (Deleted Mod)"; 
                         else __result = itemData.name;
                         break;
