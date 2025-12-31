@@ -70,7 +70,7 @@ namespace FP2Lib.Stage
         /// </summary>
         public string vinylUID;
         /// <summary>
-        /// Set to UID of a custom item to automatically assign right itemID at runtime. (WIP)
+        /// Set to UID of a custom item to automatically assign right itemID at runtime.
         /// Has to be already registered.
         /// </summary>
         public string itemUID;
@@ -105,7 +105,7 @@ namespace FP2Lib.Stage
         internal bool registered = false;
 
         /// <summary>
-        /// 
+        /// Primary constructor.
         /// </summary>
         /// <param name="uid"></param>
         /// <param name="name"></param>
@@ -136,7 +136,7 @@ namespace FP2Lib.Stage
         }
 
         /// <summary>
-        /// 
+        /// Short constructor, for loading the basics from .json
         /// </summary>
         /// <param name="uid"></param>
         /// <param name="name"></param>
@@ -150,15 +150,12 @@ namespace FP2Lib.Stage
             this.id = id;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public CustomStage() { }
 
         /// <summary>
-        /// 
+        /// Get StageData for this stage (used for storing stage details in json).
         /// </summary>
-        /// <returns></returns>
+        /// <returns>StageData to be serialised</returns>
         public StageData getStageData()
         {
             return new StageData(uid, name, isHUB, id);

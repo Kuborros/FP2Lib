@@ -179,7 +179,7 @@ namespace FP2Lib.Stage
                     }
                 }
             }
-            //Can occur if there are somehow 1024 custom stages, which is an unlikely scenario.
+            //Can occur if there are somehow 1024 total stages, which is an unlikely scenario.
             StageLogSource.LogWarning("Scene: " + stage.uid + " failed ID assignment! That's bad!");
             return 0;
         }

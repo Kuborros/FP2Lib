@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using FP2Lib.Item;
 using FP2Lib.Vinyl;
 using HarmonyLib;
 using System.Linq;
@@ -131,14 +132,14 @@ namespace FP2Lib.Stage
             if (!stage.itemUID.IsNullOrWhiteSpace())
             {
                 StageLogSource.LogDebug("Linking item with uid: " + stage.itemUID + " for stage:" + stage.uid);
-                //TODO: Implement code once ItemHandler is done
-                StageLogSource.LogDebug("Item linking is not available yet!");
-                return FPPowerup.NONE;
+                ItemData item = ItemHandler.GetItemDataByUid(stage.itemUID);
+                if (item != null)
+                {
+                    StageLogSource.LogDebug("Got id:" + item.id + " for item name: " + item.name);
+                    return (FPPowerup)item.id;
+                }
             }
-            else
-            {
-                return stage.itemID;
-            }
+            return stage.itemID;
         }
 
         //Extend time records array if needed
@@ -179,7 +180,7 @@ namespace FP2Lib.Stage
                     if (stage.id >= ___stageIconSprites.Length)
                     {
                         for (int i = ___stageIconSprites.Length; i <= (stage.id); i++)
-                            //Default icon will use the "?" from Weapon's Core (in case stage lacks the needed sprite, or we have id hole.
+                            //Default icon will use the "?" from Weapon's Core (in case stage lacks the needed sprite, or we have id hole.)
                             ___stageIconSprites = ___stageIconSprites.AddToArray(___stageIconSprites[30]);
                     }
                     if (stage.id >= ___hudVinylID.Length)
