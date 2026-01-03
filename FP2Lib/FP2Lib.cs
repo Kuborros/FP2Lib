@@ -53,6 +53,8 @@ namespace FP2Lib
             BadgeHandler.InitialiseHandler();
             MapHandler.InitialiseHandler();
             StageHandler.InitialiseHandler();
+            //PotionHandler.InitialiseHandler();
+            //ItemHandler.InitialiseHandler();
 
             Logger.LogMessage("Running FP2 Version: " + gameInfo.getVersionString());
             if (gameInfo.build == GameRelease.SAMPLE && !configCowabunga.Value)
@@ -81,8 +83,15 @@ namespace FP2Lib
             //NPC
             Logger.LogDebug("NPC Patch Init");
             //Code can handle older game builds.
-            Harmony npcPatches = new("000.kuborro.libraries.fp2.fp2lib.npc");
-            npcPatches.PatchAll(typeof(NPCPatches));
+            try
+            {
+                Harmony npcPatches = new("000.kuborro.libraries.fp2.fp2lib.npc");
+                npcPatches.PatchAll(typeof(NPCPatches));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("NPC Patch Failed! Info:" + ex.Message);
+            }
 
             //Player
             Logger.LogDebug("Player Patch Init");
@@ -134,7 +143,7 @@ namespace FP2Lib
                     Logger.LogError("Something went wrong while patching player code! Info:\n" + ex.Message);
                     Logger.LogDebug(ex);
                 }
-            } 
+            }
             else
             {
                 Logger.LogWarning("Player patches are not functional in FP2 builds older than 1.2.6! Sorry!\nMods dependent on these *will* be broken!");
@@ -142,45 +151,101 @@ namespace FP2Lib
 
             //Vinyls
             Logger.LogDebug("Vinyl Patch Init");
-            Harmony vinylPatches = new("000.kuborro.libraries.fp2.fp2lib.vinyl");
-            vinylPatches.PatchAll(typeof(VinylPatches));
+            try
+            {
+                Harmony vinylPatches = new("000.kuborro.libraries.fp2.fp2lib.vinyl");
+                vinylPatches.PatchAll(typeof(VinylPatches));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Vinyl Patch Failed! Info:" + ex.Message);
+            }
 
             //Badges
             Logger.LogDebug("Badge Patch Init");
-            Harmony badgePatches = new("000.kuborro.libraries.fp2.fp2lib.badge");
-            badgePatches.PatchAll(typeof(BadgePatches));
+            try
+            {
+                Harmony badgePatches = new("000.kuborro.libraries.fp2.fp2lib.badge");
+                badgePatches.PatchAll(typeof(BadgePatches));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Badge Patch Failed! Info:" + ex.Message);
+            }
 
             //Items
             Logger.LogDebug("Item Patch Init");
-            Harmony itemPatches = new("000.kuborro.libraries.fp2.fp2lib.item");
-            itemPatches.PatchAll(typeof(ItemPatches));
+            try
+            {
+                Harmony itemPatches = new("000.kuborro.libraries.fp2.fp2lib.item");
+                //itemPatches.PatchAll(typeof(ItemPatches));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Item Patch Failed! Info:" + ex.Message);
+            }
 
             //Potions
             Logger.LogDebug("Potion Patch Init");
-            Harmony potionPatches = new("000.kuborro.libraries.fp2.fp2lib.potion");
-            badgePatches.PatchAll(typeof(PotionPatches));
+            try
+            {
+                Harmony potionPatches = new("000.kuborro.libraries.fp2.fp2lib.potion");
+                //potionPatches.PatchAll(typeof(PotionPatches));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Potion Patch Failed! Info:" + ex.Message);
+            }
 
             //World Maps
             Logger.LogDebug("World Map Patch Init");
-            Harmony mapPatches = new("000.kuborro.libraries.fp2.fp2lib.worldmap");
-            mapPatches.PatchAll(typeof(MapPatches));
+            try
+            {
+                Harmony mapPatches = new("000.kuborro.libraries.fp2.fp2lib.worldmap");
+                mapPatches.PatchAll(typeof(MapPatches));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Map Patch Failed! Info:" + ex.Message);
+            }
 
             //Levels
             Logger.LogDebug("Stage Patch Init");
-            Harmony stagePatches = new("000.kuborro.libraries.fp2.fp2lib.stage");
-            stagePatches.PatchAll(typeof(StagePatches));
+            try
+            {
+                Harmony stagePatches = new("000.kuborro.libraries.fp2.fp2lib.stage");
+                stagePatches.PatchAll(typeof(StagePatches));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Stage Patch Failed! Info:" + ex.Message);
+            }
 
             //Save Redirection
             Logger.LogDebug("Saves Patch Init");
-            Harmony savePatches = new("000.kuborro.libraries.fp2.fp2lib.saves");
-            savePatches.PatchAll(typeof(SavePatches));
+            try
+            {
+                Harmony savePatches = new("000.kuborro.libraries.fp2.fp2lib.saves");
+                savePatches.PatchAll(typeof(SavePatches));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Save Patch Failed! VERY BAD!!!!! Info:" + ex.Message);
+            }
 
             //Misc fixes and patches
             Logger.LogDebug("Bugfix Patch Init");
-            Harmony generalPatches = new("000.kuborro.libraries.fp2.fp2lib.patches");
-            generalPatches.PatchAll(typeof(ScreenshotFix));
-            generalPatches.PatchAll(typeof(PotionSizeFix));
-            generalPatches.PatchAll(typeof(ModdedPotionsFix));
+            try
+            {
+                Harmony generalPatches = new("000.kuborro.libraries.fp2.fp2lib.patches");
+                generalPatches.PatchAll(typeof(ScreenshotFix));
+                generalPatches.PatchAll(typeof(PotionSizeFix));
+                generalPatches.PatchAll(typeof(ModdedPotionsFix));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Extras Patch Failed! Info:" + ex.Message);
+            }
 
             Logger.LogInfo("Init done!");
         }
