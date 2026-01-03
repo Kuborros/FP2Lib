@@ -40,14 +40,6 @@ Example config file contains following options which can be edited by hand:
 # Setting type: Boolean
 # Default value: false
 Cowabunga = false
-
-[Language Settings]
-
-## Force specific language on launch. Leave empty for default behaviour. 
-## This feature is currently inactive, due to apparent cancellation of FP2's language update.
-# Setting type: String
-# Default value: 
-Force Language = 
 ```
 And following ones which should _not_ be touched manually, as they are managed by FP2 Mod Manager. 
 Editing _any_ of them at runtime can have **disasterous** results, and are therefore marked as Advanced Settings using Bepinex's config flags.
