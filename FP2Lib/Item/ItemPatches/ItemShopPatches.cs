@@ -6,7 +6,6 @@ namespace FP2Lib.Item.ItemPatches
 {
     internal class ItemShopPatches
     {
-        
         //Patch the NPCs
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPHubNPC), "Start", MethodType.Normal)]

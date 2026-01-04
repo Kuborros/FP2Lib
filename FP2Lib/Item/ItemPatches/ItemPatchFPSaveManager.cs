@@ -39,19 +39,15 @@ namespace FP2Lib.Item.ItemPatches
             //Potion seller already does 99, so we should start at 100 to not mess with it
             ___inventory = FPSaveManager.ExpandByteArray(___inventory, totalItems);
 
-            //Trim the array to our highest ID. Potion Seller uses ids lower than 100 so it will not be affected.
-            //
-            if (___inventory.Length > totalItems - 1)
-                ___inventory = ___inventory.Take(totalItems).ToArray();
-
             ItemHandler.WriteToStorage();
         }
 
         [HarmonyPostfix]
+        [HarmonyWrapSafe]
         [HarmonyPatch(typeof(FPSaveManager), "GetItemName", MethodType.Normal)]
         static void PatchFPSaveManagerItemName(FPPowerup item, ref string __result)
         {
-            if (__result == "No Item") //Default method returned nothing, check if maybe we got the item
+            if (__result == "No Item") //Default method returned "No item", check if maybe we got the item
             {
                 foreach (ItemData itemData in ItemHandler.Items.Values)
                 {
@@ -68,6 +64,7 @@ namespace FP2Lib.Item.ItemPatches
         }
 
         [HarmonyPostfix]
+        [HarmonyWrapSafe]
         [HarmonyPatch(typeof(FPSaveManager), "GetItemDescription", MethodType.Normal)]
         static void PatchFPSaveManagerItemDescription(FPPowerup item, ref string __result)
         {
