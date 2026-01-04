@@ -88,7 +88,7 @@ namespace FP2Lib.Item
         /// </summary>
         public IAddToShop shopLocation = IAddToShop.None;
 
-        internal int id = 0;
+        public int id = 0;
 
         public ItemData()
         {

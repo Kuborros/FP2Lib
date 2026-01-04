@@ -4,6 +4,7 @@ using BepInEx.Logging;
 using FP2Lib.Badge;
 using FP2Lib.BepIn;
 using FP2Lib.Item;
+using FP2Lib.Item.ItemPatches;
 using FP2Lib.Map;
 using FP2Lib.NPC;
 using FP2Lib.Patches;
@@ -19,7 +20,7 @@ using System;
 
 namespace FP2Lib
 {
-    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.4.3.1")]
+    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.5.0.0")]
     [BepInProcess("FP2.exe")]
     public class FP2Lib : BaseUnityPlugin
     {
@@ -53,8 +54,8 @@ namespace FP2Lib
             BadgeHandler.InitialiseHandler();
             MapHandler.InitialiseHandler();
             StageHandler.InitialiseHandler();
-            //PotionHandler.InitialiseHandler();
-            //ItemHandler.InitialiseHandler();
+            PotionHandler.InitialiseHandler();
+            ItemHandler.InitialiseHandler();
 
             Logger.LogMessage("Running FP2 Version: " + gameInfo.getVersionString());
             if (gameInfo.build == GameRelease.SAMPLE && !configCowabunga.Value)
@@ -178,7 +179,9 @@ namespace FP2Lib
             try
             {
                 Harmony itemPatches = new("000.kuborro.libraries.fp2.fp2lib.item");
-                //itemPatches.PatchAll(typeof(ItemPatches));
+                itemPatches.PatchAll(typeof(ItemShopPatches));
+                itemPatches.PatchAll(typeof(ItemMenuPatches));
+                itemPatches.PatchAll(typeof(ItemPatchFPSaveManager));
             }
             catch (Exception ex)
             {
@@ -190,7 +193,7 @@ namespace FP2Lib
             try
             {
                 Harmony potionPatches = new("000.kuborro.libraries.fp2.fp2lib.potion");
-                //potionPatches.PatchAll(typeof(PotionPatches));
+                potionPatches.PatchAll(typeof(PotionPatches));
             }
             catch (Exception ex)
             {

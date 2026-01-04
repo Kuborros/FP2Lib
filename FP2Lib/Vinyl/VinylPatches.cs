@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace FP2Lib.Vinyl
             }
             //Add slots in file for extra tracks.
             ___musicTracks = FPSaveManager.ExpandBoolArray(___musicTracks, totalTracks);
-            //But if it's too ling things will break, so we trim it in such case.
+            //But if it's too long things will break, so we trim it in such case.
             //Very important as the game _will_ detonate if you scroll to a vinyl you have 'unlocked' but it has no data for.
             if (___musicTracks.Length > totalTracks - 1)
                 ___musicTracks = ___musicTracks.Take(totalTracks).ToArray();
@@ -119,9 +120,10 @@ namespace FP2Lib.Vinyl
 
 
         //Patching the classic mode shop
+        //Yes i am aware it kinda repeats the same loop when in adventure. But since we check in both places if giben Vinyl was already added, it can stay.
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuShop), "Start", MethodType.Normal)]
-        static void PatchClasicMusic(ref FPPowerup[] ___itemsForSale, ref int[] ___itemCosts, ref int[] ___starCardRequirements, ref FPMusicTrack[] ___musicID)
+        static void PatchClasicMusic(MenuShop __instance, ref FPPowerup[] ___itemsForSale, ref int[] ___itemCosts, ref int[] ___starCardRequirements, ref FPMusicTrack[] ___musicID)
         {
             if (___itemCosts != null && ___itemsForSale != null)
             {
@@ -138,9 +140,11 @@ namespace FP2Lib.Vinyl
                                 ___itemCosts = ___itemCosts.AddToArray(vinyl.crystalsPrice);
                                 ___starCardRequirements = ___starCardRequirements.AddToArray(vinyl.starCards);
                                 ___musicID = ___musicID.AddToArray((FPMusicTrack)vinyl.id);
-                            }
+                            }         
                         }
                     }
+                    SortItems(__instance);
+                    UpdateItemList(__instance, true);
                 }
             }
         }
@@ -178,6 +182,22 @@ namespace FP2Lib.Vinyl
                     }
                 }
             }
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(MenuShop), "SortItems", MethodType.Normal)]
+        public static void SortItems(MenuShop instance)
+        {
+            // Replaced at runtime with reverse patch
+            throw new NotImplementedException("Method failed to reverse patch!");
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(MenuShop), "UpdateItemList", MethodType.Normal)]
+        public static void UpdateItemList(MenuShop instance, bool updateText)
+        {
+            // Replaced at runtime with reverse patch
+            throw new NotImplementedException("Method failed to reverse patch!");
         }
     }
 }

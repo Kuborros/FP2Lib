@@ -35,7 +35,7 @@ namespace FP2Lib.Player.PlayerPatches
             wheelcharas = 3;
 
             //Warn the gamer on anything sus
-            PlayerHandler.doWeHaveHolesInIds();
+            PlayerHandler.DoWeHaveHolesInIds();
 
             //Extend arrays
             for (int i = 4; i < PlayerHandler.highestID; i++)

@@ -11,7 +11,7 @@ namespace FP2Lib.Player
 {
     public static class PlayerHandler
     {
-        public static Dictionary<string, PlayableChara> PlayableChars { get; internal set; } = new();
+        public static Dictionary<string, PlayableChara> PlayableChars { get; internal set; } = [];
         //The wheel can only handle 24 positions without becoming wonky, so this is the soft limit for now.
         internal static bool[] takenIDs = new bool[23];
         internal static int highestID = 4;
@@ -83,7 +83,7 @@ namespace FP2Lib.Player
         /// Checks for any holes in our ID order. Usually caused only by manual edits to the files, but it will screw things up if it happens.
         /// </summary>
         /// <returns>Have any holes been found.</returns>
-        public static bool doWeHaveHolesInIds()
+        public static bool DoWeHaveHolesInIds()
         {
             for (int i = 0; i <= highestID; i++)
             {

@@ -12,7 +12,7 @@ namespace FP2Lib.Potion
     }
 
     [System.Serializable]
-    internal class PotionData
+    public class PotionData
     {
         /// <summary>
         /// Unique identifier for your potion
@@ -62,7 +62,7 @@ namespace FP2Lib.Potion
         [NonSerialized]
         public PAddToShop shopLocation = PAddToShop.None;
 
-        internal int id = 0;
+        public int id = 0;
 
         public PotionData()
         {

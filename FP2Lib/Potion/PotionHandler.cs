@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace FP2Lib.Potion
 {
-    internal class PotionHandler
+    public class PotionHandler
     {
         private static readonly ManualLogSource PotionLogSource = FP2Lib.logSource;
         internal static bool isPotionSellerInstalled = false;

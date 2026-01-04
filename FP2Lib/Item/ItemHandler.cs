@@ -9,12 +9,13 @@ using UnityEngine;
 
 namespace FP2Lib.Item
 {
-    internal class ItemHandler
+    public class ItemHandler
     {
         private static readonly ManualLogSource ItemLogSource = FP2Lib.logSource;
         internal static bool isPotionSellerInstalled = false;
 
         //First empty slot with Potion Seller installed is 100
+        //Without it, it's slot 45
         public static readonly int baseItems = 100;
 
         internal static Dictionary<string, ItemData> Items = [];
