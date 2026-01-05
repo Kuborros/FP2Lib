@@ -15,6 +15,13 @@ namespace FP2Lib.Item
         Florin //Paradise Prime
     }
 
+    public enum PAddToShop
+    {
+        None,
+        ClassicOnly,
+        Milla //All Milla locations
+    }
+
     [Serializable]
     public class ItemData
     {
@@ -61,7 +68,7 @@ namespace FP2Lib.Item
         /// Key is the character UID, value is the description.
         /// </summary>
         [NonSerialized]
-        public Dictionary<string,string> descriptionCustom = new Dictionary<string,string>();
+        public Dictionary<string,string> descriptionCustom = [];
 
         /// <summary>
         /// Sprite shown in inventory, item list, and equipment slots.
@@ -86,20 +93,55 @@ namespace FP2Lib.Item
         /// <summary>
         /// Which shop should the item appear in
         /// </summary>
-        public IAddToShop shopLocation = IAddToShop.None;
+        public IAddToShop itemShopLocation = IAddToShop.None;
+
+
         /// <summary>
         /// Set for items which exist as equivalent to a registered potion.
+        /// This enables the following fields.
         /// </summary>
         public bool isPotion = false;
+        /// <summary>
+        /// The effect amount per one potion slot taken. Can be full number, can be float, whatever fits the text below.
+        /// </summary>
+        public float effectPercentage = 0f;
+        /// <summary>
+        /// The text following the calculated effect percentage
+        /// </summary>
+        [NonSerialized]
+        public string effect = " of nothing. The mod is not installed, silly!";
+        /// <summary>
+        /// Sprite for the middle slots in the bottle preview.
+        /// </summary>
+        [NonSerialized]
+        public Sprite spriteBottleMid = null;
+        /// <summary>
+        /// Sprite for the top (last) slot in the bottle.
+        /// </summary>
+        [NonSerialized]
+        public Sprite spriteBottleTop = null;
+        /// <summary>
+        /// Sprite for the bottom (first) slot in the bottle.
+        /// </summary>
+        [NonSerialized]
+        public Sprite spriteBottleBottom = null;
+        /// <summary>
+        /// Which shop should the potion appear in
+        /// </summary>
+        [NonSerialized]
+        public PAddToShop potionShopLocation = PAddToShop.None;
 
-        public int id = 0;
+
+        public int itemID = 0;
+        public int potionID = 0;
 
         public ItemData()
         {
         }
 
+        //Constructor for item
         public ItemData(string uid, string name, string descriptionGeneric, string descriptionLilac, string descriptionCarol, string descriptionMilla, string descriptionNeera,
-            Dictionary<string, string> descriptionCustom, Sprite sprite, int starCards, int goldGemsPrice, float gemBonus, IAddToShop shopLocation)
+            Dictionary<string, string> descriptionCustom, Sprite sprite, int starCards, int goldGemsPrice, float gemBonus, IAddToShop itemShopLocation)
         {
             this.uid = uid;
             this.name = name;
@@ -113,10 +155,11 @@ namespace FP2Lib.Item
             this.starCards = starCards;
             this.goldGemsPrice = goldGemsPrice;
             this.gemBonus = gemBonus;
-            this.shopLocation = shopLocation;
+            this.itemShopLocation = itemShopLocation;
         }
 
-        public ItemData(string uid, string name, string descriptionGeneric, Sprite sprite, int starCards, int goldGemsPrice, float gemBonus, IAddToShop shopLocation)
+        //Constructor for item - Lite
+        public ItemData(string uid, string name, string descriptionGeneric, Sprite sprite, int starCards, int goldGemsPrice, float gemBonus, IAddToShop itemShopLocation)
         {
             this.uid = uid;
             this.name = name;
@@ -125,7 +168,50 @@ namespace FP2Lib.Item
             this.starCards = starCards;
             this.goldGemsPrice = goldGemsPrice;
             this.gemBonus = gemBonus;
-            this.shopLocation = shopLocation;
+            this.itemShopLocation = itemShopLocation;
+        }
+
+        //Constructor for potion
+        public ItemData(string uid, string name, string descriptionGeneric, string descriptionLilac, string descriptionCarol, string descriptionMilla, string descriptionNeera,
+            Dictionary<string, string> descriptionCustom, Sprite sprite, int starCards, int goldGemsPrice, bool isPotion, float effectPercentage, string effect, 
+            Sprite spriteBottleMid, Sprite spriteBottleTop, Sprite spriteBottleBottom, PAddToShop potionShopLocation)
+        {
+            this.uid = uid;
+            this.name = name;
+            this.descriptionGeneric = descriptionGeneric;
+            this.descriptionLilac = descriptionLilac;
+            this.descriptionCarol = descriptionCarol;
+            this.descriptionMilla = descriptionMilla;
+            this.descriptionNeera = descriptionNeera;
+            this.descriptionCustom = descriptionCustom;
+            this.sprite = sprite;
+            this.starCards = starCards;
+            this.goldGemsPrice = goldGemsPrice;
+            this.isPotion = isPotion;
+            this.effectPercentage = effectPercentage;
+            this.effect = effect;
+            this.spriteBottleMid = spriteBottleMid;
+            this.spriteBottleTop = spriteBottleTop;
+            this.spriteBottleBottom = spriteBottleBottom;
+            this.potionShopLocation = potionShopLocation;
+        }
+
+        public ItemData(string uid, string name, string descriptionGeneric, Sprite sprite, int starCards, int goldGemsPrice, bool isPotion, float effectPercentage, string effect,
+            Sprite spriteBottleMid, Sprite spriteBottleTop, Sprite spriteBottleBottom, PAddToShop potionShopLocation)
+        {
+            this.uid = uid;
+            this.name = name;
+            this.descriptionGeneric = descriptionGeneric;
+            this.sprite = sprite;
+            this.starCards = starCards;
+            this.goldGemsPrice = goldGemsPrice;
+            this.isPotion = isPotion;
+            this.effectPercentage = effectPercentage;
+            this.effect = effect;
+            this.spriteBottleMid = spriteBottleMid;
+            this.spriteBottleTop = spriteBottleTop;
+            this.spriteBottleBottom = spriteBottleBottom;
+            this.potionShopLocation = potionShopLocation;
         }
 
         internal static ItemData LoadFromJson(string json)

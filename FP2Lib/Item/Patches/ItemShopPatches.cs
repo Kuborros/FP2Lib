@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace FP2Lib.Item.ItemPatches
+namespace FP2Lib.Item.Patches
 {
     internal class ItemShopPatches
     {
@@ -11,20 +11,32 @@ namespace FP2Lib.Item.ItemPatches
         [HarmonyPatch(typeof(FPHubNPC), "Start", MethodType.Normal)]
         static void PatchHubShopkeep(string ___NPCName, ref FPPowerup[] ___itemsForSale, ref int[] ___itemCosts, ref int[] ___starCardRequirements, ref FPMusicTrack[] ___musicID)
         {
-            if ((___NPCName == "Blake" || ___NPCName == "Yuni" || ___NPCName == "Florin" || ___NPCName == "Chloe") && ___itemCosts != null && ___itemsForSale != null)
+            if ((___NPCName == "Blake" || ___NPCName == "Yuni" || ___NPCName == "Florin" || ___NPCName == "Chloe" || ___NPCName == "Milla") && ___itemCosts != null && ___itemsForSale != null)
             {
                 foreach (ItemData item in ItemHandler.Items.Values)
                 {
-                    if (item.shopLocation != IAddToShop.None || item.shopLocation != IAddToShop.ClassicOnly)
+                    //Potions
+                    if (item.isPotion)
                     {
-                        if (item.shopLocation == IAddToShop.Blake && ___NPCName == "Blake"
-                        || item.shopLocation == IAddToShop.Yuni && ___NPCName == "Yuni"
-                        || item.shopLocation == IAddToShop.Florin && ___NPCName == "Florin"
-                        || item.shopLocation == IAddToShop.Chloe && ___NPCName == "Chloe")
+                        if (item.potionShopLocation == PAddToShop.Milla && ___NPCName == "Milla" && !___itemsForSale.Contains((FPPowerup)item.itemID))
                         {
-                            if (!___itemsForSale.Contains((FPPowerup)item.id))
+                            ___itemsForSale = ___itemsForSale.AddToArray((FPPowerup)item.itemID);
+                            ___itemCosts = ___itemCosts.AddToArray(item.goldGemsPrice);
+                            ___starCardRequirements = ___starCardRequirements.AddToArray(item.starCards);
+                            ___musicID = ___musicID.AddToArray(FPMusicTrack.NONE);
+                        }
+                    }
+                    //Normal items
+                    else if (item.itemShopLocation != IAddToShop.None || item.itemShopLocation != IAddToShop.ClassicOnly)
+                    {
+                        if (item.itemShopLocation == IAddToShop.Blake && ___NPCName == "Blake"
+                        || item.itemShopLocation == IAddToShop.Yuni && ___NPCName == "Yuni"
+                        || item.itemShopLocation == IAddToShop.Florin && ___NPCName == "Florin"
+                        || item.itemShopLocation == IAddToShop.Chloe && ___NPCName == "Chloe")
+                        {
+                            if (!___itemsForSale.Contains((FPPowerup)item.itemID))
                             {
-                                ___itemsForSale = ___itemsForSale.AddToArray((FPPowerup)item.id);
+                                ___itemsForSale = ___itemsForSale.AddToArray((FPPowerup)item.itemID);
                                 ___itemCosts = ___itemCosts.AddToArray(item.goldGemsPrice);
                                 ___starCardRequirements = ___starCardRequirements.AddToArray(item.starCards);
                                 ___musicID = ___musicID.AddToArray(FPMusicTrack.NONE);
@@ -58,22 +70,21 @@ namespace FP2Lib.Item.ItemPatches
                             {
                                 if (item.sprite != null)
                                 {
-                                    digit.digitFrames[item.id] = item.sprite;
+                                    digit.digitFrames[item.itemID] = item.sprite;
                                 }
                                 //The "?" icon
-                                else digit.digitFrames[item.id] = digit.digitFrames[1];
+                                else digit.digitFrames[item.itemID] = digit.digitFrames[1];
                             }
                         }
 
                         foreach (ItemData item in ItemHandler.Items.Values)
                         {
-                            //Do not add potions to item shops
-                            if (item.isPotion) continue;
-                            if (item.shopLocation != IAddToShop.None && FPSaveManager.gameMode == FPGameMode.CLASSIC)
+                            //Add both items and potions, since it's the classic mode shop.
+                            if (item.itemShopLocation != IAddToShop.None && FPSaveManager.gameMode == FPGameMode.CLASSIC)
                             {
-                                if (!___itemsForSale.Contains((FPPowerup)item.id))
+                                if (!___itemsForSale.Contains((FPPowerup)item.itemID))
                                 {
-                                    ___itemsForSale = ___itemsForSale.AddToArray((FPPowerup)item.id);
+                                    ___itemsForSale = ___itemsForSale.AddToArray((FPPowerup)item.itemID);
                                     ___itemCosts = ___itemCosts.AddToArray(item.goldGemsPrice);
                                     ___starCardRequirements = ___starCardRequirements.AddToArray(item.starCards);
                                     ___musicID = ___musicID.AddToArray(FPMusicTrack.NONE);
@@ -96,22 +107,32 @@ namespace FP2Lib.Item.ItemPatches
             {
                 if (fPHubNPC != null)
                 {
-                    if ((fPHubNPC.name == "Blake" || fPHubNPC.name == "Yuni" || fPHubNPC.name == "Florin" || fPHubNPC.name == "Chloe") && fPHubNPC.itemCosts != null && fPHubNPC.itemsForSale != null)
+                    if ((fPHubNPC.name == "Blake" || fPHubNPC.name == "Yuni" || fPHubNPC.name == "Florin" || fPHubNPC.name == "Chloe" || fPHubNPC.name == "Milla") && fPHubNPC.itemCosts != null && fPHubNPC.itemsForSale != null)
                     {
                         foreach (ItemData item in ItemHandler.Items.Values)
                         {
-                            //Do not add potions to item shops, even if someone decides to be funny.
-                            if (item.isPotion) continue;
-                            if (item.shopLocation != IAddToShop.None || item.shopLocation != IAddToShop.ClassicOnly)
+                            //Potions
+                            if (item.isPotion)
                             {
-                                if (item.shopLocation == IAddToShop.Blake && fPHubNPC.name == "Blake"
-                                || item.shopLocation == IAddToShop.Yuni && fPHubNPC.name == "Yuni"
-                                || item.shopLocation == IAddToShop.Florin && fPHubNPC.name == "Florin"
-                                || item.shopLocation == IAddToShop.Chloe && fPHubNPC.name == "Chloe")
+                                if (item.potionShopLocation == PAddToShop.Milla && fPHubNPC.name == "Milla" && !fPHubNPC.itemsForSale.Contains((FPPowerup)item.itemID))
                                 {
-                                    if (!fPHubNPC.itemsForSale.Contains((FPPowerup)item.id))
+                                    fPHubNPC.itemsForSale = fPHubNPC.itemsForSale.AddToArray((FPPowerup)item.itemID);
+                                    fPHubNPC.itemCosts = fPHubNPC.itemCosts.AddToArray(item.goldGemsPrice);
+                                    fPHubNPC.starCardRequirements = fPHubNPC.starCardRequirements.AddToArray(item.starCards);
+                                    fPHubNPC.musicID = fPHubNPC.musicID.AddToArray(FPMusicTrack.NONE);
+                                }
+                            }
+                            //Normal items
+                            else if (item.itemShopLocation != IAddToShop.None || item.itemShopLocation != IAddToShop.ClassicOnly)
+                            {
+                                if (item.itemShopLocation == IAddToShop.Blake && fPHubNPC.name == "Blake"
+                                || item.itemShopLocation == IAddToShop.Yuni && fPHubNPC.name == "Yuni"
+                                || item.itemShopLocation == IAddToShop.Florin && fPHubNPC.name == "Florin"
+                                || item.itemShopLocation == IAddToShop.Chloe && fPHubNPC.name == "Chloe")
+                                {
+                                    if (!fPHubNPC.itemsForSale.Contains((FPPowerup)item.itemID))
                                     {
-                                        fPHubNPC.itemsForSale = fPHubNPC.itemsForSale.AddToArray((FPPowerup)item.id);
+                                        fPHubNPC.itemsForSale = fPHubNPC.itemsForSale.AddToArray((FPPowerup)item.itemID);
                                         fPHubNPC.itemCosts = fPHubNPC.itemCosts.AddToArray(item.goldGemsPrice);
                                         fPHubNPC.starCardRequirements = fPHubNPC.starCardRequirements.AddToArray(item.starCards);
                                         fPHubNPC.musicID = fPHubNPC.musicID.AddToArray(FPMusicTrack.NONE);

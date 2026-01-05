@@ -3,9 +3,9 @@ using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using FP2Lib.Player;
 using HarmonyLib;
-using System.Linq;
+using System;
 
-namespace FP2Lib.Item.ItemPatches
+namespace FP2Lib.Item.Patches
 {
     internal class ItemFPSaveManagerPatches
     {
@@ -15,12 +15,12 @@ namespace FP2Lib.Item.ItemPatches
         [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
         static void PotionSellerRadar()
         {
-            //Detect if Potion Seller is installed. Needed to adjust inventory clean up ranges.
+            //Detect if Potion Seller is installed.
             ItemHandler.isPotionSellerInstalled = Chainloader.PluginInfos.ContainsKey("com.eps.plugin.fp2.potion-seller");
         }
 
 
-        //Update save file to account for extra Items
+        //Update save file to account for extra Items and Potions
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
         static void PatchFPSaveManagerLoad(ref byte[] ___inventory)
@@ -30,16 +30,16 @@ namespace FP2Lib.Item.ItemPatches
             foreach (ItemData item in ItemHandler.Items.Values)
             {
                 //Highest ID is the item number
-                if (item.id > totalItems)
+                if (item.itemID > totalItems)
                 {
-                    totalItems = item.id;
+                    totalItems = item.itemID;
                 }
             }
             //Add slots in file for extra items. 
             //Potion seller already does 99, so we should start at 100 to not mess with it
             ___inventory = FPSaveManager.ExpandByteArray(___inventory, totalItems);
 
-            ItemHandler.WriteToStorage();
+            ItemHandler.WriteItemsToStorage();
         }
 
         [HarmonyPostfix]
@@ -51,7 +51,7 @@ namespace FP2Lib.Item.ItemPatches
             {
                 foreach (ItemData itemData in ItemHandler.Items.Values)
                 {
-                    if (itemData.id == (int)item)
+                    if (itemData.itemID == (int)item)
                     {
                         //Even uninstalled items keep their name, so to see this the item must be turbo broken.
                         if (itemData.name.IsNullOrWhiteSpace()) __result = "Missing Item! You should not be seeing this!";
@@ -66,14 +66,14 @@ namespace FP2Lib.Item.ItemPatches
         [HarmonyPostfix]
         [HarmonyWrapSafe]
         [HarmonyPatch(typeof(FPSaveManager), "GetItemDescription", MethodType.Normal)]
-        [HarmonyPatch(typeof(FPSaveManager), "GetPotionDescription", MethodType.Normal)]
+        [HarmonyPatch(typeof(FPSaveManager), "GetPotionDescription", [typeof(FPPowerup)])]
         static void PatchFPSaveManagerItemDescription(FPPowerup item, ref string __result)
         {
             if (__result.IsNullOrWhiteSpace()) //Default method returned nothing, check if maybe we got the item
             {
                 foreach (ItemData itemData in ItemHandler.Items.Values)
                 {
-                    if (itemData.id == (int)item)
+                    if (itemData.itemID == (int)item)
                     {
                         switch (FPSaveManager.character)
                         {
@@ -116,15 +116,53 @@ namespace FP2Lib.Item.ItemPatches
         {
             if (__result == 0f)
             {
-                foreach (ItemData itemData in ItemHandler.Items.Values)
+                ItemData itemData = ItemHandler.GetItemDataByRuntimeItemID((int)item);
+                if (itemData != null)
                 {
-                    if (itemData.id == (int)item)
-                    {
-                        __result = itemData.gemBonus;
-                        break;
-                    }
+                    __result = itemData.gemBonus;
                 }
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyWrapSafe]
+        [HarmonyPatch(typeof(FPSaveManager), "GetPotionEffect", MethodType.Normal)]
+        static void PatchFPSaveManagerPotionEffect(int item, float amount, ref string __result)
+        {
+            if (__result.IsNullOrWhiteSpace()) //Default method returned nothing, check if maybe we got the item
+            {
+                ItemData data = ItemHandler.GetItemDataByRuntimePotionID(item);
+                if (data != null)
+                {
+                    float effectScale = amount * data.effectPercentage;
+                    __result = String.Concat(effectScale, data.effect);
+                }
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyWrapSafe]
+        [HarmonyPatch(typeof(FPSaveManager), "GetPotionID", MethodType.Normal)]
+        static void PatchFPSaveManagerPotionID(FPPowerup item, ref int __result)
+        {
+            if (__result == -1) //Default method returned nothing, check if maybe we got the item
+            {
+                ItemData data = ItemHandler.GetItemDataByRuntimeItemID((int)item);
+                if (data != null) __result = data.potionID;
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyWrapSafe]
+        [HarmonyPatch(typeof(FPSaveManager), "GetPotionInventoryID", MethodType.Normal)]
+        static void PatchFPSaveManagerPotionInventoryID(int id, ref FPPowerup __result)
+        {
+            if (__result == 0) //Default method returned nothing, check if maybe we got the item
+            {
+                ItemData data = ItemHandler.GetItemDataByRuntimePotionID(id);
+                if (data != null) __result = (FPPowerup)data.itemID;
             }
         }
     }
 }
+

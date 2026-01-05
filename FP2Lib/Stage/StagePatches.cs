@@ -135,8 +135,8 @@ namespace FP2Lib.Stage
                 ItemData item = ItemHandler.GetItemDataByUid(stage.itemUID);
                 if (item != null)
                 {
-                    StageLogSource.LogDebug("Got id:" + item.id + " for item name: " + item.name);
-                    return (FPPowerup)item.id;
+                    StageLogSource.LogDebug("Got id:" + item.itemID + " for item name: " + item.name);
+                    return (FPPowerup)item.itemID;
                 }
             }
             return stage.itemID;

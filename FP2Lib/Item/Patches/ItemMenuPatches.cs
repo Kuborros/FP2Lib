@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace FP2Lib.Item.ItemPatches
+namespace FP2Lib.Item.Patches
 {
     internal class ItemMenuPatches
     {
@@ -15,9 +15,9 @@ namespace FP2Lib.Item.ItemPatches
                 //Skip if the item is only a potion placeholder.
                 if (item.isPotion) continue;
                 //Make sure we are not re-adding it!
-                if (!__instance.amuletList.Contains((FPPowerup)item.id))
+                if (!__instance.amuletList.Contains((FPPowerup)item.itemID))
                 {
-                    __instance.amuletList = __instance.amuletList.AddToArray((FPPowerup)item.id);
+                    __instance.amuletList = __instance.amuletList.AddToArray((FPPowerup)item.itemID);
                     __instance.amulets = __instance.amulets.AddToArray(false);
                 }
             }
@@ -33,10 +33,10 @@ namespace FP2Lib.Item.ItemPatches
                 {
                     if (item.sprite != null)
                     {
-                        ___pfPowerupIcon.digitFrames[item.id] = item.sprite;
+                        ___pfPowerupIcon.digitFrames[item.itemID] = item.sprite;
                     }
                     //The "?" icon
-                    else ___pfPowerupIcon.digitFrames[item.id] = ___pfPowerupIcon.digitFrames[1];
+                    else ___pfPowerupIcon.digitFrames[item.itemID] = ___pfPowerupIcon.digitFrames[1];
                 }
             }
         }
@@ -57,10 +57,10 @@ namespace FP2Lib.Item.ItemPatches
                 {
                     if (item.sprite != null)
                     {
-                        digit.digitFrames[item.id] = item.sprite;
+                        digit.digitFrames[item.itemID] = item.sprite;
                     }
                     //The "?" icon
-                    else digit.digitFrames[item.id] = digit.digitFrames[1];
+                    else digit.digitFrames[item.itemID] = digit.digitFrames[1];
                 }
             }
         }
@@ -80,10 +80,10 @@ namespace FP2Lib.Item.ItemPatches
                 {
                     if (item.sprite != null)
                     {
-                        ___pfPowerupIcon.digitFrames[item.id] = item.sprite;
+                        ___pfPowerupIcon.digitFrames[item.itemID] = item.sprite;
                     }
                     //The "?" icon
-                    else ___pfPowerupIcon.digitFrames[item.id] = ___pfPowerupIcon.digitFrames[1];
+                    else ___pfPowerupIcon.digitFrames[item.itemID] = ___pfPowerupIcon.digitFrames[1];
                 }
             }
         }

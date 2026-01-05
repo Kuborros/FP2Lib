@@ -4,14 +4,12 @@ using BepInEx.Logging;
 using FP2Lib.Badge;
 using FP2Lib.BepIn;
 using FP2Lib.Item;
-using FP2Lib.Item.ItemPatches;
+using FP2Lib.Item.Patches;
 using FP2Lib.Map;
 using FP2Lib.NPC;
 using FP2Lib.Patches;
 using FP2Lib.Player;
 using FP2Lib.Player.PlayerPatches;
-using FP2Lib.Potion;
-using FP2Lib.Potion.PotionPatches;
 using FP2Lib.Saves;
 using FP2Lib.Stage;
 using FP2Lib.Tools;
@@ -55,7 +53,6 @@ namespace FP2Lib
             BadgeHandler.InitialiseHandler();
             MapHandler.InitialiseHandler();
             StageHandler.InitialiseHandler();
-            PotionHandler.InitialiseHandler();
             ItemHandler.InitialiseHandler();
 
             Logger.LogMessage("Running FP2 Version: " + gameInfo.getVersionString());
@@ -175,32 +172,19 @@ namespace FP2Lib
                 Logger.LogError("Badge Patch Failed! Info:" + ex.Message);
             }
 
-            //Items
-            Logger.LogDebug("Item Patch Init");
+            //Items and Potions
+            Logger.LogDebug("Item/Potion Patch Init");
             try
             {
                 Harmony itemPatches = new("000.kuborro.libraries.fp2.fp2lib.item");
                 itemPatches.PatchAll(typeof(ItemShopPatches));
                 itemPatches.PatchAll(typeof(ItemMenuPatches));
+                itemPatches.PatchAll(typeof(PotionMenuPatches));
                 itemPatches.PatchAll(typeof(ItemFPSaveManagerPatches));
             }
             catch (Exception ex)
             {
-                Logger.LogError("Item Patch Failed! Info:" + ex.Message);
-            }
-
-            //Potions
-            Logger.LogDebug("Potion Patch Init");
-            try
-            {
-                Harmony potionPatches = new("000.kuborro.libraries.fp2.fp2lib.potion");
-                potionPatches.PatchAll(typeof(PotionShopPatches));
-                potionPatches.PatchAll(typeof(PotionMenuPatches));
-                potionPatches.PatchAll(typeof(PotionFPSaveManagerPatches));
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Potion Patch Failed! Info:" + ex.Message);
+                Logger.LogError("Item/Potion Patch Failed! Info:" + ex.Message);
             }
 
             //World Maps
