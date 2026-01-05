@@ -175,16 +175,6 @@ namespace FP2Lib.Item
             return false;
         }
 
-        /// <summary>
-        /// Alias for RegisterItemDirect().
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns>Registered successfully?</returns>
-        public static bool RegisterPotionDirect(ItemData item)
-        {
-            return RegisterItemDirect(item);
-        }
-
         private static int AssignItemID(ItemData item)
         {
             //Item already has ID
@@ -278,7 +268,7 @@ namespace FP2Lib.Item
         {
             foreach (ItemData data in Items.Values)
             {
-                if (data.potionID == id) return data;
+                if (data.potionID == id && data.isPotion) return data;
             }
             return null;
         }

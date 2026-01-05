@@ -104,6 +104,7 @@ namespace FP2Lib.Item
         /// <summary>
         /// The effect amount per one potion slot taken. Can be full number, can be float, whatever fits the text below.
         /// </summary>
+        [NonSerialized]
         public float effectPercentage = 0f;
         /// <summary>
         /// The text following the calculated effect percentage
@@ -133,7 +134,7 @@ namespace FP2Lib.Item
 
 
         public int itemID = 0;
-        public int potionID = 0;
+        public int potionID = -1;
 
         public ItemData()
         {
