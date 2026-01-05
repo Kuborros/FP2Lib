@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using FP2Lib.Tools;
+using HarmonyLib;
 using System;
 using System.Linq;
 
@@ -64,7 +65,7 @@ namespace FP2Lib.Item.Patches
                         {
                             if (digit.digitFrames.Length < totalItems)
                             {
-                                Array.Resize(ref digit.digitFrames, totalItems);
+                                digit.digitFrames = Utils.ExpandSpriteArray(digit.digitFrames, totalItems, digit.digitFrames[1]);
                             }
                             foreach (ItemData item in ItemHandler.Items.Values)
                             {

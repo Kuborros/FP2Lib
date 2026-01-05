@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using FP2Lib.Player;
 using HarmonyLib;
@@ -10,15 +9,6 @@ namespace FP2Lib.Item.Patches
     internal class ItemFPSaveManagerPatches
     {
         private static readonly ManualLogSource ItemLogSource = FP2Lib.logSource;
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
-        static void PotionSellerRadar()
-        {
-            //Detect if Potion Seller is installed.
-            ItemHandler.isPotionSellerInstalled = Chainloader.PluginInfos.ContainsKey("com.eps.plugin.fp2.potion-seller");
-        }
-
 
         //Update save file to account for extra Items and Potions
         [HarmonyPostfix]

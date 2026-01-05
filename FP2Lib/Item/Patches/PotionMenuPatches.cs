@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using FP2Lib.Tools;
+using HarmonyLib;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -26,24 +27,27 @@ namespace FP2Lib.Item.Patches
 
         [HarmonyPrefix]
         [HarmonyWrapSafe]
+        [HarmonyAfter("com.eps.plugin.fp2.potion-seller")]
         [HarmonyPatch(typeof(MenuWorldMapConfirm), "Start", MethodType.Normal)]
+        [HarmonyPatch(typeof(MenuItemSelect), "Start", MethodType.Normal)]
         [HarmonyPatch(typeof(FPPauseMenu), "Start", MethodType.Normal)]
         static void PatchMenuMultipleStart(ref Sprite[] ___spriteBottom, ref Sprite[] ___spriteMiddle, ref Sprite[] ___spriteTop)
         {
+
             int totalPotions = ItemHandler.basePotions + ItemHandler.potionCount;
             if (___spriteTop.Length < totalPotions)
             {
-                Array.Resize(ref ___spriteTop, totalPotions);
+                ___spriteTop = Utils.ExpandSpriteArray(___spriteTop, totalPotions, ___spriteTop[1]);
             }
 
             if (___spriteMiddle.Length < totalPotions)
             {
-                Array.Resize(ref ___spriteMiddle, totalPotions);
+                ___spriteMiddle = Utils.ExpandSpriteArray(___spriteMiddle, totalPotions, ___spriteMiddle[1]);
             }
 
             if (___spriteBottom.Length < totalPotions)
             {
-                Array.Resize(ref ___spriteBottom, totalPotions);
+                ___spriteBottom = Utils.ExpandSpriteArray(___spriteBottom, totalPotions, ___spriteBottom[1]);
             }
 
             foreach (ItemData potion in ItemHandler.Items.Values)
@@ -72,25 +76,27 @@ namespace FP2Lib.Item.Patches
 
         [HarmonyPrefix]
         [HarmonyWrapSafe]
+        [HarmonyAfter("com.eps.plugin.fp2.potion-seller")]
         [HarmonyPatch(typeof(MenuFile), "Start", MethodType.Normal)]
         static void PatchMenuFileStart(ref MenuFilePanel[] ___files)
         {
             int totalPotions = ItemHandler.basePotions + ItemHandler.potionCount;
             foreach (MenuFilePanel file in ___files)
             {
+
                 if (file.spriteTop.Length < totalPotions)
                 {
-                    Array.Resize(ref file.spriteTop, totalPotions);
+                    file.spriteTop = Utils.ExpandSpriteArray(file.spriteTop, totalPotions, file.spriteTop[1]);
                 }
 
                 if (file.spriteMiddle.Length < totalPotions)
                 {
-                    Array.Resize(ref file.spriteMiddle, totalPotions);
+                    file.spriteMiddle = Utils.ExpandSpriteArray(file.spriteMiddle, totalPotions, file.spriteMiddle[1]);
                 }
 
                 if (file.spriteBottom.Length < totalPotions)
                 {
-                    Array.Resize(ref file.spriteBottom, totalPotions);
+                    file.spriteBottom = Utils.ExpandSpriteArray(file.spriteBottom, totalPotions, file.spriteBottom[1]);
                 }
 
                 foreach (ItemData potion in ItemHandler.Items.Values)

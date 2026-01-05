@@ -1,4 +1,6 @@
-﻿using HarmonyLib;
+﻿using BepInEx.Bootstrap;
+using FP2Lib.Tools;
+using HarmonyLib;
 using System;
 using System.Linq;
 
@@ -6,6 +8,16 @@ namespace FP2Lib.Item.Patches
 {
     internal class ItemMenuPatches
     {
+
+        [HarmonyPrefix]
+        [HarmonyAfter("com.eps.plugin.fp2.potion-seller")]
+        [HarmonyPatch(typeof(MenuMain), "Start", MethodType.Normal)]
+        static void PotionSellerRadar()
+        {
+            //Detect if Potion Seller is installed.
+            ItemHandler.isPotionSellerInstalled = Chainloader.PluginInfos.ContainsKey("com.eps.plugin.fp2.potion-seller");
+        }
+
         [HarmonyPrefix]
         [HarmonyAfter("com.eps.plugin.fp2.potion-seller")]
         [HarmonyPatch(typeof(MenuItemSelect),"Start", MethodType.Normal)]
@@ -31,7 +43,7 @@ namespace FP2Lib.Item.Patches
 
                 if (___pfPowerupIcon.digitFrames.Length < totalItems)
                 {
-                    Array.Resize(ref ___pfPowerupIcon.digitFrames, totalItems);
+                    ___pfPowerupIcon.digitFrames = Utils.ExpandSpriteArray(___pfPowerupIcon.digitFrames, totalItems, ___pfPowerupIcon.digitFrames[1]);
                 }
                 foreach (ItemData item in ItemHandler.Items.Values)
                 {
@@ -39,8 +51,6 @@ namespace FP2Lib.Item.Patches
                     {
                         ___pfPowerupIcon.digitFrames[item.itemID] = item.sprite;
                     }
-                    //The "?" icon
-                    else ___pfPowerupIcon.digitFrames[item.itemID] = ___pfPowerupIcon.digitFrames[1];
                 }
             }
         }
@@ -58,7 +68,7 @@ namespace FP2Lib.Item.Patches
 
                 if (digit.digitFrames.Length < totalItems)
                 {
-                    Array.Resize(ref digit.digitFrames, totalItems);
+                    digit.digitFrames = Utils.ExpandSpriteArray(digit.digitFrames, totalItems, digit.digitFrames[1]);
                 }
                 foreach (ItemData item in ItemHandler.Items.Values)
                 {
@@ -66,8 +76,6 @@ namespace FP2Lib.Item.Patches
                     {
                         digit.digitFrames[item.itemID] = item.sprite;
                     }
-                    //The "?" icon
-                    else digit.digitFrames[item.itemID] = digit.digitFrames[1];
                 }
             }
         }
@@ -86,7 +94,7 @@ namespace FP2Lib.Item.Patches
 
                 if (___pfPowerupIcon.digitFrames.Length < totalItems)
                 {
-                    Array.Resize(ref ___pfPowerupIcon.digitFrames, totalItems);
+                    ___pfPowerupIcon.digitFrames = Utils.ExpandSpriteArray(___pfPowerupIcon.digitFrames, totalItems, ___pfPowerupIcon.digitFrames[1]);
                 }
                 foreach (ItemData item in ItemHandler.Items.Values)
                 {
@@ -94,8 +102,6 @@ namespace FP2Lib.Item.Patches
                     {
                         ___pfPowerupIcon.digitFrames[item.itemID] = item.sprite;
                     }
-                    //The "?" icon
-                    else ___pfPowerupIcon.digitFrames[item.itemID] = ___pfPowerupIcon.digitFrames[1];
                 }
             }
         }
@@ -116,7 +122,7 @@ namespace FP2Lib.Item.Patches
 
                 if (___powerupIcon.digitFrames.Length < totalItems)
                 {
-                    Array.Resize(ref ___powerupIcon.digitFrames, totalItems);
+                    ___powerupIcon.digitFrames = Utils.ExpandSpriteArray(___powerupIcon.digitFrames, totalItems, ___powerupIcon.digitFrames[1]);
                 }
                 foreach (ItemData item in ItemHandler.Items.Values)
                 {
