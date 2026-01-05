@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using FP2Lib.Item;
 using FP2Lib.Tools;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace FP2Lib.Potion
         public static readonly int basePotions = 11;
 
         internal static Dictionary<string, PotionData> Potions = [];
+        internal static Dictionary<FPPowerup, int> itemPotionMapping = [];
         internal static bool[] takenIDs = new bool[100];
 
         internal static void InitialiseHandler()
@@ -41,6 +43,7 @@ namespace FP2Lib.Potion
         /// </summary>
         /// <param name="uid">Unique ID of the potion</param>
         /// <param name="name">Name of the potion</param>
+        /// <param name="description">Description of the potion</param>
         /// <param name="inventorySprite">Inventory sprite for the potion</param>
         /// <param name="spriteBottleBottom">Sprite used in bottle previev (bottom)</param>
         /// <param name="spriteBottleMid">Sprite used in bottle previev (middle)</param>
@@ -54,9 +57,16 @@ namespace FP2Lib.Potion
         {
             if (!Potions.ContainsKey(uid))
             {
-                PotionData data = new PotionData(uid, name, description, inventorySprite, spriteBottleMid, spriteBottleTop, spriteBottleBottom, starCards, goldGemsPrice, shop);
+                PotionData data = new PotionData(uid, name, description, inventorySprite, spriteBottleMid, spriteBottleTop, spriteBottleBottom, starCards, goldGemsPrice, shop);                
                 data.id = AssignPotionID(data);
                 Potions.Add(uid, data);
+
+                //Has to be done - Potions are, in a way, just funky items.
+                ItemData itemData = new ItemData(uid, name, description, inventorySprite, 0, 0, 0, IAddToShop.None);
+                itemData.isPotion = true;
+                itemData.relatedPotionUID = uid;
+                ItemHandler.RegisterItemDirect(itemData);
+
                 return true;
             }
             else if (Potions.ContainsKey(uid) && Potions[uid].inventorySprite == null)
@@ -71,6 +81,12 @@ namespace FP2Lib.Potion
                 Potions[uid].spriteBottleTop = spriteBottleTop;
                 Potions[uid].description = description;
                 Potions[uid].id = AssignPotionID(Potions[uid]);
+
+                ItemData itemData = new ItemData(uid, name, description, inventorySprite, 0, 0, 0, IAddToShop.None);
+                itemData.isPotion = true;
+                itemData.relatedPotionUID = uid;
+                ItemHandler.RegisterItemDirect(itemData);
+
                 return true;
             }
             return false;
@@ -90,12 +106,37 @@ namespace FP2Lib.Potion
             {
                 potion.id = AssignPotionID(potion);
                 Potions.Add(uid, potion);
+
+                ItemData itemData = new ItemData
+                {
+                    uid = uid,
+                    name = potion.name,
+                    descriptionGeneric = potion.description,
+                    descriptionLilac = potion.descriptionLilac,
+                    descriptionCarol = potion.descriptionCarol,
+                    descriptionMilla = potion.descriptionMilla,
+                    descriptionNeera = potion.descriptionNeera,
+                    descriptionCustom = potion.descriptionCustom,
+                    sprite = potion.inventorySprite,
+                    starCards = potion.starCards,
+                    goldGemsPrice = potion.goldGemsPrice,
+                    gemBonus = 0,
+                    shopLocation = IAddToShop.None,
+                    isPotion = true
+                };
+                ItemHandler.RegisterItemDirect(itemData);
+
                 return true;
             }
             else if (Potions.ContainsKey(uid) && Potions[uid].inventorySprite == null)
             {
                 Potions[uid] = potion;
                 Potions[uid].id = AssignPotionID(Potions[uid]);
+
+                ItemData itemData = new ItemData(uid, potion.name, potion.description, potion.inventorySprite, 0, 0, 0, IAddToShop.None);
+                itemData.isPotion = true;
+                ItemHandler.RegisterItemDirect(itemData);
+
                 return true;
             }
             return false;
@@ -113,7 +154,7 @@ namespace FP2Lib.Potion
             {
                 PotionLogSource.LogDebug("Potion with unassigned ID registered! Running assignment process for " + potion.uid);
                 //Iterate over array, assign first non-taken slot
-                for (int i = 64; i < takenIDs.Length; i++)
+                for (int i = 9; i < takenIDs.Length; i++)
                 {
                     //First slot with false = empty space
                     if (!takenIDs[i])

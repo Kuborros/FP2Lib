@@ -87,6 +87,10 @@ namespace FP2Lib.Item
         /// Which shop should the item appear in
         /// </summary>
         public IAddToShop shopLocation = IAddToShop.None;
+        /// <summary>
+        /// Set for items which exist as equivalent to a registered potion.
+        /// </summary>
+        public bool isPotion = false;
 
         public int id = 0;
 

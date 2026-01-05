@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace FP2Lib.Item.ItemPatches
 {
-    internal class ItemPatchFPSaveManager
+    internal class ItemFPSaveManagerPatches
     {
         private static readonly ManualLogSource ItemLogSource = FP2Lib.logSource;
 
@@ -66,6 +66,7 @@ namespace FP2Lib.Item.ItemPatches
         [HarmonyPostfix]
         [HarmonyWrapSafe]
         [HarmonyPatch(typeof(FPSaveManager), "GetItemDescription", MethodType.Normal)]
+        [HarmonyPatch(typeof(FPSaveManager), "GetPotionDescription", MethodType.Normal)]
         static void PatchFPSaveManagerItemDescription(FPPowerup item, ref string __result)
         {
             if (__result.IsNullOrWhiteSpace()) //Default method returned nothing, check if maybe we got the item

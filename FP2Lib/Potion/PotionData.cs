@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FP2Lib.Potion
@@ -23,9 +24,49 @@ namespace FP2Lib.Potion
         /// </summary>
         public string name;
         /// <summary>
-        /// Item description
+        /// Potion description, if no character specific one is found.
         /// </summary>
         public string description;
+        /// <summary>
+        /// Description of the potion when playing as Lilac.
+        /// Leave empty to use default description.
+        /// </summary>
+        [NonSerialized]
+        public string descriptionLilac;
+        /// <summary>
+        /// Description of the potion when playing as Carol.
+        /// Leave empty to use default description.
+        /// </summary>
+        [NonSerialized]
+        public string descriptionCarol;
+        /// <summary>
+        /// Description of the potion when playing as Milla.
+        /// Leave empty to use default description.
+        /// </summary>
+        [NonSerialized]
+        public string descriptionMilla;
+        /// <summary>
+        /// Description of the potion when playing as Neera.
+        /// Leave empty to use default description.
+        /// </summary>
+        [NonSerialized]
+        public string descriptionNeera;
+        /// <summary>
+        /// Description of the potion when playing as a custom character.
+        /// Key is the character UID, value is the description.
+        /// </summary>
+        [NonSerialized]
+        public Dictionary<string, string> descriptionCustom = new Dictionary<string, string>();
+
+        /// <summary>
+        /// The effect amount per one potion slot taken. Can be full number, can be float, whatever fits the text below.
+        /// </summary>
+        public float effectPercentage = 0f;
+        /// <summary>
+        /// The text following the calculated effect percentage
+        /// </summary>
+        [NonSerialized]
+        public string effect = " of nothing. The mod is not installed, silly!";
         /// <summary>
         /// Inventory sprite (shops and item list)
         /// </summary>

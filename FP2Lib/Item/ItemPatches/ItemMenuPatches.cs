@@ -1,8 +1,6 @@
-﻿using FP2Lib.Player;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Linq;
-using UnityEngine;
 
 namespace FP2Lib.Item.ItemPatches
 {
@@ -14,6 +12,8 @@ namespace FP2Lib.Item.ItemPatches
         {
             foreach (ItemData item in ItemHandler.Items.Values)
             {
+                //Skip if the item is only a potion placeholder.
+                if (item.isPotion) continue;
                 //Make sure we are not re-adding it!
                 if (!__instance.amuletList.Contains((FPPowerup)item.id))
                 {

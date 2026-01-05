@@ -67,6 +67,8 @@ namespace FP2Lib.Item.ItemPatches
 
                         foreach (ItemData item in ItemHandler.Items.Values)
                         {
+                            //Do not add potions to item shops
+                            if (item.isPotion) continue;
                             if (item.shopLocation != IAddToShop.None && FPSaveManager.gameMode == FPGameMode.CLASSIC)
                             {
                                 if (!___itemsForSale.Contains((FPPowerup)item.id))
@@ -98,6 +100,8 @@ namespace FP2Lib.Item.ItemPatches
                     {
                         foreach (ItemData item in ItemHandler.Items.Values)
                         {
+                            //Do not add potions to item shops, even if someone decides to be funny.
+                            if (item.isPotion) continue;
                             if (item.shopLocation != IAddToShop.None || item.shopLocation != IAddToShop.ClassicOnly)
                             {
                                 if (item.shopLocation == IAddToShop.Blake && fPHubNPC.name == "Blake"

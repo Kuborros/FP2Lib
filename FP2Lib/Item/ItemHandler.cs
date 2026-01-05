@@ -109,7 +109,7 @@ namespace FP2Lib.Item
             {
                 ItemLogSource.LogDebug("Item with unassigned ID registered! Running assignment process for " + item.uid);
                 //Iterate over array, assign first non-taken slot
-                for (int i = 64; i < takenIDs.Length; i++)
+                for (int i = 99; i < takenIDs.Length; i++)
                 {
                     //First slot with false = empty space
                     if (!takenIDs[i])

@@ -11,6 +11,7 @@ using FP2Lib.Patches;
 using FP2Lib.Player;
 using FP2Lib.Player.PlayerPatches;
 using FP2Lib.Potion;
+using FP2Lib.Potion.PotionPatches;
 using FP2Lib.Saves;
 using FP2Lib.Stage;
 using FP2Lib.Tools;
@@ -44,7 +45,7 @@ namespace FP2Lib
             configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, new ConfigDescription("Makes JSON files more human-readable.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, new ConfigDescription("Select save redirection profile.", new AcceptableValueRange<int>(0, 9), new ConfigurationManagerAttributes { IsAdvanced = true }));
 
-            configCowabunga = Config.Bind("Debug", "Cowabunga", false, new ConfigDescription("Engages cowabunga mode. No sanity checks will be run, will attempt to hook in on any FP2 version.\n" +
+            configCowabunga = Config.Bind("Debug", "Cowabunga", false, new ConfigDescription("Engages cowabunga mode. No version checks will be run, will attempt to hook in on any FP2 version.\n" +
                 "Yes, this includes 2015 Sample Versions. Your mileage might vary and bug reports with this mode on will *not* be accepted!\n" +
                 "Some mods might read this value to skip their own checks.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
 
@@ -70,7 +71,7 @@ namespace FP2Lib
             }
 
             if (configCowabunga.Value)
-                Logger.LogWarning("Hook-in checks disabled by config option - things might break, but you asked for it! Cowabunga it is.");
+                Logger.LogWarning("Hook-in checks disabled by config option - things might break, but you asked for it! **Cowabunga it is.**");
 
             Logger.LogInfo("FP2Lib initialisation started!");
             SetupHarmonyPatches();
@@ -181,7 +182,7 @@ namespace FP2Lib
                 Harmony itemPatches = new("000.kuborro.libraries.fp2.fp2lib.item");
                 itemPatches.PatchAll(typeof(ItemShopPatches));
                 itemPatches.PatchAll(typeof(ItemMenuPatches));
-                itemPatches.PatchAll(typeof(ItemPatchFPSaveManager));
+                itemPatches.PatchAll(typeof(ItemFPSaveManagerPatches));
             }
             catch (Exception ex)
             {
@@ -193,7 +194,9 @@ namespace FP2Lib
             try
             {
                 Harmony potionPatches = new("000.kuborro.libraries.fp2.fp2lib.potion");
-                potionPatches.PatchAll(typeof(PotionPatches));
+                potionPatches.PatchAll(typeof(PotionShopPatches));
+                potionPatches.PatchAll(typeof(PotionMenuPatches));
+                potionPatches.PatchAll(typeof(PotionFPSaveManagerPatches));
             }
             catch (Exception ex)
             {
