@@ -10,7 +10,7 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(ArenaSpawner), "Start", MethodType.Normal)]
         static void PatchArenaFlash(ArenaSpawner __instance)
         {
-            if (__instance.useGlobalChallengeID && FPSaveManager.currentArenaChallenge == 4) //Hero Battle Royale
+            if (FPSaveManager.character > FPCharacterID.NEERA && __instance.useGlobalChallengeID && FPSaveManager.currentArenaChallenge == 4) //4 = Hero Battle Royale
             {
                 if (__instance.challenges[4].roundObjectList[0].objectList.Length == 3)
                 {
