@@ -19,5 +19,17 @@ namespace FP2Lib.Tools
             }
             return sprites;
         }
+
+        public static FPStageCollectables[] ExpandStageCollectablesArray(FPStageCollectables[] stageCollectables, int newLength)
+        {
+            int oldLength = stageCollectables.Length;
+            Array.Resize(ref stageCollectables, newLength);
+            for (int i = oldLength; i < newLength; i++)
+            {
+                FPSaveManager.stageCollectables[i].length = 1;
+                FPSaveManager.stageCollectables[i].status = new byte[1];
+            }
+            return stageCollectables;
+        }
     }
 }

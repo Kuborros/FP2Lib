@@ -181,6 +181,7 @@ namespace FP2Lib
                 itemPatches.PatchAll(typeof(ItemShopPatches));
                 itemPatches.PatchAll(typeof(ItemMenuPatches));
                 itemPatches.PatchAll(typeof(PotionMenuPatches));
+                itemPatches.PatchAll(typeof(PatchItemChest));
                 itemPatches.PatchAll(typeof(ItemFPSaveManagerPatches));
             }
             catch (Exception ex)

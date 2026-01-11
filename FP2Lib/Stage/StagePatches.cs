@@ -5,6 +5,7 @@ using FP2Lib.Vinyl;
 using HarmonyLib;
 using System.Linq;
 using UnityEngine;
+using FP2Lib.Tools;
 
 namespace FP2Lib.Stage
 {
@@ -86,6 +87,7 @@ namespace FP2Lib.Stage
         //Extend the story flag array if custom stage has id higher than the array size
         //Also set Item and Vinyl IDs from their uids
         [HarmonyPostfix]
+        [HarmonyWrapSafe]
         [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
         static void PatchFPSaveManagerLoad()
         {
@@ -95,17 +97,25 @@ namespace FP2Lib.Stage
             if (StageHandler.Stages.Count > 0)
             {
                 //Load in custom stages.
+                int totalStages = 32;
                 foreach (CustomStage stage in StageHandler.Stages.Values)
                 {
                     //Create story flags as needed
                     if (stage.storyFlag >= FPSaveManager.storyFlag.Length)
                         FPSaveManager.storyFlag = FPSaveManager.ExpandByteArray(FPSaveManager.storyFlag, stage.storyFlag);
 
+                    if (stage.id > totalStages) totalStages = stage.id;
                     //If custom Vinyl is defined, set it here
                     stage.vinylID = GetStageMusic(stage);
                     //Same for items
                     stage.itemID = GetStageItem(stage);
                 }
+                //Extend collectables array
+                if (FPSaveManager.stageCollectables.Length < totalStages)
+                {
+                    FPSaveManager.stageCollectables = Utils.ExpandStageCollectablesArray(FPSaveManager.stageCollectables, totalStages);
+                }
+
                 StageHandler.WriteToStorage();
             }
         }

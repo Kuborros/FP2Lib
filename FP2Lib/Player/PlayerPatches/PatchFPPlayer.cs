@@ -7,12 +7,8 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchFPPlayer
     {
-
-        public static FPPlayer player;
-
         internal static readonly MethodInfo m_AirMoves = SymbolExtensions.GetMethodInfo(() => HandleActionAirMoves());
         internal static readonly MethodInfo m_GroundMoves = SymbolExtensions.GetMethodInfo(() => HandleActionGroundMoves());
-        internal static readonly MethodInfo m_Grind = SymbolExtensions.GetMethodInfo(() => HandleGrindJump());
 
         internal static void HandleActionGroundMoves()
         {
@@ -24,7 +20,7 @@ namespace FP2Lib.Player.PlayerPatches
             PlayerHandler.currentCharacter.AirMoves?.Invoke();
         }
 
-        internal static void HandleGrindJump()
+        internal static void HandleGrindJump(FPPlayer player)
         {
             if (player.input.left)
             {
@@ -37,15 +33,6 @@ namespace FP2Lib.Player.PlayerPatches
             player.Action_Jump();
             HandleActionAirMoves();
         }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(FPPlayer), "Update", MethodType.Normal)]
-        static void PatchPlayerUpdate(FPPlayer __instance)
-        {
-            //Yeet the player instance for our own nefarious uses.
-            player = __instance;
-        }
-
 
         //AutoGuard
         [HarmonyTranspiler]
@@ -309,7 +296,7 @@ namespace FP2Lib.Player.PlayerPatches
             airCodeStart.labels.Add(airStart);
 
             codes.Add(airCodeStart);
-            codes.Add(new CodeInstruction(OpCodes.Call, m_Grind));
+            codes.Add(CodeInstruction.Call(typeof(PatchFPPlayer), nameof(HandleGrindJump)));
             codes.Add(new CodeInstruction(OpCodes.Br, airEnd));
 
             return codes;

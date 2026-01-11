@@ -13,6 +13,7 @@ namespace FP2Lib.Player.PlayerPatches
             {
                 //If using mod's own code, simply behave as we did not match. The mod will be handling it by itself.
                 //Instance of current FPEventSequence is handed over for manipulation
+                //A mod will likely just want to instance their own version, but borrow some data from the existing instance.
                 PlayerHandler.currentCharacter.EventSequenceStart?.Invoke(instance);
                 return false;
             }
@@ -64,33 +65,36 @@ namespace FP2Lib.Player.PlayerPatches
 
         private static int HandleEventEvent(FPEventSequence instance, int num)
         {
-            switch (PlayerHandler.currentCharacter.eventActivatorCharacter)
+            if (!PlayerHandler.currentCharacter.useOwnCutsceneActivators)
             {
-                case FPCharacterID.LILAC:
-                    if (instance.lilacEndpoint > 0)
-                    {
-                        num = Mathf.Min(instance.lilacEndpoint, num);
-                    }
-                    break;
-                case FPCharacterID.CAROL:
-                case FPCharacterID.BIKECAROL:
-                    if (instance.carolEndpoint > 0)
-                    {
-                        num = Mathf.Min(instance.carolEndpoint, num);
-                    }
-                    break;
-                case FPCharacterID.MILLA:
-                    if (instance.millaEndpoint > 0)
-                    {
-                        num = Mathf.Min(instance.millaEndpoint, num);
-                    }
-                    break;
-                case FPCharacterID.NEERA:
-                    if (instance.neeraEndpoint > 0)
-                    {
-                        num = Mathf.Min(instance.neeraEndpoint, num);
-                    }
-                    break;
+                switch (PlayerHandler.currentCharacter.eventActivatorCharacter)
+                {
+                    case FPCharacterID.LILAC:
+                        if (instance.lilacEndpoint > 0)
+                        {
+                            num = Mathf.Min(instance.lilacEndpoint, num);
+                        }
+                        break;
+                    case FPCharacterID.CAROL:
+                    case FPCharacterID.BIKECAROL:
+                        if (instance.carolEndpoint > 0)
+                        {
+                            num = Mathf.Min(instance.carolEndpoint, num);
+                        }
+                        break;
+                    case FPCharacterID.MILLA:
+                        if (instance.millaEndpoint > 0)
+                        {
+                            num = Mathf.Min(instance.millaEndpoint, num);
+                        }
+                        break;
+                    case FPCharacterID.NEERA:
+                        if (instance.neeraEndpoint > 0)
+                        {
+                            num = Mathf.Min(instance.neeraEndpoint, num);
+                        }
+                        break;
+                }
             }
             return num;
         }

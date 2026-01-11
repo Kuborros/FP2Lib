@@ -1,5 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using FP2Lib.Item;
+using FP2Lib.Stage;
 using HarmonyLib;
 using System;
 using System.Linq;
@@ -120,7 +122,7 @@ namespace FP2Lib.Vinyl
 
 
         //Patching the classic mode shop
-        //Yes i am aware it kinda repeats the same loop when in adventure. But since we check in both places if giben Vinyl was already added, it can stay.
+        //Yes i am aware it kinda repeats the same loop when in adventure. But since we check in both places if given Vinyl was already added, it can stay.
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuShop), "Start", MethodType.Normal)]
         static void PatchClasicMusic(MenuShop __instance, ref FPPowerup[] ___itemsForSale, ref int[] ___itemCosts, ref int[] ___starCardRequirements, ref FPMusicTrack[] ___musicID)
@@ -183,6 +185,30 @@ namespace FP2Lib.Vinyl
                 }
             }
         }
+
+        [HarmonyPrefix]
+        [HarmonyWrapSafe]
+        [HarmonyPatch(typeof(ItemChest), "Start", MethodType.Normal)]
+        static void PatchItemChestStart(ItemChest __instance)
+        {
+            if (__instance.contents == FPItemChestContent.MUSIC)
+            {
+                if (FPStage.currentStage != null && __instance.powerupType == FPPowerup.RANDOM)
+                {
+                    // Stages over 32 are custom stages
+                    if (FPStage.currentStage.stageID > 32)
+                    {
+                        CustomStage stage = StageHandler.getCustomStageByRuntimeId(FPStage.currentStage.stageID);
+                        if (stage != null && !stage.vinylUID.IsNullOrWhiteSpace())
+                        {
+                            VinylData data = VinylHandler.GetVinylDataByUid(stage.vinylUID);
+                            if (data != null) __instance.musicID = (FPMusicTrack)data.id;
+                        }
+                    }
+                }
+            }
+        }
+
 
         [HarmonyReversePatch]
         [HarmonyPatch(typeof(MenuShop), "SortItems", MethodType.Normal)]
