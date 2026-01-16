@@ -14,11 +14,6 @@ namespace FP2Lib.Player
         /// Will differ from characterID since not every character (ex. Bike Carol) is on the wheel!
         /// </summary>
         internal int wheelId;
-        /// <summary>
-        /// 0 - Zao's Aiship, 1 - Cargo Airship. Also affects plane/submarine but base game fills the array with identical sprites in each slot.
-        /// Anything else - Sprite provided by modder and added to vehicle array under said id.
-        /// </summary>
-        public int airshipSprite = 0;
 
         /// <summary>
         /// Unique Identifier
@@ -32,6 +27,7 @@ namespace FP2Lib.Player
         /// <summary>
         /// Tutorial scene name. Can be any of the built-in ones, but all non-Lilac ones require character-specific attacks to proceed.
         /// Can be a name of a custom scene loaded by the mod. As long as it has all the flags marking it as tutorial, all will behave as intended.
+        /// Defaults to "Tutorial1" which is Lilac's tutorial.
         /// </summary>
         public string TutorialScene = "Tutorial1";
         /// <summary>
@@ -93,10 +89,9 @@ namespace FP2Lib.Player
         /// Perform the code related to the powerup logic here.
         /// </summary>
         public Action ItemFuelPickup;
-        //public Action CutsceneActivator;
         /// <summary>
         /// Method delegate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>FPEventSequence</c> fires it's event start logic.
-        /// Use this to run your own event logic.
+        /// Use this to run your own event logic - likely by instancing your own <c>FPEventSequence</c>.
         /// Current instance of <c>FPEventSequence</c> the method was fired in is provided for convenienience as first method argument.
         /// </summary>
         public Action<FPEventSequence> EventSequenceStart;
@@ -156,6 +151,12 @@ namespace FP2Lib.Player
         /// Sprite shown next to character name in World Map's pause screen.
         /// </summary>
         public Sprite worldMapPauseSprite;
+        /// <summary>
+        /// 0 - Zao's Aiship, 1 - Cargo Airship. Also affects plane/submarine but base game fills the array with identical sprites in each slot.
+        /// Anything else - Sprite provided by modder and added to vehicle array under said id. 
+        /// Be aware that some world maps have leftover sprites in slots 2 and 3. They are not used and can be overwritten.
+        /// </summary>
+        public int airshipSprite = 0;
 
         /// <summary>
         /// 3 Frames for live icon animation. Frame 0 is shown for most of the time, frames 1 and 2 are used for the blinking animation.

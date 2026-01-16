@@ -232,7 +232,7 @@ namespace FP2Lib
                 Harmony generalPatches = new("000.kuborro.libraries.fp2.fp2lib.patches");
                 generalPatches.PatchAll(typeof(ScreenshotFix));
                 generalPatches.PatchAll(typeof(PotionSizeFix));
-                generalPatches.PatchAll(typeof(ModdedPotionsFix));
+                //generalPatches.PatchAll(typeof(ModdedPotionsFix));
             }
             catch (Exception ex)
             {

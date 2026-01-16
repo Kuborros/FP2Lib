@@ -25,7 +25,7 @@ namespace FP2Lib.Stage
         /// </summary>
         public string version = "1.0.0";
         /// <summary>
-        /// Should this stage be shown in other mods that list custom stages. 
+        /// Should this stage be shown in other mods that list custom stages.
         /// It's not *enforced*, and is therefore just a suggestion to other mod that you wish to show this stage or not.
         /// </summary>
         public bool showInCustomStageLoaders = true;
@@ -79,8 +79,11 @@ namespace FP2Lib.Stage
         /// </summary>
         public Sprite preview;
         /// <summary>
-        /// Prefab used for the quickshop menu in the world maps.
-        /// Null means no shop.
+        /// Prefab used for the quickshop menu in the world maps. 
+        /// Should be an object containing MenuClassicShopHub component and all it's sub-objects. 
+        /// Despite the name it is also used in Adventure mode.
+        /// Any menu-like GameObject will work here, so it doesn't have to actually be a Quick Shop menu if you want to be fancy.
+        /// Null means no shop, or that you are using the NPC shop option below (shopkeeper).
         /// Used only for Hubs.
         /// </summary>
         public GameObject quickShop;
@@ -94,8 +97,10 @@ namespace FP2Lib.Stage
         /// <summary>
         /// NPC to take the shop from.
         /// This will also copy the shop over from the one in NPC's prefab.
-        /// Used very scarcely (a single time) in the base game, as usually the shop menu just has the NPC sprite embedded in it instead.
+        /// It directly opens the NPC's shop when clicking "Quick Shop" button on stage confirm menu, and sets up said menu for you.
+        /// Used very scarcely (a single time) in the base game, as usually the shop menu is instanced from MenuClassicShopHub object instead.
         /// If you do that, then just leave this at Null.
+        /// Null here and in quickShop means no shop.
         /// Used only for Hubs.
         /// </summary>
         public FPHubNPC shopkeeper;

@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using FP2Lib.Item;
 using FP2Lib.Stage;
 using FP2Lib.Vinyl;
 using HarmonyLib;
@@ -84,7 +85,9 @@ namespace FP2Lib.Map
                                             //Same for item!
                                             if (!target.itemUID.IsNullOrWhiteSpace())
                                             {
-                                                //TODO: Add item code when that feature is done!
+                                                ItemData item = ItemHandler.GetItemDataByUid(target.itemUID);
+                                                if (item != null)
+                                                    location.pointers.hudChestItem = (FPPowerup)item.itemID;
                                             }
                                         }
                                         else
