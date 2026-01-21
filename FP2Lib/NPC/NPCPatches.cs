@@ -107,6 +107,20 @@ namespace FP2Lib.NPC
             }
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FPHubNPC), "CheckLineCharacterMatch", MethodType.Normal)]
+        static void PatchCheckLineCharacterMatch(NPCDialogLine line, FPCharacterID charID, ref bool __result)
+        {
+            //Modded characters only
+            if (charID > FPCharacterID.NEERA)
+            {
+                //Base game has slightly different ID system for dialogue which stars desynced from characterID
+                //HOWEVER, presence of Bike Carol then re-syncs it with characterIDs at Neera
+                //So all our custom chars can just use their numeric ID there.
+                if ((int)line.character == (int)FPSaveManager.character) __result = true;
+            }
+        }
+
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MenuGlobalPause), "UpdateNPCList", MethodType.Normal)]
