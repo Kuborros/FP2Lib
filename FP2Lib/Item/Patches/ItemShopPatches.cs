@@ -16,6 +16,7 @@ namespace FP2Lib.Item.Patches
             {
                 foreach (ItemData item in ItemHandler.Items.Values)
                 {
+                    if (item.sprite == null) continue;
                     //Potions
                     if (item.isPotion)
                     {
@@ -80,6 +81,8 @@ namespace FP2Lib.Item.Patches
 
                         foreach (ItemData item in ItemHandler.Items.Values)
                         {
+                            //Let us not add items that have no sprite.
+                            if (item.sprite == null) continue;
                             //Add both items and potions, since it's the classic mode shop.
                             if (item.itemShopLocation != IAddToShop.None && FPSaveManager.gameMode == FPGameMode.CLASSIC)
                             {
@@ -112,6 +115,7 @@ namespace FP2Lib.Item.Patches
                     {
                         foreach (ItemData item in ItemHandler.Items.Values)
                         {
+                            if (item.sprite == null) continue;
                             //Potions
                             if (item.isPotion)
                             {
