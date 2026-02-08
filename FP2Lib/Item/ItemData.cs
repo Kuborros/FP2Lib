@@ -197,6 +197,7 @@ namespace FP2Lib.Item
             this.potionShopLocation = potionShopLocation;
         }
 
+        //Constructor for potion - lite
         public ItemData(string uid, string name, string descriptionGeneric, Sprite sprite, int starCards, int goldGemsPrice, bool isPotion, float effectPercentage, string effect,
             Sprite spriteBottleMid, Sprite spriteBottleTop, Sprite spriteBottleBottom, PAddToShop potionShopLocation)
         {

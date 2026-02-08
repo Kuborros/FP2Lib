@@ -37,6 +37,7 @@ namespace FP2Lib.NPC
         PLANT = 22,
         ROBOT = 23,
         PANGOLIN = 24,
+        ORYX = 25,
     }
 
     public enum FPCharacterHome

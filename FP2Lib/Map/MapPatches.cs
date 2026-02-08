@@ -111,7 +111,7 @@ namespace FP2Lib.Map
                                         //Make sure we actually found a valid stage!
                                         if (target != null)
                                         {
-                                            location.pointers.stageID = StageHandler.getCustomStageByUid(destination).id;
+                                            location.pointers.stageID = target.id;
                                         }
                                         else
                                         {
@@ -131,7 +131,7 @@ namespace FP2Lib.Map
                                         MapData target = MapHandler.getWorldMapByUid(destination);
                                         if (target != null)
                                         {
-                                            location.pointers.mapID = MapHandler.getWorldMapByUid(destination).id;
+                                            location.pointers.mapID = target.id;
                                         }
                                         else
                                         {

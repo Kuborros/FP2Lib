@@ -173,11 +173,11 @@ namespace FP2Lib.Player
         public Sprite[] worldMapWalk;
 
         /// <summary>
-        /// Animator for Saga block capturing the player. It has to include animation called "TrapPlayer" which plays your character being trapped.
+        /// Animator for Saga block capturing the player. It has to include animation called "TrapPlayer" which plays your character being trapped, as well as other animations usually present in original animator.
         /// </summary>
         public RuntimeAnimatorController sagaBlock;
         /// <summary>
-        /// Animator for Syntax Saga block capturing the player. It has to include animation called "TrapPlayer" which plays your character being trapped.
+        /// Animator for Syntax Saga block capturing the player. It has to include animation called "TrapPlayer" which plays your character being trapped, as well as other animations from the original.
         /// </summary>
         public RuntimeAnimatorController sagaBlockSyntax;
 
