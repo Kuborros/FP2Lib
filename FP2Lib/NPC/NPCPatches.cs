@@ -205,7 +205,11 @@ namespace FP2Lib.NPC
                     {
                         //Set custom preview
                         ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npc.Prefabs.Values.First().GetComponent<Animator>().runtimeAnimatorController;
-                        component.Play("Default", 0);
+                        if (component.HasState(0, Animator.StringToHash("Preview")))
+                        {
+                            component.Play("Preview", 0);
+                        }
+                        else component.Play("Default", 0);
                         //Set custom home and species if needed.
                         if (!npc.customSpecies.IsNullOrWhiteSpace())
                         {
