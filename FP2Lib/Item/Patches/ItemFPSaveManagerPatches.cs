@@ -81,19 +81,14 @@ namespace FP2Lib.Item.Patches
                                 if (!itemData.descriptionNeera.IsNullOrWhiteSpace()) __result = itemData.descriptionNeera;
                                 break;
                             default:
-                                if (FPSaveManager.character > FPCharacterID.NEERA)
+                                if (FPSaveManager.character > FPCharacterID.NEERA && PlayerHandler.currentCharacter != null)
                                 {
-                                    if (PlayerHandler.currentCharacter != null)
-                                    {
-                                        if (itemData.descriptionCustom.ContainsKey(PlayerHandler.currentCharacter.uid))
-                                            __result = itemData.descriptionCustom[PlayerHandler.currentCharacter.uid];
-                                        else __result = itemData.descriptionGeneric;
-                                    }
-                                    else __result = itemData.descriptionGeneric;
+                                    if (itemData.descriptionCustom.ContainsKey(PlayerHandler.currentCharacter.uid))
+                                        __result = itemData.descriptionCustom[PlayerHandler.currentCharacter.uid];
                                 }
-                                else __result = itemData.descriptionGeneric;
                                 break;
                         }
+                        if (__result.IsNullOrWhiteSpace()) __result = itemData.descriptionGeneric;
                         break;
                     }
                 }

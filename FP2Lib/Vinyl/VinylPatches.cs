@@ -102,6 +102,9 @@ namespace FP2Lib.Vinyl
                 {
                     if (vinyl.shopLocation != VAddToShop.None || vinyl.shopLocation != VAddToShop.ClassicOnly)
                     {
+                        //Skip vinyls with no music, they should not be put on sale.
+                        if (vinyl.audioClip == null) continue;
+
                         if ((vinyl.shopLocation == VAddToShop.Naomi && ___NPCName == "Naomi")
                         || (vinyl.shopLocation == VAddToShop.Digo && ___NPCName == "Digo")
                         || (vinyl.shopLocation == VAddToShop.Fawnstar && ___NPCName == "Fawnstar")
@@ -136,6 +139,8 @@ namespace FP2Lib.Vinyl
                     {
                         if (vinyl.shopLocation != VAddToShop.None && FPSaveManager.gameMode == FPGameMode.CLASSIC)
                         {
+                            //Skip vinyls with no music, they should not be put on sale.
+                            if (vinyl.audioClip == null) continue;
                             if (!___musicID.Contains((FPMusicTrack)vinyl.id))
                             {
                                 ___itemsForSale = ___itemsForSale.AddToArray(FPPowerup.NONE);
@@ -166,6 +171,9 @@ namespace FP2Lib.Vinyl
                         {
                             if (vinyl.shopLocation != VAddToShop.None || vinyl.shopLocation != VAddToShop.ClassicOnly)
                             {
+                                //Skip vinyls with no music, they should not be put on sale.
+                                if (vinyl.audioClip == null) continue;
+
                                 if ((vinyl.shopLocation == VAddToShop.Naomi && fPHubNPC.NPCName == "Naomi")
                                 || (vinyl.shopLocation == VAddToShop.Digo && fPHubNPC.NPCName == "Digo")
                                 || (vinyl.shopLocation == VAddToShop.Fawnstar && fPHubNPC.NPCName == "Fawnstar")

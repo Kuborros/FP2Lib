@@ -83,6 +83,7 @@ namespace FP2Lib.Item.Patches
         [HarmonyPrefix]
         [HarmonyAfter("com.eps.plugin.fp2.potion-seller")]
         [HarmonyPatch(typeof(MenuFile), "Start", MethodType.Normal)]
+        [HarmonyPatch(typeof(MenuItemGet), "Start", MethodType.Normal)]
         static void PatchMenuFileStart(ref FPHudDigit ___pfPowerupIcon)
         {
             int totalItems = ItemHandler.baseItems + ItemHandler.Items.Count;
