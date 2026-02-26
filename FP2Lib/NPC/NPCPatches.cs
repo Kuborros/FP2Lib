@@ -192,12 +192,17 @@ namespace FP2Lib.NPC
             //If we swapped to different NPC than last frame
             if (id != selectedNPC)
             {
-                ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npcRenderer;
+                //Dumb but needed.
+                //This is here to reset the 'Default animation variables' that Unity 5.6 uses.
+                //While 2022+ lets you dynamically edit and write them from code, 5.6 does not - they *only* get set when the animator is first activated.
+                //Therefore, before changing animators we need an intermediary step where we change to nothing, reset tail object, and *then* switch to the right animator.
+                __instance.npcPreviewSprite.gameObject.GetComponent<Animator>().runtimeAnimatorController = null;
+                __instance.npcPreviewSprite.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = null;
+
+                Animator component = __instance.npcPreviewSprite.gameObject.GetComponent<Animator>();
                 selectedNPC = id;
                 customHomeDisplay = string.Empty;
                 customSpeciesDisplay = string.Empty;
-
-                Animator component = __instance.npcPreviewSprite.gameObject.GetComponent<Animator>();
 
                 foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
                 {
@@ -205,6 +210,7 @@ namespace FP2Lib.NPC
                     {
                         //Set custom preview
                         ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npc.Prefabs.Values.First().GetComponent<Animator>().runtimeAnimatorController;
+                        //Special animation if we got one
                         if (component.HasState(0, Animator.StringToHash("Preview")))
                         {
                             component.Play("Preview", 0);
@@ -222,7 +228,10 @@ namespace FP2Lib.NPC
                         return;
                     }
                 }
+                //If we didn't set anything above, then fall back to default
+                ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npcRenderer;
             }
+
             if (!customSpeciesDisplay.IsNullOrWhiteSpace())
             {
                 ___npcSpecies.GetComponent<TextMesh>().text = customSpeciesDisplay;
