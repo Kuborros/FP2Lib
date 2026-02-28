@@ -1,4 +1,5 @@
-﻿using FP2Lib.Tools;
+﻿using BepInEx.Logging;
+using FP2Lib.Tools;
 using HarmonyLib;
 using System;
 using System.Linq;
@@ -8,6 +9,11 @@ namespace FP2Lib.Item.Patches
 {
     internal class PotionMenuPatches
     {
+        //Special magical failsafe
+        //This only bumps up how far we extend the sprite arrays, in case the file has some potion with unnaturaly high id
+        static int highestEncounteredPotionID = 0;
+
+        private static readonly ManualLogSource PotionLogSource = FP2Lib.logSource;
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuItemSelect), "Start", MethodType.Normal)]
@@ -35,6 +41,10 @@ namespace FP2Lib.Item.Patches
         {
 
             int totalPotions = ItemHandler.basePotions + ItemHandler.potionCount;
+            //In case we ran into a potion that had a higher ID than the one we have registered
+            if (totalPotions > highestEncounteredPotionID) highestEncounteredPotionID = totalPotions;
+            else totalPotions = highestEncounteredPotionID;
+
             if (___spriteTop.Length < totalPotions)
             {
                 ___spriteTop = Utils.ExpandSpriteArray(___spriteTop, totalPotions, ___spriteTop[1]);
@@ -81,6 +91,10 @@ namespace FP2Lib.Item.Patches
         static void PatchMenuFileStart(ref MenuFilePanel[] ___files)
         {
             int totalPotions = ItemHandler.basePotions + ItemHandler.potionCount;
+            //In case there was a higher potion ID somewhere along the line
+            if (totalPotions > highestEncounteredPotionID) highestEncounteredPotionID = totalPotions;
+            else totalPotions = highestEncounteredPotionID;
+
             foreach (MenuFilePanel file in ___files)
             {
 
@@ -122,6 +136,29 @@ namespace FP2Lib.Item.Patches
                     else file.spriteBottom[potion.potionID] = file.spriteBottom[1];
                 }
             }
+        }
+
+        //If a mod introduced new potion IDs outside ranges known to us and then got removed game will try to render invalid potion sprites within the save menu, resulting in an unhandled null pointer.
+        //This Finalizer intercepts this exception, and restores sane defaults which lets the game proceed far enough for its own sanity checks to fire and correct the file.
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(FPSaveManager), "DrawPotion", new Type[] { typeof(FPPowerup[]), typeof(byte[]),
+            typeof(SpriteRenderer[]),typeof(SpriteRenderer), typeof(Sprite[]), typeof(Sprite[]),
+            typeof(Sprite[]), typeof(Sprite[])})]
+        public static Exception PatchDrawPotion(Exception __exception, FPPowerup[] powerups, SpriteRenderer[] potionSlot, byte[] activePotions, Sprite[] spriteBottom, Sprite[] spriteMiddle, Sprite[] spriteTop)
+        {
+            if (__exception != null)
+            {
+                PotionLogSource.LogWarning("Attempted to render a potion with out-of-bounds sprite! Bad!" +
+                    "\nHighest encountered potion ID:" + activePotions.Length + "\nWe have expected the highest one to be: " + highestEncounteredPotionID +
+                    "\nIncreasing value accordingly, applying fix!");
+                highestEncounteredPotionID = activePotions.Length + 1;
+                foreach (SpriteRenderer renderer in potionSlot)
+                {
+                    renderer.sprite = null;
+                }
+                return null;
+            }
+            return __exception;
         }
     }
 }
