@@ -152,6 +152,12 @@ namespace FP2Lib.Player
         /// </summary>
         public Sprite worldMapPauseSprite;
         /// <summary>
+        /// Sprite used for getting instakilled by Bakunawa Fusion's stab - both in stealth and boss fight.
+        /// Base game uses KO sprites, but it is not a requirement.
+        /// Default of null means you deal with it yourself in your own mod code.
+        /// </summary>
+        public Sprite bfImpaleSprite = null;
+        /// <summary>
         /// 0 - Zao's Aiship, 1 - Cargo Airship. Also affects plane/submarine but base game fills the array with identical sprites in each slot.
         /// Anything else - Sprite provided by modder and added to vehicle array under said id. 
         /// Be aware that some world maps have leftover sprites in slots 2 and 3. They are not used and can be overwritten.

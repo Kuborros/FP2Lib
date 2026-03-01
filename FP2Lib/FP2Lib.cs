@@ -138,6 +138,7 @@ namespace FP2Lib
                     playerPatches.PatchAll(typeof(PatchFPPauseMenu));
                     playerPatches.PatchAll(typeof(PatchArenaSpawner));
                     playerPatches.PatchAll(typeof(PatchSnakePlatform));
+                    playerPatches.PatchAll(typeof(PatchBakunawaInstakill));
                 }
                 catch (Exception ex)
                 {
