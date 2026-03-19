@@ -19,7 +19,7 @@ using System;
 
 namespace FP2Lib
 {
-    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.5.0.1")]
+    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.5.1.0")]
     [BepInProcess("FP2.exe")]
     public class FP2Lib : BaseUnityPlugin
     {
