@@ -58,7 +58,7 @@ namespace FP2Lib.NPC
 
         public HubNPC() { }
 
-        internal string getNpcString()
+        internal string GetNpcString()
         {
             return string.Format("{0} {1} {2}", Species.ToString("D2"), Home.ToString("D2"), Name);
         }

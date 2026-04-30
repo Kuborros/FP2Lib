@@ -60,10 +60,17 @@ namespace FP2Lib.Player
         /// </summary>
         internal bool registered = false;
         /// <summary>
-        /// Should the mod use it's own code and objects for all the cutscene, stage dialogue, and activator logic. 
+        /// Should the mod use it's own code and objects for all the cutscene and stage dialogue logic. 
+        /// This includes all the cutscenes, mid-stage dialogue, and things like Sky Bridge's and Nalao Lake's special cutscenes.
         /// Enabling this disables automatic rerouting of all these functions to character selected in <c>eventActivatorCharacter</c>
         /// </summary>
-        public bool useOwnCutsceneActivators;
+        public bool useOwnCutsceneActivators = false;
+        /// <summary>
+        /// Should the mod use it's own code and objects for all the parent activator logic. 
+        /// Unless doing major stage modifications you will likely want to use the built-in ones.
+        /// Enabling this disables automatic rerouting of all these functions to character selected in <c>eventActivatorCharacter</c>
+        /// </summary>
+        public bool useOwnParentActivators = false;
         /// <summary>
         /// Should the character be listed in Adventure Mode character select.
         /// </summary>

@@ -12,7 +12,7 @@ namespace FP2Lib.Player.PlayerPatches
             //If no extra characters are loaded, abort patch.
             if (FPSaveManager.character >= (FPCharacterID)5)
             {
-                if (!PlayerHandler.currentCharacter.useOwnCutsceneActivators)
+                if (!PlayerHandler.currentCharacter.useOwnParentActivators)
                 {
                     if (PlayerHandler.currentCharacter.eventActivatorCharacter == FPCharacterID.LILAC && !__instance.lilac)
                     {

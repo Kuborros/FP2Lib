@@ -33,9 +33,9 @@ namespace FP2Lib.NPC
                 {
                     //Non-zero ID means NPC was initialised before (or already exists in the array) and already has ID assigned. Set it in the array.
                     //Also check if it uses placeholder (otherwise we migh have collision which need fixing)
-                    if (___npcNames[npc.ID] == "00 00 Data Missing" || ___npcNames[npc.ID] == npc.getNpcString())
+                    if (___npcNames[npc.ID] == "00 00 Data Missing" || ___npcNames[npc.ID] == npc.GetNpcString())
                     {
-                        ___npcNames[npc.ID] = npc.getNpcString();
+                        ___npcNames[npc.ID] = npc.GetNpcString();
                         FP2Lib.logSource.LogDebug("NPC " + npc.UID + " restored from storage with ID = " + npc.ID);
                     }
                     else
@@ -114,7 +114,7 @@ namespace FP2Lib.NPC
             //Modded characters only
             if (charID > FPCharacterID.NEERA)
             {
-                //Base game has slightly different ID system for dialogue which stars desynced from characterID
+                //Base game has slightly different ID system for dialogue which starts desynced from characterID
                 //HOWEVER, presence of Bike Carol then re-syncs it with characterIDs at Neera
                 //So all our custom chars can just use their numeric ID there.
                 if ((int)line.character == (int)FPSaveManager.character) __result = true;
