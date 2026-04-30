@@ -1,12 +1,31 @@
 ﻿using HarmonyLib;
 using System;
+using System.Collections.Generic;
+using System.Reflection.Emit;
 using UnityEngine;
 
 namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchMenuWorldMap
     {
-        private static MenuWorldMap instance;
+        public static bool CutsceneCheckExtended(MenuWorldMap instance, int i, int l)
+        {
+            PlayableChara character = PlayerHandler.currentCharacter;
+            if (character != null)
+            {
+                if (!character.useOwnCutsceneActivators)
+                {
+                    return instance.cutscenes[i].dialogSequence[l].characters[(int)character.eventActivatorCharacter];
+                }
+            }
+            return false;
+        }
+
+        public static bool CutsceneCheckCharBase()
+        {
+            if (FPSaveManager.character > FPCharacterID.NEERA) return true;
+            else return false;
+        }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuWorldMap), "SetPlayerSprite", MethodType.Normal)]
@@ -47,102 +66,75 @@ namespace FP2Lib.Player.PlayerPatches
             return false;
         }
 
-
-        [HarmonyPostfix]
+        [HarmonyTranspiler]
         [HarmonyPatch(typeof(MenuWorldMap), "CutsceneCheck", MethodType.Normal)]
-        static void PatchCutsceneCheck(MenuWorldMap __instance, ref float ___badgeCheckTimer, ref GameObject ___targetMenu)
+        static IEnumerable<CodeInstruction> CutsceneCheckTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
         {
-            //Skip doing anything on built-in chars, or if custom char is null
-            if (FPSaveManager.character <= FPCharacterID.NEERA || PlayerHandler.currentCharacter == null) return;
+            Label patchStart = il.DefineLabel();
+            Label loopEnd = il.DefineLabel();
+            Label lilacTarget = il.DefineLabel();
 
-            //Unironically just re-run the cutscene check ourselves
-            if (__instance.cutscenes.Length > 0)
+            List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+            for (int i = 1; i < codes.Count; i++)
             {
-                for (int i = 0; i < __instance.cutscenes.Length; i++)
+                //Original:
+                /*
+			    IL_021B: ldlen
+			    IL_021C: conv.i4
+			    IL_021D: blt       IL_011C
+                IL_0222: ldloc.s 4
+
+                The jump code of the loop. Located below all the loop's code but ran first.
+                */
+
+                if (codes[i - 1].opcode == OpCodes.Conv_I4 && codes[i].opcode == OpCodes.Blt && codes[i + 1].opcode == OpCodes.Ldloc_S)
                 {
-                    if (__instance.cutscenes[i].requiredStoryFlags.Length <= 0)
-                    {
-                        continue;
-                    }
-                    int num = __instance.cutscenes[i].requiredStoryFlags.Length;
-                    for (int j = 0; j < __instance.cutscenes[i].requiredStoryFlags.Length; j++)
-                    {
-                        if (FPSaveManager.storyFlag[__instance.cutscenes[i].requiredStoryFlags[j]] > 0)
-                        {
-                            num--;
-                        }
-                    }
-                    for (int k = 0; k < __instance.cutscenes[i].deactivateAtFlag.Length; k++)
-                    {
-                        if (FPSaveManager.storyFlag[__instance.cutscenes[i].deactivateAtFlag[k]] > 0)
-                        {
-                            num = 99;
-                        }
-                    }
-                    if (__instance.cutscenes[i].requiredMap >= 0 && FPSaveManager.lastMap != __instance.cutscenes[i].requiredMap)
-                    {
-                        num = 99;
-                    }
-                    if (__instance.cutscenes[i].requiredLocation >= 0 && FPSaveManager.lastMapLocation != __instance.cutscenes[i].requiredLocation)
-                    {
-                        num = 99;
-                    }
-                    bool flag = false;
-                    for (int l = 0; l < __instance.cutscenes[i].dialogSequence.Length; l++)
-                    {
-                        //If using own cutscene activators, check if the mod added its own scene
-                        if (PlayerHandler.currentCharacter.useOwnCutsceneActivators)
-                        {
-                            if (__instance.cutscenes[i].dialogSequence[l].characters.Length > PlayerHandler.currentCharacter.id)
-                            {
-                                if (__instance.cutscenes[i].dialogSequence[l].characters[0])
-                                {
-                                    flag = true;
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (__instance.cutscenes[i].dialogSequence[l].characters[(int)PlayerHandler.currentCharacter.eventActivatorCharacter])
-                            {
-                                flag = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!flag)
-                    {
-                        num = 99;
-                    }
-                    if (num <= 0)
-                    {
-                        CutsceneDialog cutsceneDialog = GameObject.Instantiate(__instance.menuCutscene);
-                        cutsceneDialog.currentScene = __instance.cutscenes[i].sceneID;
-                        cutsceneDialog.dialogSystem = __instance.dialogSystem;
-                        cutsceneDialog.dialogSequence = __instance.cutscenes[i].dialogSequence;
-                        ___targetMenu = cutsceneDialog.gameObject;
-                        instance = __instance;
-                        __instance.state = State_WaitForMenu;
-                    }
-                    else
-                    {
-                        ___badgeCheckTimer = 1f;
-                    }
+                    //Reroute start of the loop to our own code
+                    lilacTarget = (Label)codes[i].operand;
+                    loopEnd = (Label)codes[i - 13].operand;
+                    codes[i].operand = patchStart;
+                    break;
                 }
             }
-        }
-        public static void State_WaitForMenu()
-        {
-            State_WaitForMenu(instance);
-        }
 
-        [HarmonyReversePatch(HarmonyReversePatchType.Snapshot)]
-        [HarmonyPatch(typeof(MenuWorldMap), "State_WaitForMenu", MethodType.Normal)]
-        public static void State_WaitForMenu(object instance)
-        {
-            // Replaced at runtime with reverse patch
-            throw new NotImplementedException("Method failed to reverse patch!");
+            //Our stuff
+            /*
+             * Ldsfld FPSaveManager.character (load current char into comparator)
+             * Ldc_I4_4 (load 4 into comparator)
+             * Ble.s lilacTarget (jump to lilacTarget if we are less than 4 - it means we are dealing with base game chars)
+             * Ldarg_0 (load 'this' into argument stack)
+             * Ldarg_0 (load 'this' into argument stack - again)
+             * Ldloc_0 (load 'i')
+             * Ldloc_S 5 (load 'l')
+             * Call m_CutsceneCheck (Call the method)
+             * StLoc_2 (load the result into val 2 - in our case 'flag')
+             * Br loopEnd (break the loop)
+             */
+            //C# result:
+            /*
+                if (FPSaveManager.character > FPCharacterID.NEERA)
+			    {
+			        flag = CutsceneCheckExtended(this);
+			        break;
+			    }
+            */
+
+
+            CodeInstruction patchCodeStart = new CodeInstruction(OpCodes.Ldarg_0);
+            patchCodeStart.labels.Add(patchStart);
+
+            codes.Add(patchCodeStart);
+            codes.Add(Transpilers.EmitDelegate(CutsceneCheckCharBase));
+            codes.Add(new CodeInstruction(OpCodes.Brfalse, lilacTarget));
+            codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+            codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+            codes.Add(new CodeInstruction(OpCodes.Ldloc_0));
+            codes.Add(new CodeInstruction(OpCodes.Ldloc_S, 5));
+            codes.Add(Transpilers.EmitDelegate(CutsceneCheckExtended));
+            codes.Add(new CodeInstruction(OpCodes.Stloc_S, 4));
+            codes.Add(new CodeInstruction(OpCodes.Br, loopEnd));
+
+            return codes;
         }
     }
 }
