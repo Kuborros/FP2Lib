@@ -13,7 +13,13 @@ namespace FP2Lib.Player.PlayerPatches
             PlayableChara character = PlayerHandler.currentCharacter;
             if (character != null)
             {
-                if (!character.useOwnCutsceneActivators)
+                if (character.useOwnCutsceneActivators)
+                {
+                    if (instance.cutscenes[i].dialogSequence[l].characters.Length >= character.id)
+                        return instance.cutscenes[i].dialogSequence[l].characters[character.id];
+                    else return false;
+                }
+                else
                 {
                     return instance.cutscenes[i].dialogSequence[l].characters[(int)character.eventActivatorCharacter];
                 }
@@ -66,6 +72,68 @@ namespace FP2Lib.Player.PlayerPatches
             return false;
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(MenuWorldMap), "SearchForDialog", MethodType.Normal)]
+        static void PatchSearchForDialog(FPMapLocation current, FPMapDialog[] dialogArray, ref MenuWorldMap __instance)
+        {
+            if (FPSaveManager.character <= FPCharacterID.NEERA || PlayerHandler.currentCharacter == null) return;
+
+            if (dialogArray.Length >= current.pointers.stageID)
+            {
+                DialogCall[] dialogSequence = dialogArray[current.pointers.stageID].dialogSequence;
+                int sceneID = dialogArray[current.pointers.stageID].sceneID;
+                bool flag = false;
+                if (FPSaveManager.storyFlag[FPSaveManager.GetStoryFlag(current.pointers.stageID)] <= 1 && dialogSequence.Length > 0)
+                {
+                    flag = true;
+                }
+                if (current.type == FPMapLocationType.HUB)
+                {
+                    flag = true;
+                }
+                if (dialogArray[current.pointers.stageID].disableAtStoryFlag > 0 && FPSaveManager.storyFlag[dialogArray[current.pointers.stageID].disableAtStoryFlag] >= dialogArray[current.pointers.stageID].storyFlagValue)
+                {
+                    flag = false;
+                }
+                if (flag)
+                {
+                    for (int i = 0; i < dialogSequence.Length; i++)
+                    {
+                        if (PlayerHandler.currentCharacter.useOwnCutsceneActivators)
+                        {
+                            if (dialogSequence[i].characters[PlayerHandler.currentCharacter.id])
+                            {
+                                Dialog(__instance, sceneID, dialogSequence[i].ID);
+                                for (int j = i + 1; j < dialogSequence.Length; j++)
+                                {
+                                    if (dialogSequence[j].characters[PlayerHandler.currentCharacter.id])
+                                    {
+                                        Dialog(__instance, sceneID, dialogSequence[j].ID);
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            if (dialogSequence[i].characters[(int)PlayerHandler.currentCharacter.eventActivatorCharacter])
+                            {
+                                Dialog(__instance, sceneID, dialogSequence[i].ID);
+                                for (int j = i + 1; j < dialogSequence.Length; j++)
+                                {
+                                    if (dialogSequence[j].characters[(int)PlayerHandler.currentCharacter.eventActivatorCharacter])
+                                    {
+                                        Dialog(__instance, sceneID, dialogSequence[j].ID);
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(MenuWorldMap), "CutsceneCheck", MethodType.Normal)]
         static IEnumerable<CodeInstruction> CutsceneCheckTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -99,14 +167,14 @@ namespace FP2Lib.Player.PlayerPatches
 
             //Our stuff
             /*
-             * Ldsfld FPSaveManager.character (load current char into comparator)
-             * Ldc_I4_4 (load 4 into comparator)
-             * Ble.s lilacTarget (jump to lilacTarget if we are less than 4 - it means we are dealing with base game chars)
+             * Ldarg_0 (load 'this' into argument stack)
+             * Call (Fancy call constructor util is used here)
+             * Bfalse lilacTarget (jump to lilacTarget if method returned false)
              * Ldarg_0 (load 'this' into argument stack)
              * Ldarg_0 (load 'this' into argument stack - again)
              * Ldloc_0 (load 'i')
              * Ldloc_S 5 (load 'l')
-             * Call m_CutsceneCheck (Call the method)
+             * Call (the sequel)
              * StLoc_2 (load the result into val 2 - in our case 'flag')
              * Br loopEnd (break the loop)
              */
@@ -136,5 +204,13 @@ namespace FP2Lib.Player.PlayerPatches
 
             return codes;
         }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(MenuWorldMap), "Dialog", MethodType.Normal)]
+        public static void Dialog(object instance, int scene, int line)
+        {
+            throw new NotImplementedException("Reverse Patch failed!");
+        }
     }
+
 }
