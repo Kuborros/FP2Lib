@@ -141,6 +141,7 @@ namespace FP2Lib
                     playerPatches.PatchAll(typeof(PatchBakunawaInstakill));
                     playerPatches.PatchAll(typeof(PatchCutsceneDialog));
                     playerPatches.PatchAll(typeof(PatchFPResultsMenu));
+                    playerPatches.PatchAll(typeof(PatchBossRushManager));
                 }
                 catch (Exception ex)
                 {
