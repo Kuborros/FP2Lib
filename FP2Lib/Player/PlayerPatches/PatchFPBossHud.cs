@@ -9,8 +9,8 @@ namespace FP2Lib.Player.PlayerPatches
         [HarmonyPatch(typeof(FPBossHud), "Start", MethodType.Normal)]
         static void PatchFPBossHudStart(FPBossHud __instance)
         {
-            //We fightin' everyone, so move the health bars
-            if (FPSaveManager.character >= (FPCharacterID)5)
+            //We fightin' everyone, so move the health bars (only in the Battlesphere)
+            if (FPSaveManager.character >= (FPCharacterID)5 && FPStage.stageNameString == "The Battlesphere")
             {
                 switch (__instance.name)
                 {

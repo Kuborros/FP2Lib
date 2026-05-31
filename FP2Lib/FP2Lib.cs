@@ -19,7 +19,7 @@ using System;
 
 namespace FP2Lib
 {
-    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.5.1.0")]
+    [BepInPlugin("000.kuborro.libraries.fp2.fp2lib", "FP2Lib", "0.6.0.0")]
     [BepInProcess("FP2.exe")]
     public class FP2Lib : BaseUnityPlugin
     {
@@ -216,6 +216,18 @@ namespace FP2Lib
             catch (Exception ex)
             {
                 Logger.LogError("Stage Patch Failed! Info:" + ex.Message);
+            }
+
+            //Arena/Dojo challenges 
+            Logger.LogDebug("Challenge Patch Init");
+            try
+            {
+                Harmony stagePatches = new("000.kuborro.libraries.fp2.fp2lib.arena");
+                //stagePatches.PatchAll(typeof());
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Challenge Patch Failed! Info:" + ex.Message);
             }
 
             //Save Redirection
