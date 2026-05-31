@@ -14,31 +14,30 @@ namespace FP2Lib.Player.PlayerPatches
             //If character has their own cutscenes, they will be added to the array and can be played.
             if (PlayerHandler.currentCharacter.useOwnCutsceneActivators)
             {
-                switch (character)
+                instance.cutsceneToStart[character].Activate(false);
+            }
+            //Otherwise, fire off the activator for the character they mantle
+            else
+            {
+                switch (PlayerHandler.currentCharacter.eventActivatorCharacter)
                 {
-                    case 0:
+                    case FPCharacterID.LILAC:
                         instance.cutsceneToStart[0].Activate(false);
                         break;
-                    case 1:
-                    case 2:
+                    case FPCharacterID.CAROL:
+                    case FPCharacterID.BIKECAROL:
                         instance.cutsceneToStart[1].Activate(false);
                         break;
-                    case 3:
+                    case FPCharacterID.MILLA:
                         instance.cutsceneToStart[2].Activate(false);
                         break;
-                    case 4:
+                    case FPCharacterID.NEERA:
                         instance.cutsceneToStart[3].Activate(false);
                         break;
                     default:
                         instance.cutsceneToStart[character].Activate(false);
                         break;
-
                 }
-            }
-            //Otherwise, fire off the activator for the character they mantle
-            else
-            {
-                instance.cutsceneToStart[(int)PlayerHandler.currentCharacter.eventActivatorCharacter].Activate(false);
             }
         }
 
