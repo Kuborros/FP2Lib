@@ -73,3 +73,6 @@ After that is added, the project should build without a hitch.
 
 Packaging release .zip follows the same steps as a normal mod, with exception of the path and modified modinfo.json (here named fp2lib.json).
 Since this library is preinstalled by default with every FP2MM modded game install, you will need to bump the version number if you do not wish to replace existing one.
+
+
+#### This project is made completely using Natural Stupidity. No AI was used in any step of the process, and never will.
