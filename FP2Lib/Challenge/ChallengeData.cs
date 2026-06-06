@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace FP2Lib.Challenge
@@ -9,17 +6,43 @@ namespace FP2Lib.Challenge
 
     public enum FPChallengeType
     {
+        /// <summary>
+        /// Bosses to be added in the Battlesphere.
+        /// </summary>
         BOSS,
+        /// <summary>
+        /// Bosses to be added in Shang Tu Dojo. Best used for sparring matches.
+        /// </summary>
+        DOJO_BOSS,
+        /// <summary>
+        /// General battlesphere challenge, this is where most of them should go.
+        /// These challenges are listed in the credits, alongside their ranks and times.
+        /// </summary>
         CHALLENGE,
+        /// <summary>
+        /// Challenges destined for Dojo. This menu is non-standard, and will require manual patches.
+        /// </summary>
+        DOJO_CHALLENGE,
+        /// <summary>
+        /// Home Run challenges are delegated to the Home Run menu
+        /// </summary>
         HOMERUN,
-        RACE
+        /// <summary>
+        /// Functionally same as challenge in base game due to removal of the separate race menu.
+        /// </summary>
+        RACE,
+        /// <summary>
+        /// For challenges that should not be automatically added anywhere.
+        /// Use this if you implement your own challenge menu.
+        /// </summary>
+        OTHER
     }
 
     [Serializable]
-    class ChallengeData
+    public class ChallengeData
     {
         /// <summary>
-        /// 
+        /// Internal id of the challenge
         /// </summary>
         public int id;
 
@@ -29,104 +52,103 @@ namespace FP2Lib.Challenge
         public string uid;
 
         /// <summary>
-        /// 
+        /// Name of the challenge, or the boss.
         /// </summary>
         public string name;
 
         /// <summary>
+        /// Type of the challenge.
+        /// While only bosses have unique fields, Home Run gets their own menus. 
+        /// Race used to have it's own menu, but it was removed in development and now it shares it with Challenges.
+        /// </summary>
+        public FPChallengeType type;
+
+        /// <summary>
         /// Scene which should be loaded
         /// Needs to have a valid ArenaSpawner/ArenaController at the destination
+        /// That's up to you to set up properly!
         /// </summary>
+        [NonSerialized]
         public string destinationScene;
 
         /// <summary>
-        /// 
+        /// Reward in crystals for beating the challenge.
+        /// Once beaten once, this value is divided by 4 - so don't set it to lower than that! Bad things will happen!
         /// </summary>
+        [NonSerialized]
         public int crystalReward = 100;
 
         /// <summary>
-        /// 
+        /// Amount of Star Cards needed to unlock this challenge/boss.
+        /// Set this to -1 for 'always unlocked'.
         /// </summary>
-        public bool rewardTimeCapsule;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int timeCapsuleID;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool spawnAllies;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool alliesAreHostile;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool disableCorePickups;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public FPBaseObject[] spawnAtStart;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public ArenaRoundSpawnList[] roundObjectList;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public float[] spawnDelay;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string endCutscene;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public float victoryDelayOffset;
+        [NonSerialized]
+        public int unlockRequirement = -1;
 
         //Challenge Specific
 
         /// <summary>
         /// Description of the challenge
         /// </summary>
-        public string description;
+        public string challengeDescription;
 
         /// <summary>
-        /// 
+        /// Sprite used for the challenge in the challenge list
         /// </summary>
         [NonSerialized]
         public Sprite challengeIcon;
 
+        /// <summary>
+        /// Reward a Time Capsule. 
+        /// Here it primarily just sets up a sprite to show in the rewards field, and marks it as collected if you already have it.
+        /// Requires you to set the same Time Capsule up in the Arena Controller in the destination scene in order to *actually* give it as a reward.
+        /// </summary>
+        [NonSerialized]
+        public int timeCapsuleID = -1;
+
+        /// <summary>
+        /// Custom reward sprite (like one for VIP Room).
+        /// Leave as null to show either a Time Capsule (when selected above), or nothing.
+        /// </summary>
+        [NonSerialized]
+        public Sprite rewardSprite;
+
         //Boss Specific
 
         /// <summary>
-        /// 
-        /// </summary>
-        public string bossName;
-
-        /// <summary>
-        /// 
+        /// Location where the boss was originally encountered.
+        /// Used in the "Location: " text in the UI
         /// </summary>
         public string bossHome;
 
         /// <summary>
-        /// 
+        /// Should the boss be foreshadowed before being unlocked (renders their picture black on the list)
         /// </summary>
         [NonSerialized]
-        public Sprite bossPFP;
+        public bool foreshadow;
 
+        /// <summary>
+        /// ID of the playable character this boss represents.
+        /// Used for mirror mode UI changes like replacing their icon with Pangu.
+        /// Leave it empty if you are not interested in this effect, and for non-player bosses.
+        /// </summary>
+        [NonSerialized]
+        public FPCharacterID bossCharacterID;
 
+        /// <summary>
+        /// Sprite for the boss on the boss list
+        /// Follows the same sizing format as character profile pictures, but with a different pivot point.
+        /// </summary>
+        [NonSerialized]
+        public Sprite bossIcon;
 
+        /// <summary>
+        /// This method will be fired when checking for extra unlock requirements, other than the Star Cards one. 
+        /// Use this if you want to, for example, do something like Askal's fight does.
+        /// Return true for Unlocked, false for Locked.
+        /// </summary>
+        [NonSerialized]
+        public Delegate CustomBossUnlockCheck;
 
 
 

@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using FP2Lib.Tools;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace FP2Lib.Challenge
 
         private static readonly ManualLogSource ArenaLogSource = FP2Lib.logSource;
 
-        public static readonly int baseChallenges = 90;
+        public static readonly int baseChallenges = 85;
 
         internal static Dictionary<string, ChallengeData> Challenges = [];
         internal static bool[] takenIDs = new bool[256];
@@ -23,7 +24,7 @@ namespace FP2Lib.Challenge
             if (!File.Exists(GameInfo.getProfilePath() + "/ChallengeStore.json"))
                 File.Create(GameInfo.getProfilePath() + "/ChallengeStore.json").Close();
 
-            //Mark first 100 item ids as taken by base game + Potion Seller.
+            //Mark first 85 challenges as taken.
             for (int i = 0; i < baseChallenges; i++)
             {
                 takenIDs[i] = true;
@@ -33,14 +34,76 @@ namespace FP2Lib.Challenge
         }
 
 
+        public bool RegisterChallenge()
+        {
+            return false;
+        }
+
+        public bool RegisterBoss()
+        {
+            return false;
+        }
+
+        public bool RegisterDojoBoss()
+        {
+            return false;
+        }
 
 
+        public bool RegisterChallengeDirect(ChallengeData challenge)
+        {
+            string uid = challenge.uid;
+            if (!Challenges.ContainsKey(uid))
+            {
+                challenge.id = AssignChallengeID(challenge);
+                Challenges.Add(uid, challenge);
+                return true;
+            }
+            else if (Challenges.ContainsKey(uid) && (Challenges[uid].challengeIcon == null || Challenges[uid].bossIcon == null))
+            {
+                Challenges[uid] = challenge;
+                Challenges[uid].id = AssignChallengeID(Challenges[uid]);
+                return true;
+            }
+            return false;
+        }
+
+        private static int AssignChallengeID(ChallengeData challenge)
+        {
+            //Challenge already has ID
+            if (challenge.id != 0 && Challenges.ContainsKey(challenge.uid))
+            {
+                ArenaLogSource.LogDebug("Stored challenge ID assigned (" + challenge.uid + "): " + challenge.id);
+                return challenge.id;
+            }
+            else
+            {
+                ArenaLogSource.LogDebug("Challenge with unassigned ID registered! Running assignment process for " + challenge.uid);
+                //Iterate over array, assign first non-taken slot
+                for (int i = 85; i < takenIDs.Length; i++)
+                {
+                    //First slot with false = empty space
+                    if (!takenIDs[i])
+                    {
+                        challenge.id = i;
+                        takenIDs[i] = true;
+                        ArenaLogSource.LogDebug("ID assigned:" + challenge.id);
+                        //Will also break loop
+                        return challenge.id;
+                    }
+                }
+            }
+            ArenaLogSource.LogWarning("Challenge: " + challenge.uid + " failed ID assignment! That's *very* bad!");
+            return 0;
+        }
 
 
-
-
-
-
+        [CanBeNull]
+        public ChallengeData GetChallengeDataByUID(string uid)
+        {
+            if (Challenges.ContainsKey(uid)) return Challenges[uid];
+            else return null;
+        }
 
         //Did you know, Unity's JSON parser detonates if the root object is an array? And that it struggles _so much_ with arrays?
         //This cursed stuff is the easiest way to make it not break.
