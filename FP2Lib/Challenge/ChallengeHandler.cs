@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using FP2Lib.Item;
 using FP2Lib.Tools;
 using JetBrains.Annotations;
 using System;
@@ -59,13 +60,40 @@ namespace FP2Lib.Challenge
                 Challenges.Add(uid, challenge);
                 return true;
             }
-            else if (Challenges.ContainsKey(uid) && (Challenges[uid].challengeIcon == null || Challenges[uid].bossIcon == null))
+            else if (Challenges.ContainsKey(uid) && Challenges[uid].destinationScene.IsNullOrWhiteSpace())
             {
                 Challenges[uid] = challenge;
                 Challenges[uid].id = AssignChallengeID(Challenges[uid]);
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns>ChallengeData for given uid, or Null if none such exists.</returns>
+        [CanBeNull]
+        public ChallengeData GetChallengeDataByUID(string uid)
+        {
+            if (Challenges.ContainsKey(uid)) return Challenges[uid];
+            else return null;
+        }
+
+        /// <summary>
+        /// Returns the ChallengeData object for given challenge ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>ChallengeData for given id, or Null if none such exists.</returns>
+        [CanBeNull]
+        public static ChallengeData GetChallengeDataByRuntimeID(int id)
+        {
+            foreach (ChallengeData data in Challenges.Values)
+            {
+                if (data.id == id) return data;
+            }
+            return null;
         }
 
         private static int AssignChallengeID(ChallengeData challenge)
@@ -95,14 +123,6 @@ namespace FP2Lib.Challenge
             }
             ArenaLogSource.LogWarning("Challenge: " + challenge.uid + " failed ID assignment! That's *very* bad!");
             return 0;
-        }
-
-
-        [CanBeNull]
-        public ChallengeData GetChallengeDataByUID(string uid)
-        {
-            if (Challenges.ContainsKey(uid)) return Challenges[uid];
-            else return null;
         }
 
         //Did you know, Unity's JSON parser detonates if the root object is an array? And that it struggles _so much_ with arrays?

@@ -31,5 +31,19 @@ namespace FP2Lib.Tools
             }
             return stageCollectables;
         }
+
+        public static string[] ExpandStringArray(string[] array, int newLength)
+        {
+            if (newLength > array.Length)
+            {
+                string[] array2 = new string[newLength];
+                for (int i = 0; i < array.Length; i++)
+                {
+                    array2[i] = array[i];
+                }
+                return array2;
+            }
+            return array;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using UnityEngine;
 
 namespace FP2Lib.Challenge
@@ -50,6 +51,12 @@ namespace FP2Lib.Challenge
         /// Unique identifier of the challenge
         /// </summary>
         public string uid;
+
+        /// <summary>
+        /// ID used internally to track local menu position.
+        /// </summary>
+        [NonSerialized]
+        internal int localID;
 
         /// <summary>
         /// Name of the challenge, or the boss.
@@ -123,6 +130,7 @@ namespace FP2Lib.Challenge
 
         /// <summary>
         /// Should the boss be foreshadowed before being unlocked (renders their picture black on the list)
+        /// This *only* works with custom unblock conditions.
         /// </summary>
         [NonSerialized]
         public bool foreshadow;
@@ -148,7 +156,8 @@ namespace FP2Lib.Challenge
         /// Return true for Unlocked, false for Locked.
         /// </summary>
         [NonSerialized]
-        public Delegate CustomBossUnlockCheck;
+        [CanBeNull]
+        public Func<bool> CustomBossUnlockCheck;
 
 
 

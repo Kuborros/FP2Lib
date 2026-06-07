@@ -15,7 +15,8 @@ namespace FP2Lib.Player.PlayerPatches
                 return true;
             }
 
-            if(___animationStep == 4 && FPSaveManager.character > FPCharacterID.NEERA && PlayerHandler.currentCharacter != null)
+            //Only run for modded characters.
+            if (___animationStep == 4 && FPSaveManager.character > FPCharacterID.NEERA && PlayerHandler.currentCharacter != null)
             {
                 ___genericTimer += FPStage.deltaTime;
                 if (___genericTimer < 50f)
