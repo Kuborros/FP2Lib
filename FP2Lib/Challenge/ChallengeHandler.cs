@@ -1,12 +1,12 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
-using FP2Lib.Item;
 using FP2Lib.Tools;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UnityEngine;
 
 namespace FP2Lib.Challenge
 {
@@ -35,23 +35,24 @@ namespace FP2Lib.Challenge
         }
 
 
-        public bool RegisterChallenge()
+        public static bool RegisterChallenge()
         {
             return false;
         }
 
-        public bool RegisterBoss()
+        public static bool RegisterBoss()
         {
             return false;
         }
 
-        public bool RegisterDojoBoss()
+        public static bool RegisterDojoBoss(string uid, string name, int crystalReward, int unlockRequirement, string bossHome, FPCharacterID bossCharacterID, Sprite bossIcon)
         {
-            return false;
+            ChallengeData challenge = new ChallengeData(uid, name, FPChallengeType.DOJO_BOSS, "RoyalPalace_Sparring", crystalReward, unlockRequirement, bossHome, bossCharacterID, bossIcon);
+            return RegisterChallengeDirect(challenge);
         }
 
 
-        public bool RegisterChallengeDirect(ChallengeData challenge)
+        public static bool RegisterChallengeDirect(ChallengeData challenge)
         {
             string uid = challenge.uid;
             if (!Challenges.ContainsKey(uid))
@@ -62,6 +63,7 @@ namespace FP2Lib.Challenge
             }
             else if (Challenges.ContainsKey(uid) && Challenges[uid].destinationScene.IsNullOrWhiteSpace())
             {
+                challenge.id = Challenges[uid].id;
                 Challenges[uid] = challenge;
                 Challenges[uid].id = AssignChallengeID(Challenges[uid]);
                 return true;
@@ -75,7 +77,7 @@ namespace FP2Lib.Challenge
         /// <param name="uid"></param>
         /// <returns>ChallengeData for given uid, or Null if none such exists.</returns>
         [CanBeNull]
-        public ChallengeData GetChallengeDataByUID(string uid)
+        public static ChallengeData GetChallengeDataByUID(string uid)
         {
             if (Challenges.ContainsKey(uid)) return Challenges[uid];
             else return null;

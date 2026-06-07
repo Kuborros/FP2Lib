@@ -156,6 +156,9 @@ namespace FP2Lib.Item
             }
             else if (Items.ContainsKey(uid) && Items[uid].sprite == null)
             {
+                item.itemID = Items[uid].itemID;
+                item.potionID = Items[uid].potionID;
+
                 Items[uid] = item;
                 Items[uid].itemID = AssignItemID(Items[uid]);
                 if (Items[uid].isPotion)

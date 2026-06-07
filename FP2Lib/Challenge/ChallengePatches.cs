@@ -2,7 +2,7 @@
 using BepInEx.Logging;
 using FP2Lib.Tools;
 using HarmonyLib;
-using System;
+using UnityEngine;
 
 namespace FP2Lib.Challenge
 {
@@ -68,12 +68,11 @@ namespace FP2Lib.Challenge
         //Boss Stuff
         [HarmonyPrefix]
         [HarmonyPatch(typeof(MenuArenaBossSelect), "Start", MethodType.Normal)]
-        static void PatchArenaBossSelectPre(MenuArenaBossSelect __instance, ref FPHudDigit ___pfBossLabel, ref bool[] ___bossForeshadowed, ref MenuText ___bossNames)
+        static void PatchArenaBossSelectPre(MenuArenaBossSelect __instance, ref FPHudDigit ___pfBossLabel, ref MenuText ___bossNames)
         {
             int bossSceneOffset = __instance.bossScenes.Length;
             int bossUnlockOffset = __instance.bossUnlockRequirement.Length;
             int bossSpawnIDOffset = __instance.bossSpawnID.Length;
-            int bossForeshadowOffset = ___bossForeshadowed.Length;
 
             //Extend arrays
             ___pfBossLabel.digitFrames = Utils.ExpandSpriteArray(___pfBossLabel.digitFrames, ChallengeHandler.baseChallenges + ChallengeHandler.Challenges.Count, null);
@@ -98,11 +97,8 @@ namespace FP2Lib.Challenge
                             __instance.bossSpawnID = FPSaveManager.ExpandIntArray(__instance.bossSpawnID, bossSpawnIDOffset + totalBosses);
                             __instance.bossSpawnID[bossSpawnIDOffset + challenge.localID] = challenge.id;
 
-                            ___bossForeshadowed = FPSaveManager.ExpandBoolArray(___bossForeshadowed, bossForeshadowOffset + totalBosses);
-                            ___bossForeshadowed[bossForeshadowOffset + challenge.localID] = ShouldBossBeForeshadowed(challenge);
-
-                            ___pfBossLabel.digitFrames[challenge.id] = challenge.bossIcon;
-                            ___bossNames.paragraph[challenge.id] = challenge.name;
+                            ___pfBossLabel.digitFrames[bossSceneOffset + challenge.localID + 1] = challenge.bossIcon;
+                            ___bossNames.paragraph[bossSceneOffset + challenge.localID + 1] = challenge.name;
                         }
                         break;
                     case FPChallengeType.DOJO_BOSS:
@@ -117,13 +113,52 @@ namespace FP2Lib.Challenge
                             __instance.bossSpawnID = FPSaveManager.ExpandIntArray(__instance.bossSpawnID, bossSpawnIDOffset + totalDojoBosses);
                             __instance.bossSpawnID[bossSpawnIDOffset + challenge.localID] = challenge.id;
 
-                            ___bossForeshadowed = FPSaveManager.ExpandBoolArray(___bossForeshadowed, bossForeshadowOffset + totalDojoBosses);
-                            ___bossForeshadowed[bossForeshadowOffset + challenge.localID] = ShouldBossBeForeshadowed(challenge);
+                            //Mirror Match
+                            if (challenge.bossCharacterID == FPSaveManager.character) 
+                            {
+                                ___pfBossLabel.digitFrames[bossSceneOffset + challenge.localID + 1] = ___pfBossLabel.digitFrames[0];
+                                ___bossNames.paragraph[bossSceneOffset + challenge.localID + 1] = "Pangu Hologram";
+                            }
+                            else
+                            {
+                                ___pfBossLabel.digitFrames[bossSceneOffset + challenge.localID + 1] = challenge.bossIcon;
+                                ___bossNames.paragraph[bossSceneOffset + challenge.localID + 1] = challenge.name;
+                            }
 
-                            ___pfBossLabel.digitFrames[challenge.id] = challenge.bossIcon;
-                            ___bossNames.paragraph[challenge.id] = challenge.name;
+                            //Allow scrolling when more than 1 boss is added
+                            if (totalDojoBosses > 1) __instance.disableScrolling = false;
                         }
                         break;
+                }
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyWrapSafe]
+        [HarmonyPatch(typeof(MenuArenaBossSelect), "Start", MethodType.Normal)]
+        static void PatchArenaBossSelect(ref FPHudDigit[] ___bossList, ref int[] ___internalSpawnID)
+        {
+            if (totalDojoBosses > 0 || totalBosses > 0)
+            {
+                for (int i = 0; i < ___internalSpawnID.Length; i++)
+                {
+                    //Run only for moddes stuff
+                    if (___internalSpawnID[i] > 85)
+                    {
+                        ChallengeData data = ChallengeHandler.GetChallengeDataByRuntimeID(i);
+                        if (data != null)
+                        {
+                            //Foreshadowing
+                            if (ShouldBossBeForeshadowed(data))
+                            {
+                                ___bossList[i].GetRenderer().color = new Color(0f, 0f, 0f);
+                                ___bossList[i].GetRenderer().material = FPResources.material[6];
+                                SpriteOutline spriteOutline = ___bossList[i].gameObject.AddComponent<SpriteOutline>();
+                                spriteOutline.color = new Color(0f, 0.54509807f, 1f);
+                                spriteOutline.outlineSize = 0;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -158,7 +193,7 @@ namespace FP2Lib.Challenge
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(MenuArenaBossSelect), "CheckAdditionalBossRequirements",MethodType.Normal)]
+        [HarmonyPatch(typeof(MenuArenaBossSelect), "CheckAdditionalBossRequirements", MethodType.Normal)]
         static void PatchCheckAdditionalBossRequirements(int bossSlotID, ref bool __result)
         {
             if (bossSlotID >= 85)
@@ -185,7 +220,7 @@ namespace FP2Lib.Challenge
                 ChallengeData data = ChallengeHandler.GetChallengeDataByRuntimeID(challenge);
                 if (data != null)
                 {
-                    __result = data.name;
+                     __result = data.name;
                 }
             }
         }

@@ -159,8 +159,49 @@ namespace FP2Lib.Challenge
         [CanBeNull]
         public Func<bool> CustomBossUnlockCheck;
 
+        //Challenge Constructor
+        public ChallengeData(string uid, string name, FPChallengeType type, string destinationScene, int crystalReward, int unlockRequirement, string challengeDescription, Sprite challengeIcon, int timeCapsuleID, Sprite rewardSprite)
+        {
+            this.uid = uid;
+            this.name = name;
+            this.type = type;
+            this.destinationScene = destinationScene;
+            this.crystalReward = crystalReward;
+            this.unlockRequirement = unlockRequirement;
+            this.challengeDescription = challengeDescription;
+            this.challengeIcon = challengeIcon;
+            this.timeCapsuleID = timeCapsuleID;
+            this.rewardSprite = rewardSprite;
+        }
 
+        //Boss Constructor
+        public ChallengeData(string uid, string name, FPChallengeType type, string destinationScene, int crystalReward, int unlockRequirement, string bossHome, Sprite bossIcon)
+        {
+            this.uid = uid;
+            this.name = name;
+            this.type = type;
+            this.destinationScene = destinationScene;
+            this.crystalReward = crystalReward;
+            this.unlockRequirement = unlockRequirement;
+            this.bossHome = bossHome;
+            this.bossIcon = bossIcon;
+        }
 
+        //Dojo Boss Constructor
+        public ChallengeData(string uid, string name, FPChallengeType type, string destinationScene, int crystalReward, int unlockRequirement, string bossHome, FPCharacterID bossCharacterID, Sprite bossIcon)
+        {
+            this.uid = uid;
+            this.name = name;
+            this.type = type;
+            this.destinationScene = destinationScene;
+            this.crystalReward = crystalReward;
+            this.unlockRequirement = unlockRequirement;
+            this.bossHome = bossHome;
+            this.bossCharacterID = bossCharacterID;
+            this.bossIcon = bossIcon;
+        }
+
+        public ChallengeData() {}
 
         internal static ChallengeData LoadFromJson(string json)
         {
