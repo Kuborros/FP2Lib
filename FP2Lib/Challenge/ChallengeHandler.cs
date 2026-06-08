@@ -35,20 +35,19 @@ namespace FP2Lib.Challenge
         }
 
 
-        public static bool RegisterChallenge()
+        public static bool RegisterChallenge(string uid, string name, string destinationScene, int crystalReward, int unlockRequirement, string challengeDescription, Sprite challengeIcon)
         {
-            return false;
+            return RegisterChallengeDirect(new ChallengeData(uid, name, FPChallengeType.CHALLENGE, destinationScene, crystalReward, unlockRequirement, challengeDescription, challengeIcon, (-1), null));
         }
 
-        public static bool RegisterBoss()
+        public static bool RegisterBoss(string uid, string name, string sceneName, int crystalReward, int unlockRequirement, string bossHome, Sprite bossIcon)
         {
-            return false;
+            return RegisterChallengeDirect(new ChallengeData(uid, name, FPChallengeType.BOSS, sceneName, crystalReward, unlockRequirement, bossHome, (FPCharacterID)(-1), bossIcon));
         }
 
         public static bool RegisterDojoBoss(string uid, string name, int crystalReward, int unlockRequirement, string bossHome, FPCharacterID bossCharacterID, Sprite bossIcon)
         {
-            ChallengeData challenge = new ChallengeData(uid, name, FPChallengeType.DOJO_BOSS, "RoyalPalace_Sparring", crystalReward, unlockRequirement, bossHome, bossCharacterID, bossIcon);
-            return RegisterChallengeDirect(challenge);
+            return RegisterChallengeDirect(new ChallengeData(uid, name, FPChallengeType.DOJO_BOSS, "RoyalPalace_Sparring", crystalReward, unlockRequirement, bossHome, bossCharacterID, bossIcon));
         }
 
 

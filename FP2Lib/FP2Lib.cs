@@ -258,6 +258,11 @@ namespace FP2Lib
             }
 
             Logger.LogInfo("Init done!");
+
+
+            //Evil testing
+
+            ChallengeHandler.RegisterChallenge("test.test", "Spade's Challenge", "Tutorial1", 1000, -1, "Spade's Evil Trial", null);
         }
     }
 }

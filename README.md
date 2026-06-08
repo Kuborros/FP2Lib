@@ -17,6 +17,7 @@ A library intended to simplify most common parts of modding **Freedom Planet 2**
 * Provides framework to add new world maps into the game.
 * Provides framework to add new items and potions into the game.
 * Provides framework to instance NPC from json and AssetBundle pair.
+* Provides framework to add custom challenges and bosses to the Battlesphere (and Dojo!)
 * Provides patches for issues caused by workings of mods and game.
 * Provides game build information.
 

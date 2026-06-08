@@ -2,7 +2,10 @@
 using BepInEx.Logging;
 using FP2Lib.Tools;
 using HarmonyLib;
+using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace FP2Lib.Challenge
 {
@@ -86,7 +89,7 @@ namespace FP2Lib.Challenge
                 switch (challenge.type)
                 {
                     case FPChallengeType.BOSS:
-                        if (FPStage.stageNameString == "The Battlesphere")
+                        if (SceneManager.GetActiveScene().name == "ArenaMenu")
                         {
                             __instance.bossScenes = Utils.ExpandStringArray(__instance.bossScenes, bossSceneOffset + totalBosses);
                             __instance.bossScenes[bossSceneOffset + challenge.localID] = challenge.destinationScene;
@@ -114,7 +117,7 @@ namespace FP2Lib.Challenge
                             __instance.bossSpawnID[bossSpawnIDOffset + challenge.localID] = challenge.id;
 
                             //Mirror Match
-                            if (challenge.bossCharacterID == FPSaveManager.character) 
+                            if (challenge.bossCharacterID == FPSaveManager.character)
                             {
                                 ___pfBossLabel.digitFrames[bossSceneOffset + challenge.localID + 1] = ___pfBossLabel.digitFrames[0];
                                 ___bossNames.paragraph[bossSceneOffset + challenge.localID + 1] = "Pangu Hologram";
@@ -211,6 +214,120 @@ namespace FP2Lib.Challenge
 
         //Challenge Stuff
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(MenuArenaChallengeSelect), "Start", MethodType.Normal)]
+        static void PatchArenaChallengeSelectPre(MenuArenaChallengeSelect __instance, ref MenuText ___challengeNames, ref MenuText ___pfChallengeLabel, ref MenuText ___textDescription)
+        {
+            int challengeSceneOffset = __instance.challengeScene.Length + 1;
+            int challengeUnlockOffset = __instance.challengeUnlockRequirement.Length + 1;
+            int challengeSpawnIDOffset = __instance.challengeSpawnID.Length + 1;
+            int challengeRewardIDOffset = __instance.challengeRewards.Length + 1;
+
+            //Fuckery
+            if (__instance.name.Contains("ArenaChallengeSelect"))
+            {
+                __instance.challengeScene = __instance.challengeScene.AddToArray("Battlesphere_Arena");
+                __instance.challengeUnlockRequirement = __instance.challengeUnlockRequirement.AddToArray(30);
+                __instance.challengeSpawnID = __instance.challengeSpawnID.AddToArray(-1);
+                __instance.challengeRewards = __instance.challengeRewards.AddToArray(1000);
+            }
+
+
+            //Extend arrays
+
+            ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames = Utils.ExpandSpriteArray(___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames, challengeSceneOffset + Math.Max(totalChallenges, totalHomeRuns) + 1, null);
+            ___challengeNames.paragraph = Utils.ExpandStringArray(___challengeNames.paragraph, challengeSceneOffset + Math.Max(totalChallenges, totalHomeRuns) + 1);
+            ___textDescription.paragraph = Utils.ExpandStringArray(___textDescription.paragraph, challengeSceneOffset + Math.Max(totalChallenges, totalHomeRuns) + 1);
+
+            foreach (ChallengeData challenge in ChallengeHandler.Challenges.Values)
+            {
+                //Skip uninitialised ones.
+                if (challenge.destinationScene.IsNullOrWhiteSpace() || SceneManager.GetActiveScene().name != "ArenaMenu") continue;
+
+                switch (challenge.type)
+                {
+                    case FPChallengeType.CHALLENGE:
+                    case FPChallengeType.RACE:
+
+                        if (__instance.name.Contains("ArenaChallengeSelect"))
+                        {
+                            __instance.challengeScene = Utils.ExpandStringArray(__instance.challengeScene, challengeSceneOffset + totalChallenges);
+                            __instance.challengeScene[challengeSceneOffset + challenge.localID] = challenge.destinationScene;
+
+                            __instance.challengeUnlockRequirement = FPSaveManager.ExpandIntArray(__instance.challengeUnlockRequirement, challengeUnlockOffset + totalChallenges);
+                            __instance.challengeUnlockRequirement[challengeUnlockOffset + challenge.localID] = challenge.unlockRequirement;
+
+                            __instance.challengeSpawnID = FPSaveManager.ExpandIntArray(__instance.challengeSpawnID, challengeSpawnIDOffset + totalChallenges);
+                            __instance.challengeSpawnID[challengeSpawnIDOffset + challenge.localID] = challenge.id;
+
+                            __instance.challengeRewards = FPSaveManager.ExpandIntArray(__instance.challengeRewards, challengeRewardIDOffset + totalChallenges);
+                            __instance.challengeRewards[challengeRewardIDOffset + challenge.localID] = challenge.crystalReward;
+
+                            ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames[challengeSceneOffset + challenge.localID + 1] = challenge.challengeIcon;
+                            ___challengeNames.paragraph[challengeSceneOffset + challenge.localID] = challenge.name;
+                            ___textDescription.paragraph[challengeSceneOffset + challenge.localID] = challenge.challengeDescription;
+                        }
+                        break;
+                    case FPChallengeType.HOMERUN:
+
+                        //Home Run seems to have once had a different menu object, which got at the later time smashed into the ArenaChallengeSelect
+                        //It shares only some of the fields with Arena UI, despite being the same object. It also renders it's labels in another way.
+                        //This one uses 'challengeNames' object to pull names from
+                        //Both objects draw to both TextMesh _and_ SuperTextMesh variants of the labels.
+
+                        if (__instance.name.Contains("ArenaHomeRunSelect"))
+                        {
+
+                            __instance.challengeScene = Utils.ExpandStringArray(__instance.challengeScene, challengeSceneOffset + totalHomeRuns);
+                            __instance.challengeScene[challengeSceneOffset + challenge.localID] = challenge.destinationScene;
+
+                            __instance.challengeUnlockRequirement = FPSaveManager.ExpandIntArray(__instance.challengeUnlockRequirement, challengeUnlockOffset + totalHomeRuns);
+                            __instance.challengeUnlockRequirement[challengeUnlockOffset + challenge.localID] = challenge.unlockRequirement;
+
+                            __instance.challengeSpawnID = FPSaveManager.ExpandIntArray(__instance.challengeSpawnID, challengeSpawnIDOffset + totalHomeRuns);
+                            __instance.challengeSpawnID[challengeSpawnIDOffset + challenge.localID] = challenge.id;
+
+                            __instance.challengeRewards = FPSaveManager.ExpandIntArray(__instance.challengeRewards, challengeRewardIDOffset + totalHomeRuns);
+                            __instance.challengeRewards[challengeRewardIDOffset + challenge.localID] = challenge.crystalReward;
+
+                            ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames[challengeSceneOffset + challenge.localID + 1] = challenge.challengeIcon;
+                            ___challengeNames.paragraph[challengeSceneOffset + challenge.localID] = challenge.name;
+                        }
+                        break;
+                }
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyWrapSafe]
+        [HarmonyPatch(typeof(MenuArenaChallengeSelect), "Start", MethodType.Normal)]
+        static void PatchArenaChallengeSelect(ref MenuText[] ___challengeList, ref int[] ___challengeSpawnID, bool[] ___challengeUnlocked, ref int[] ___slotID, int ___challengeIDOffset)
+        {
+            if (totalChallenges > 0 || totalHomeRuns > 0)
+            {
+                for (int i = 0; i < ___challengeSpawnID.Length; i++)
+                {
+                    //Run only for moddes stuff
+                    if (___challengeSpawnID[i] >= 85 && ___challengeUnlocked[i])
+                    {
+                        ChallengeData data = ChallengeHandler.GetChallengeDataByRuntimeID(i);
+                        if (data != null)
+                        {
+                            //Overwrite default behaviour of turning everything over ID 19 into Dragon Circuit
+                            if (___challengeList[i].GetComponent<SuperTextMesh>() != null)
+                                ___challengeList[i].GetComponent<SuperTextMesh>().text = data.name;
+                            if (___challengeList[i].GetComponent<TextMesh>() != null)
+                                ___challengeList[i].GetComponent<TextMesh>().text = data.name;
+
+                            //Set right challengeID for reward display
+                            ___slotID[i] = data.id - ___challengeIDOffset;
+
+                        }
+                    }
+                }
+            }
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPSaveManager), "GetChallengeName", MethodType.Normal)]
         static void PatchGetChallengeName(int challenge, ref string __result)
@@ -220,7 +337,7 @@ namespace FP2Lib.Challenge
                 ChallengeData data = ChallengeHandler.GetChallengeDataByRuntimeID(challenge);
                 if (data != null)
                 {
-                     __result = data.name;
+                    __result = data.name;
                 }
             }
         }
