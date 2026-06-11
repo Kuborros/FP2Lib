@@ -120,6 +120,15 @@ namespace FP2Lib.Challenge
         [NonSerialized]
         public Sprite rewardSprite;
 
+        //Dojo Challenge Specific
+
+        /// <summary>
+        /// GameObject containing the 'preview' of the challenge seen above the list.
+        /// Used exclusively in Gong's Dojo, can contain arbitrary amount of child objects
+        /// </summary>
+        [NonSerialized]
+        public GameObject dojoChallengePreview;
+
         //Boss Specific
 
         /// <summary>

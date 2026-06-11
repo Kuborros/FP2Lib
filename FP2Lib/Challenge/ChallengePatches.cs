@@ -3,9 +3,6 @@ using BepInEx.Logging;
 using FP2Lib.Tools;
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
-using System.Reflection.Emit;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -246,8 +243,6 @@ namespace FP2Lib.Challenge
             {
                 //TODO: Expand graphicPanels[] properly.
                 //___graphicPanels = ___graphicPanels.AddRangeToArray<GameObject>(new GameObject[totalDojoChallenges + 1]);
-                //___challengeNames.paragraph = Utils.ExpandStringArray(___challengeNames.paragraph, challengeSceneOffset + totalDojoChallenges + 1);
-                //___textDescription.paragraph = Utils.ExpandStringArray(___textDescription.paragraph, challengeSceneOffset + totalDojoChallenges + 1);
             }
 
             foreach (ChallengeData challenge in ChallengeHandler.Challenges.Values)
@@ -308,8 +303,14 @@ namespace FP2Lib.Challenge
                             __instance.timeCapsuleID[challengeRewardIDOffset + challenge.localID] = challenge.timeCapsuleID;
 
                             //Dojo lacks custom labels, its all one sprite.
+                            ___challengeNames.paragraph = Utils.ExpandStringArray(___challengeNames.paragraph, challengeSceneOffset + totalDojoChallenges + 1);
                             ___challengeNames.paragraph[challengeSceneOffset + challenge.localID] = challenge.name;
+
+                            ___textDescription.paragraph = Utils.ExpandStringArray(___textDescription.paragraph, challengeSceneOffset + totalDojoChallenges + 1);
                             ___textDescription.paragraph[challengeSceneOffset + challenge.localID] = challenge.challengeDescription;
+
+                            ___graphicPanels[challengeSceneOffset + challenge.localID] = challenge.dojoChallengePreview;
+
                         }
                         */
                         break;
@@ -366,7 +367,7 @@ namespace FP2Lib.Challenge
                                 ___challengeList[i].GetComponent<TextMesh>().text = data.name;
 
                             //Set right challengeID for reward display
-                            ___slotID[i] = data.id - ___challengeIDOffset;
+                            ___slotID[i - 2] = ___challengeSpawnID[i] - ___challengeIDOffset;
                         }
                     }
                 }
