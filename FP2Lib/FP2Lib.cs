@@ -258,6 +258,10 @@ namespace FP2Lib
             }
 
             Logger.LogInfo("Init done!");
+
+
+            ChallengeHandler.RegisterChallenge("test.test", "Spade's Challenge", "Tutorial1", 1000, -1, "Spade's Evil Trial", null);
+            ChallengeHandler.RegisterHomeRun("bingus2", "Spade's Run", "Tutorial1", 1000, null);
         }
     }
 }

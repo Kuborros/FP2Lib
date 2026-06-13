@@ -20,6 +20,11 @@ namespace FP2Lib.Challenge
         {
             //Calculate how many challenges we have
             int totalArenaChallenges = ChallengeHandler.baseChallenges + ChallengeHandler.Challenges.Count + 4;
+
+            //Add slots in file for extra challenges.
+            ___challengeRank = FPSaveManager.ExpandByteArray(___challengeRank, totalArenaChallenges);
+            ___challengeRecord = FPSaveManager.ExpandIntArray(___challengeRecord, totalArenaChallenges);
+
             foreach (ChallengeData challenge in ChallengeHandler.Challenges.Values)
             {
                 //Highest ID is the track number
@@ -57,11 +62,39 @@ namespace FP2Lib.Challenge
                         break;
                 }
             }
-            //Add slots in file for extra challenges.
-            ___challengeRank = FPSaveManager.ExpandByteArray(___challengeRank, totalArenaChallenges);
-            ___challengeRecord = FPSaveManager.ExpandIntArray(___challengeRecord, totalArenaChallenges);
-
             ChallengeHandler.WriteToStorage();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(MenuArena),"Start",MethodType.Normal)]
+        static void PatchMenuArena(ref int ___completedArenas, ref int ___unlockedArenas, ref int ___completedBosses, ref int ___unlockedBosses, ref int ___completedHomeRun, ref int ___unlockedHomeRun)
+        {
+            foreach (ChallengeData challenge in ChallengeHandler.Challenges.Values)
+            {
+                //Skip uninitialised challenges.
+                if (challenge.destinationScene.IsNullOrWhiteSpace()) continue;
+
+                //Count each type up
+                switch (challenge.type)
+                {
+                    case FPChallengeType.BOSS:
+                        if (challenge.unlockRequirement == -1) ___unlockedBosses++;
+                        else if (FPSaveManager.timeRecord[challenge.unlockRequirement] > 0) ___unlockedBosses++;
+                        if (FPSaveManager.challengeRecord[challenge.id] > 0) ___completedBosses++;
+                        break;
+                    case FPChallengeType.CHALLENGE:
+                    case FPChallengeType.RACE:
+                        if (challenge.unlockRequirement == -1) ___unlockedArenas++;
+                        else if (FPSaveManager.timeRecord[challenge.unlockRequirement] > 0) ___unlockedArenas++;
+                        if (FPSaveManager.challengeRecord[challenge.id] > 0) ___completedArenas++;
+                        break;
+                    case FPChallengeType.HOMERUN:
+                        if (challenge.unlockRequirement == -1) ___unlockedHomeRun++;
+                        else if (FPSaveManager.timeRecord[challenge.unlockRequirement] > 0) ___unlockedHomeRun++;
+                        if (FPSaveManager.challengeRecord[challenge.id] > 0) ___completedHomeRun++;
+                        break;
+                }
+            }
         }
 
         //Boss Stuff

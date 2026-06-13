@@ -89,6 +89,8 @@ namespace FP2Lib.Challenge
         /// <summary>
         /// Amount of Star Cards needed to unlock this challenge/boss.
         /// Set this to -1 for 'always unlocked'.
+        /// Used only for bosses and challenges. 
+        /// While technically supported by Home Run and Dojo these menus lack assets needed to display them correctly, and *will* break.
         /// </summary>
         [NonSerialized]
         public int unlockRequirement = -1;

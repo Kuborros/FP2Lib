@@ -55,6 +55,20 @@ namespace FP2Lib.Challenge
         /// </summary>
         /// <param name="uid"></param>
         /// <param name="name"></param>
+        /// <param name="destinationScene"></param>
+        /// <param name="crystalReward"></param>
+        /// <param name="challengeIcon"></param>
+        /// <returns></returns>
+        public static bool RegisterHomeRun(string uid, string name, string destinationScene, int crystalReward, Sprite challengeIcon)
+        {
+            return RegisterChallengeDirect(new ChallengeData(uid, name, FPChallengeType.HOMERUN, destinationScene, crystalReward, -1, "", challengeIcon, (-1), null));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
         /// <param name="sceneName"></param>
         /// <param name="crystalReward"></param>
         /// <param name="unlockRequirement"></param>
