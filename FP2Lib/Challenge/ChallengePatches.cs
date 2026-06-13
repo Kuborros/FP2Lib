@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using FP2Lib.Tools;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,6 +13,7 @@ namespace FP2Lib.Challenge
     {
         private static readonly ManualLogSource ArenaLogSource = FP2Lib.logSource;
         private static int[] idLookup;
+        private static Dictionary<int,Sprite> spriteLookup = [];
         private static int totalChallenges = 0, totalHomeRuns = -1, totalBosses = 0, totalDojoBosses = 0, totalDojoChallenges = -1;
 
         [HarmonyPostfix]
@@ -254,6 +256,7 @@ namespace FP2Lib.Challenge
             int challengeRewardIDOffset = __instance.challengeRewards.Length + 1;
 
             idLookup = new int[__instance.challengeScene.Length];
+            spriteLookup = [];
 
             //Fuckery to force-ignore slot 21
             if (__instance.name.Contains("ArenaChallengeSelect"))
@@ -431,6 +434,7 @@ namespace FP2Lib.Challenge
 
                             ___slotID[data.slotID] = i;
                             idLookup[data.slotID] = ___challengeSpawnID[i];
+                            if (data.rewardSprite != null) spriteLookup.Add(data.id, data.rewardSprite);
 
                             //Scrolling is broken.
                             //Scroll if there is more than one challenge.
@@ -472,6 +476,13 @@ namespace FP2Lib.Challenge
                         {
                             __instance.rankIcon.SetDigitValue(FPSaveManager.challengeRank[idLookup[___challengeSelection]]);
                         }
+                    }
+                    if (__instance.rewardItem != null && __instance.rewardCheckmark != null)
+                    {
+                        if (spriteLookup.ContainsKey(idLookup[___challengeSelection]))
+                            __instance.rewardItem.sprite = spriteLookup[idLookup[___challengeSelection]];
+                        if (FPSaveManager.challengeRecord[idLookup[___challengeSelection]] > 0)
+                            __instance.rewardCheckmark.SetActive(true);
                     }
                 }
                 else if (___challengeSelection >= 3 && __instance.name.Contains("ArenaHomeRunSelect")) 
