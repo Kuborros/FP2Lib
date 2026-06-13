@@ -15,27 +15,18 @@ namespace FP2Lib.Player.PlayerPatches
                 return true;
             }
 
-            //Only run for modded characters.
-            if (___animationStep == 4 && FPSaveManager.character > FPCharacterID.NEERA && PlayerHandler.currentCharacter != null)
+            //Only run for modded characters in adventure mode.
+            if (___animationStep == 4 && FPSaveManager.character > FPCharacterID.NEERA && FPSaveManager.gameMode == FPGameMode.ADVENTURE && PlayerHandler.currentCharacter != null)
             {
                 ___genericTimer += FPStage.deltaTime;
-                if (___genericTimer < 50f)
+                if (___genericTimer < 50f || ___menuSelection == 1)
                 {
                     return true;
                 }
                 FPScreenTransition component = GameObject.Find("Screen Transition").GetComponent<FPScreenTransition>();
                 component.transitionType = FPTransitionTypes.WIPE;
                 component.transitionSpeed = 48f;
-                if (___menuSelection == 1)
-                {
-                    component.sceneToLoad = SceneManager.GetActiveScene().name;
-                }
-                else if (FPSaveManager.gameMode == FPGameMode.DEMO)
-                {
-                    component.sceneToLoad = "MainMenu";
-                    FPSaveManager.menuToLoad = 4;
-                }
-                else if (FPSaveManager.gameMode == FPGameMode.ADVENTURE || FPStage.currentStage.alwaysForceCutscene)
+                if (FPSaveManager.gameMode == FPGameMode.ADVENTURE || FPStage.currentStage.alwaysForceCutscene)
                 {
                     bool flag = false;
                     if (__instance.adventureCutscene.Length > 0)
@@ -58,59 +49,20 @@ namespace FP2Lib.Player.PlayerPatches
                                     flag = true;
                                 }
                             }
-                        }
-                    }
-                    if (!flag)
-                    {
-                        if (__instance.challengeMode)
-                        {
-                            component.sceneToLoad = __instance.sourceScene;
-                            FPSaveManager.menuToLoad = 0;
-                            if (FPStage.currentStage.timeCapsuleID >= 0 && FPSaveManager.timeCapsules[FPStage.currentStage.timeCapsuleID] < 2)
+                            if (flag)
                             {
-                                FPSaveManager.timeCapsules[FPStage.currentStage.timeCapsuleID] = 1;
-                                component.sceneToLoad = __instance.timeCapsuleScene;
+                                component.SetTransitionColor(0f, 0f, 0f);
+                                component.BeginTransition();
+                                FPStage.checkpointEnabled = false;
+                                FPStage.checkpointPos = new Vector2(0f, 0f);
+                                FPSaveManager.SaveToFile(FPSaveManager.fileSlot);
+                                FPAudio.PlayMenuSfx(3);
+                                ___animationStep++;
+                                return false;
                             }
                         }
-                        else
-                        {
-                            component.sceneToLoad = "AdventureMenu";
-                            FPSaveManager.menuToLoad = 4;
-                        }
                     }
                 }
-                else if (__instance.challengeMode)
-                {
-                    component.sceneToLoad = __instance.sourceScene;
-                    FPSaveManager.menuToLoad = 0;
-                    if (FPStage.currentStage.timeCapsuleID >= 0 && FPSaveManager.timeCapsules[FPStage.currentStage.timeCapsuleID] < 2)
-                    {
-                        FPSaveManager.timeCapsules[FPStage.currentStage.timeCapsuleID] = 1;
-                        component.sceneToLoad = __instance.timeCapsuleScene;
-                    }
-                }
-                else if (FPSaveManager.gameMode == FPGameMode.CLASSIC)
-                {
-                    component.sceneToLoad = "ClassicMenu";
-                    FPSaveManager.menuToLoad = 5;
-                }
-                component.SetTransitionColor(0f, 0f, 0f);
-                component.BeginTransition();
-                FPStage.checkpointEnabled = false;
-                FPStage.checkpointPos = new Vector2(0f, 0f);
-                if (___menuSelection == 0 && __instance.challengeMode && __instance.sourceIsHub && FPStage.hubCheckpointPos.x > 0f)
-                {
-                    FPStage.checkpointEnabled = true;
-                    FPStage.checkpointPos = FPStage.hubCheckpointPos;
-                }
-                else
-                {
-                    FPStage.checkpointPos = new Vector2(0f, 0f);
-                }
-                FPSaveManager.SaveToFile(FPSaveManager.fileSlot);
-                FPAudio.PlayMenuSfx(3);
-                ___animationStep++;
-                return false;
             }
             return true;
         }

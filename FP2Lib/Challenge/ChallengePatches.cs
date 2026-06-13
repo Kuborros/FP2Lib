@@ -74,7 +74,7 @@ namespace FP2Lib.Challenge
                 //Skip uninitialised challenges.
                 if (challenge.destinationScene.IsNullOrWhiteSpace()) continue;
 
-                //Count each type up
+                //Update the completed/unlocked challenge counts.
                 switch (challenge.type)
                 {
                     case FPChallengeType.BOSS:

@@ -107,7 +107,7 @@ namespace FP2Lib.Challenge
         /// <param name="challengeDescription"></param>
         /// <param name="dojoPreview"></param>
         /// <returns></returns>
-        public static bool RegisterDojoChallenge(string uid, string name, string destinationScene, int crystalReward, int unlockRequirement, string challengeDescription, GameObject dojoPreview)
+        public static bool RegisterDojoChallenge(string uid, string name, string destinationScene, int crystalReward, int unlockRequirement, string challengeDescription)
         {
             return RegisterChallengeDirect(new ChallengeData(uid, name, FPChallengeType.DOJO_CHALLENGE, destinationScene, crystalReward, unlockRequirement, challengeDescription, null, (-1), null));
         }
@@ -237,12 +237,12 @@ namespace FP2Lib.Challenge
                         takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, challenge.id);
                     //Mark id as taken
                     takenIDs[challenge.id] = true;
-                    ArenaLogSource.LogDebug("Reserving Extra Homerun Slot: " + challenge.name + "(" + (challenge.id + 3) + ")");
                     if (challenge.type == FPChallengeType.HOMERUN)
                     {
                         if ((challenge.id + 3) > takenIDs.Length)
                             takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, challenge.id + 3);
                         takenIDs[challenge.id + 3] = true;
+                        ArenaLogSource.LogDebug("Reserving Extra Homerun Slot: " + challenge.name + "(" + (challenge.id + 3) + ")");
                     }
                 }
             }
