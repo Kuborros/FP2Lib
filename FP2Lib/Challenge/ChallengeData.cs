@@ -170,6 +170,19 @@ namespace FP2Lib.Challenge
         public Func<bool> CustomBossUnlockCheck;
 
         //Challenge Constructor
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <param name="destinationScene"></param>
+        /// <param name="crystalReward"></param>
+        /// <param name="unlockRequirement"></param>
+        /// <param name="challengeDescription"></param>
+        /// <param name="challengeIcon"></param>
+        /// <param name="timeCapsuleID"></param>
+        /// <param name="rewardSprite"></param>
         public ChallengeData(string uid, string name, FPChallengeType type, string destinationScene, int crystalReward, int unlockRequirement, string challengeDescription, Sprite challengeIcon, int timeCapsuleID, Sprite rewardSprite)
         {
             this.uid = uid;
@@ -185,6 +198,17 @@ namespace FP2Lib.Challenge
         }
 
         //Boss Constructor
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <param name="destinationScene"></param>
+        /// <param name="crystalReward"></param>
+        /// <param name="unlockRequirement"></param>
+        /// <param name="bossHome"></param>
+        /// <param name="bossIcon"></param>
         public ChallengeData(string uid, string name, FPChallengeType type, string destinationScene, int crystalReward, int unlockRequirement, string bossHome, Sprite bossIcon)
         {
             this.uid = uid;
@@ -198,6 +222,18 @@ namespace FP2Lib.Challenge
         }
 
         //Dojo Boss Constructor
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <param name="destinationScene"></param>
+        /// <param name="crystalReward"></param>
+        /// <param name="unlockRequirement"></param>
+        /// <param name="bossHome"></param>
+        /// <param name="bossCharacterID"></param>
+        /// <param name="bossIcon"></param>
         public ChallengeData(string uid, string name, FPChallengeType type, string destinationScene, int crystalReward, int unlockRequirement, string bossHome, FPCharacterID bossCharacterID, Sprite bossIcon)
         {
             this.uid = uid;
@@ -209,6 +245,32 @@ namespace FP2Lib.Challenge
             this.bossHome = bossHome;
             this.bossCharacterID = bossCharacterID;
             this.bossIcon = bossIcon;
+        }
+
+        //Dojo Challenge Constructor
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <param name="destinationScene"></param>
+        /// <param name="crystalReward"></param>
+        /// <param name="challengeDescription"></param>
+        /// <param name="challengeIcon"></param>
+        /// <param name="timeCapsuleID"></param>
+        /// <param name="dojoPreview"></param>
+        public ChallengeData(string uid, string name, FPChallengeType type, string destinationScene, int crystalReward, string challengeDescription, Sprite challengeIcon, int timeCapsuleID, GameObject dojoPreview)
+        {
+            this.uid = uid;
+            this.name = name;
+            this.type = type;
+            this.destinationScene = destinationScene;
+            this.crystalReward = crystalReward;
+            this.challengeDescription = challengeDescription;
+            this.challengeIcon = challengeIcon;
+            this.timeCapsuleID = timeCapsuleID;
+            this.dojoChallengePreview = dojoPreview;
         }
 
         public ChallengeData() {}

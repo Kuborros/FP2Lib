@@ -34,23 +34,75 @@ namespace FP2Lib.Challenge
             LoadFromStorage();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="destinationScene"></param>
+        /// <param name="crystalReward"></param>
+        /// <param name="unlockRequirement"></param>
+        /// <param name="challengeDescription"></param>
+        /// <param name="challengeIcon"></param>
+        /// <returns></returns>
         public static bool RegisterChallenge(string uid, string name, string destinationScene, int crystalReward, int unlockRequirement, string challengeDescription, Sprite challengeIcon)
         {
             return RegisterChallengeDirect(new ChallengeData(uid, name, FPChallengeType.CHALLENGE, destinationScene, crystalReward, unlockRequirement, challengeDescription, challengeIcon, (-1), null));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="sceneName"></param>
+        /// <param name="crystalReward"></param>
+        /// <param name="unlockRequirement"></param>
+        /// <param name="bossHome"></param>
+        /// <param name="bossIcon"></param>
+        /// <returns></returns>
         public static bool RegisterBoss(string uid, string name, string sceneName, int crystalReward, int unlockRequirement, string bossHome, Sprite bossIcon)
         {
             return RegisterChallengeDirect(new ChallengeData(uid, name, FPChallengeType.BOSS, sceneName, crystalReward, unlockRequirement, bossHome, (FPCharacterID)(-1), bossIcon));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="crystalReward"></param>
+        /// <param name="unlockRequirement"></param>
+        /// <param name="bossHome"></param>
+        /// <param name="bossCharacterID"></param>
+        /// <param name="bossIcon"></param>
+        /// <returns></returns>
         public static bool RegisterDojoBoss(string uid, string name, int crystalReward, int unlockRequirement, string bossHome, FPCharacterID bossCharacterID, Sprite bossIcon)
         {
             return RegisterChallengeDirect(new ChallengeData(uid, name, FPChallengeType.DOJO_BOSS, "RoyalPalace_Sparring", crystalReward, unlockRequirement, bossHome, bossCharacterID, bossIcon));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="name"></param>
+        /// <param name="destinationScene"></param>
+        /// <param name="crystalReward"></param>
+        /// <param name="unlockRequirement"></param>
+        /// <param name="challengeDescription"></param>
+        /// <param name="dojoPreview"></param>
+        /// <returns></returns>
+        public static bool RegisterDojoChallenge(string uid, string name, string destinationScene, int crystalReward, int unlockRequirement, string challengeDescription, GameObject dojoPreview)
+        {
+            return RegisterChallengeDirect(new ChallengeData(uid, name, FPChallengeType.DOJO_CHALLENGE, destinationScene, crystalReward, unlockRequirement, challengeDescription, null, (-1), null));
+        }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="challenge"></param>
+        /// <returns></returns>
         public static bool RegisterChallengeDirect(ChallengeData challenge)
         {
             string uid = challenge.uid;
@@ -83,7 +135,7 @@ namespace FP2Lib.Challenge
         }
 
         /// <summary>
-        /// Returns the ChallengeData object for given challenge ID.
+        /// Returns the ChallengeData object for given challenge ID. Slow, and should be used with care.
         /// </summary>
         /// <param name="id"></param>
         /// <returns>ChallengeData for given id, or Null if none such exists.</returns>
@@ -98,7 +150,7 @@ namespace FP2Lib.Challenge
         }
 
         /// <summary>
-        /// Returns the ChallengeData object for given slotID.
+        /// Returns the ChallengeData object for given slotID. Slow, and should be used with care.
         /// </summary>
         /// <param name="id"></param>
         /// <returns>ChallengeData for given id, or Null if none such exists.</returns>
@@ -173,7 +225,11 @@ namespace FP2Lib.Challenge
                     takenIDs[challenge.id] = true;
                     ArenaLogSource.LogDebug("Reserving Extra Homerun Slot: " + challenge.name + "(" + (challenge.id + 3) + ")");
                     if (challenge.type == FPChallengeType.HOMERUN)
+                    {
+                        if ((challenge.id + 3) > takenIDs.Length)
+                            takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, challenge.id + 3);
                         takenIDs[challenge.id + 3] = true;
+                    }
                 }
             }
         }
