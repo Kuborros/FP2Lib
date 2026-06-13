@@ -15,7 +15,7 @@ namespace FP2Lib.Challenge
 
         private static readonly ManualLogSource ArenaLogSource = FP2Lib.logSource;
 
-        public static readonly int baseChallenges = 85;
+        public static readonly int baseChallenges = 90;
 
         internal static Dictionary<string, ChallengeData> Challenges = [];
         internal static bool[] takenIDs = new bool[256];
@@ -25,7 +25,7 @@ namespace FP2Lib.Challenge
             if (!File.Exists(GameInfo.getProfilePath() + "/ChallengeStore.json"))
                 File.Create(GameInfo.getProfilePath() + "/ChallengeStore.json").Close();
 
-            //Mark first 85 challenges as taken.
+            //Mark first 90 challenges as taken.
             for (int i = 0; i < baseChallenges; i++)
             {
                 takenIDs[i] = true;
@@ -97,6 +97,21 @@ namespace FP2Lib.Challenge
             return null;
         }
 
+        /// <summary>
+        /// Returns the ChallengeData object for given slotID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>ChallengeData for given id, or Null if none such exists.</returns>
+        [CanBeNull]
+        public static ChallengeData GetChallengeDataBySlotID(int id)
+        {
+            foreach (ChallengeData data in Challenges.Values)
+            {
+                if (data.slotID == id) return data;
+            }
+            return null;
+        }
+
         private static int AssignChallengeID(ChallengeData challenge)
         {
             //Challenge already has ID
@@ -109,14 +124,23 @@ namespace FP2Lib.Challenge
             {
                 ArenaLogSource.LogDebug("Challenge with unassigned ID registered! Running assignment process for " + challenge.uid);
                 //Iterate over array, assign first non-taken slot
-                for (int i = 85; i < takenIDs.Length; i++)
+                for (int i = 90; i < takenIDs.Length; i++)
                 {
                     //First slot with false = empty space
-                    if (!takenIDs[i])
+                    if (challenge.type != FPChallengeType.HOMERUN && !takenIDs[i])
                     {
                         challenge.id = i;
                         takenIDs[i] = true;
                         ArenaLogSource.LogDebug("ID assigned:" + challenge.id);
+                        //Will also break loop
+                        return challenge.id;
+                    }
+                    else if (challenge.type == FPChallengeType.HOMERUN && !takenIDs[i] && !takenIDs[i + 3])
+                    {
+                        challenge.id = i;
+                        takenIDs[i] = true;
+                        takenIDs[i + 3] = true;
+                        ArenaLogSource.LogDebug("ID assigned: " + challenge.id + " Extra HomeRun ID:" + (challenge.id + 3));
                         //Will also break loop
                         return challenge.id;
                     }
@@ -147,6 +171,9 @@ namespace FP2Lib.Challenge
                         takenIDs = FPSaveManager.ExpandBoolArray(takenIDs, challenge.id);
                     //Mark id as taken
                     takenIDs[challenge.id] = true;
+                    ArenaLogSource.LogDebug("Reserving Extra Homerun Slot: " + challenge.name + "(" + (challenge.id + 3) + ")");
+                    if (challenge.type == FPChallengeType.HOMERUN)
+                        takenIDs[challenge.id + 3] = true;
                 }
             }
         }

@@ -57,6 +57,7 @@ namespace FP2Lib.Challenge
         /// </summary>
         [NonSerialized]
         internal int localID;
+        internal int slotID;
 
         /// <summary>
         /// Name of the challenge, or the boss.

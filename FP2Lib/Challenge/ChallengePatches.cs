@@ -11,14 +11,15 @@ namespace FP2Lib.Challenge
     internal class ChallengePatches
     {
         private static readonly ManualLogSource ArenaLogSource = FP2Lib.logSource;
-        private static int totalChallenges = 0, totalHomeRuns = 0, totalBosses = 0, totalDojoBosses = 0, totalDojoChallenges = 0;
+        private static int[] idLookup;
+        private static int totalChallenges = 0, totalHomeRuns = -1, totalBosses = 0, totalDojoBosses = 0, totalDojoChallenges = -1;
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(FPSaveManager), "LoadFromFile", MethodType.Normal)]
         static void PatchFPSaveManagerLoad(ref byte[] ___challengeRank, ref int[] ___challengeRecord)
         {
             //Calculate how many challenges we have
-            int totalArenaChallenges = ChallengeHandler.baseChallenges + ChallengeHandler.Challenges.Count;
+            int totalArenaChallenges = ChallengeHandler.baseChallenges + ChallengeHandler.Challenges.Count + 4;
             foreach (ChallengeData challenge in ChallengeHandler.Challenges.Values)
             {
                 //Highest ID is the track number
@@ -59,10 +60,6 @@ namespace FP2Lib.Challenge
             //Add slots in file for extra challenges.
             ___challengeRank = FPSaveManager.ExpandByteArray(___challengeRank, totalArenaChallenges);
             ___challengeRecord = FPSaveManager.ExpandIntArray(___challengeRecord, totalArenaChallenges);
-
-            //TODO: Test if vinyl-like trimming is needed!!!
-            //if (___musicTracks.Length > totalTracks - 1)
-            //    ___musicTracks = ___musicTracks.Take(totalTracks).ToArray();
 
             ChallengeHandler.WriteToStorage();
         }
@@ -184,7 +181,7 @@ namespace FP2Lib.Challenge
         [HarmonyPatch(typeof(FPSaveManager), "GetBossHome", MethodType.Normal)]
         static void PatchGetBossHome(int challenge, ref string __result)
         {
-            if (challenge >= 85)
+            if (challenge >= 90)
             {
                 ChallengeData data = ChallengeHandler.GetChallengeDataByRuntimeID(challenge);
                 if (data != null)
@@ -198,7 +195,7 @@ namespace FP2Lib.Challenge
         [HarmonyPatch(typeof(MenuArenaBossSelect), "CheckAdditionalBossRequirements", MethodType.Normal)]
         static void PatchCheckAdditionalBossRequirements(int bossSlotID, ref bool __result)
         {
-            if (bossSlotID >= 85)
+            if (bossSlotID >= 90)
             {
                 ChallengeData challenge = ChallengeHandler.GetChallengeDataByRuntimeID(bossSlotID);
                 if (challenge != null)
@@ -223,6 +220,8 @@ namespace FP2Lib.Challenge
             int challengeSpawnIDOffset = __instance.challengeSpawnID.Length + 1;
             int challengeRewardIDOffset = __instance.challengeRewards.Length + 1;
 
+            idLookup = new int[__instance.challengeScene.Length];
+
             //Fuckery to force-ignore slot 21
             if (__instance.name.Contains("ArenaChallengeSelect"))
             {
@@ -233,22 +232,27 @@ namespace FP2Lib.Challenge
             }
 
             //Extend arrays
-            if (__instance.name.Contains("ArenaChallengeSelect") || __instance.name.Contains("ArenaHomeRunSelect"))
+            if (__instance.name.Contains("ArenaChallengeSelect"))
             {
                 ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames =
-                    Utils.ExpandSpriteArray(___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames, challengeSceneOffset + Math.Max(totalChallenges, totalHomeRuns) + 1,
+                    Utils.ExpandSpriteArray(___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames, challengeSceneOffset + totalChallenges + 1,
+                    ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames[0]);
+            }
+            if (__instance.name.Contains("ArenaHomeRunSelect"))
+            {
+                ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames =
+                    Utils.ExpandSpriteArray(___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames, challengeSceneOffset + totalHomeRuns,
                     ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames[0]);
             }
             if (__instance.name.Contains("TrainingChallengeSelect"))
             {
-                //TODO: Expand graphicPanels[] properly.
-                //___graphicPanels = ___graphicPanels.AddRangeToArray<GameObject>(new GameObject[totalDojoChallenges + 1]);
+                ___graphicPanels = ___graphicPanels.AddRangeToArray<GameObject>(new GameObject[totalDojoChallenges + 1]);
             }
 
             foreach (ChallengeData challenge in ChallengeHandler.Challenges.Values)
             {
                 //Skip uninitialised ones.
-                if (challenge.destinationScene.IsNullOrWhiteSpace() || SceneManager.GetActiveScene().name != "ArenaMenu") continue;
+                if (challenge.destinationScene.IsNullOrWhiteSpace()) continue;
 
                 switch (challenge.type)
                 {
@@ -272,19 +276,21 @@ namespace FP2Lib.Challenge
                             __instance.timeCapsuleID = FPSaveManager.ExpandIntArray(__instance.timeCapsuleID, challengeRewardIDOffset + totalChallenges);
                             __instance.timeCapsuleID[challengeRewardIDOffset + challenge.localID] = challenge.timeCapsuleID;
 
-                            ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames[challengeSceneOffset + challenge.localID + 1] = challenge.challengeIcon;
+                            ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames[challengeSceneOffset + challenge.localID] = challenge.challengeIcon;
 
                             ___challengeNames.paragraph = Utils.ExpandStringArray(___challengeNames.paragraph, challengeSceneOffset + totalChallenges + 1);
                             ___textDescription.paragraph = Utils.ExpandStringArray(___textDescription.paragraph, challengeSceneOffset + totalChallenges + 1);
 
                             ___challengeNames.paragraph[challengeSceneOffset + challenge.localID] = challenge.name;
                             ___textDescription.paragraph[challengeSceneOffset + challenge.localID] = challenge.challengeDescription;
+
+                            idLookup = FPSaveManager.ExpandIntArray(idLookup, challengeSceneOffset + totalChallenges + 1);
+
                         }
                         break;
                     case FPChallengeType.DOJO_CHALLENGE:
-                        //Disabled for now. More work than it's worth since the menu would have to be heavily edited.
+                        //More work than it's worth since the menu would have to be heavily edited.
                         //It used hand-made GameObjects for the preview graphics.
-                        /*
                         if (__instance.name.Contains("TrainingChallengeSelect"))
                         {
                             __instance.challengeScene = Utils.ExpandStringArray(__instance.challengeScene, challengeSceneOffset + totalDojoChallenges);
@@ -309,10 +315,14 @@ namespace FP2Lib.Challenge
                             ___textDescription.paragraph = Utils.ExpandStringArray(___textDescription.paragraph, challengeSceneOffset + totalDojoChallenges + 1);
                             ___textDescription.paragraph[challengeSceneOffset + challenge.localID] = challenge.challengeDescription;
 
-                            ___graphicPanels[challengeSceneOffset + challenge.localID] = challenge.dojoChallengePreview;
+                            if (challenge.dojoChallengePreview != null)
+                                ___graphicPanels[challengeSceneOffset + challenge.localID] = challenge.dojoChallengePreview;
+                            else
+                                ___graphicPanels[challengeSceneOffset + challenge.localID] = ___graphicPanels[0];
+
+                            idLookup = FPSaveManager.ExpandIntArray(idLookup, challengeSceneOffset + challenge.localID + 1);
 
                         }
-                        */
                         break;
                     case FPChallengeType.HOMERUN:
 
@@ -335,10 +345,19 @@ namespace FP2Lib.Challenge
                             __instance.challengeRewards = FPSaveManager.ExpandIntArray(__instance.challengeRewards, challengeRewardIDOffset + totalHomeRuns);
                             __instance.challengeRewards[challengeRewardIDOffset + challenge.localID] = challenge.crystalReward;
 
-                            ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames[challengeSceneOffset + challenge.localID + 1] = challenge.challengeIcon;
+                            __instance.timeCapsuleID = FPSaveManager.ExpandIntArray(__instance.timeCapsuleID, challengeRewardIDOffset + totalHomeRuns);
+                            __instance.timeCapsuleID[challengeRewardIDOffset + challenge.localID] = challenge.timeCapsuleID;
 
-                            ___challengeNames.paragraph = Utils.ExpandStringArray(___challengeNames.paragraph, challengeSceneOffset + totalHomeRuns + 1);
+                            ___pfChallengeLabel.transform.GetChild(0).GetComponent<FPHudDigit>().digitFrames[challengeSceneOffset + challenge.localID] = challenge.challengeIcon;
+
+                            ___challengeNames.paragraph = Utils.ExpandStringArray(___challengeNames.paragraph, challengeSceneOffset + totalHomeRuns);
                             ___challengeNames.paragraph[challengeSceneOffset + challenge.localID] = challenge.name;
+
+                            ___textDescription.paragraph = Utils.ExpandStringArray(___textDescription.paragraph, challengeSceneOffset + totalHomeRuns);
+
+                            idLookup = FPSaveManager.ExpandIntArray(idLookup, challengeSceneOffset + challenge.localID + 1);
+
+                            if (totalHomeRuns >= 0) __instance.scrolling = true;
                         }
                         break;
                 }
@@ -348,13 +367,13 @@ namespace FP2Lib.Challenge
         [HarmonyPostfix]
         [HarmonyWrapSafe]
         [HarmonyPatch(typeof(MenuArenaChallengeSelect), "Start", MethodType.Normal)]
-        static void PatchArenaChallengeSelect(ref MenuText[] ___challengeList, ref int[] ___challengeSpawnID, bool[] ___challengeUnlocked, ref int[] ___slotID, int ___challengeIDOffset)
+        static void PatchArenaChallengeSelect(MenuArenaChallengeSelect __instance, ref MenuText[] ___challengeList, ref int[] ___challengeSpawnID, ref bool[] ___challengeUnlocked, ref int[] ___slotID)
         {
             if (totalChallenges > 0 || totalHomeRuns > 0)
             {
                 for (int i = 0; i < ___challengeSpawnID.Length; i++)
                 {
-                    //Run only for moddes stuff
+                    //Run only for modded stuff
                     if (___challengeSpawnID[i] >= 85 && ___challengeUnlocked[i])
                     {
                         ChallengeData data = ChallengeHandler.GetChallengeDataByRuntimeID(___challengeSpawnID[i]);
@@ -366,9 +385,69 @@ namespace FP2Lib.Challenge
                             if (___challengeList[i].GetComponent<TextMesh>() != null)
                                 ___challengeList[i].GetComponent<TextMesh>().text = data.name;
 
-                            //Set right challengeID for reward display
-                            ___slotID[i - 2] = ___challengeSpawnID[i] - ___challengeIDOffset;
+                            if (___challengeList[i].transform.childCount > 1)
+                            {
+                                if (FPSaveManager.challengeRecord[___challengeSpawnID[i]] > 0) ___challengeList[i].transform.GetChild(1).gameObject.SetActive(true);
+                            }
+
+                            if (__instance.name.Contains("ArenaChallengeSelect"))
+                            {
+                                data.slotID = i - 2;
+                            }
+                            else data.slotID = i;
+
+                            ___slotID[data.slotID] = i;
+                            idLookup[data.slotID] = ___challengeSpawnID[i];
+
+                            //Scrolling is broken.
+                            //Scroll if there is more than one challenge.
+                            if (totalDojoChallenges > 0 && __instance.name.Contains("TrainingChallengeSelect"))
+                            {
+                                ArenaLogSource.LogInfo("Enabling horrible hack. Yes the display is missing *ON PURPOSE*. Don't report it lol.");
+                                if (__instance.transform.childCount > 1 && __instance.transform.GetChild(1).childCount > 7)
+                                {
+                                    __instance.transform.GetChild(1).GetChild(7).gameObject.SetActive(false);
+                                }
+                                __instance.scrolling = true;
+                            }
                         }
+                    }
+                }
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyWrapSafe]
+        [HarmonyPatch(typeof(MenuArenaChallengeSelect), "State_Challenge", MethodType.Normal)]
+        static void PatchArenaChallengeSelect(MenuArenaChallengeSelect __instance, int ___challengeSelection)
+        {
+            if (totalChallenges > 0 || totalHomeRuns >= 0)
+            {
+                if (___challengeSelection >= 20 && __instance.name.Contains("ArenaChallengeSelect"))
+                {
+                    if (__instance.textReward.textMesh != null)
+                    {
+                        if (FPSaveManager.challengeRecord[idLookup[___challengeSelection]] == 0)
+                            __instance.textReward.textMesh.text = FPSaveManager.GetChallengeReward(idLookup[___challengeSelection]).ToString();
+                        else
+                            __instance.textReward.textMesh.text = (FPSaveManager.GetChallengeReward(idLookup[___challengeSelection]) / 4).ToString();
+                    }
+                    if (__instance.textRecord.textMesh != null)
+                    {
+                        __instance.textRecord.textMesh.text = FPStage.TimeToString(FPSaveManager.challengeRecord[idLookup[___challengeSelection]]);
+                        if (__instance.rankIcon != null)
+                        {
+                            __instance.rankIcon.SetDigitValue((int)FPSaveManager.challengeRank[idLookup[___challengeSelection]]);
+                        }
+                    }
+                }
+                else if (___challengeSelection >= 3 && __instance.name.Contains("ArenaHomeRunSelect")) 
+                {
+                    //Home Run Specific
+                    if (__instance.textRecordLocal != null)
+                    {
+                        __instance.textRecord.textMesh.text = FPSaveManager.challengeRecord[idLookup[___challengeSelection]].ToString(); //"Total"
+                        __instance.textRecordLocal.textMesh.text = FPSaveManager.challengeRecord[idLookup[___challengeSelection] + 3].ToString(); //"Best Round"
                     }
                 }
             }
@@ -378,7 +457,7 @@ namespace FP2Lib.Challenge
         [HarmonyPatch(typeof(FPSaveManager), "GetChallengeName", MethodType.Normal)]
         static void PatchGetChallengeName(int challenge, ref string __result)
         {
-            if (challenge >= 85)
+            if (challenge >= 90)
             {
                 ChallengeData data = ChallengeHandler.GetChallengeDataByRuntimeID(challenge);
                 if (data != null)
@@ -393,7 +472,7 @@ namespace FP2Lib.Challenge
         [HarmonyPatch(typeof(FPSaveManager), "GetChallengeReward", MethodType.Normal)]
         static void PatchGetChallengeReward(int challenge, ref int __result)
         {
-            if (challenge >= 85)
+            if (challenge >= 90)
             {
                 ChallengeData data = ChallengeHandler.GetChallengeDataByRuntimeID(challenge);
                 if (data != null)
