@@ -369,7 +369,7 @@ namespace FP2Lib.Challenge
         [HarmonyPatch(typeof(MenuArenaChallengeSelect), "Start", MethodType.Normal)]
         static void PatchArenaChallengeSelect(MenuArenaChallengeSelect __instance, ref MenuText[] ___challengeList, ref int[] ___challengeSpawnID, ref bool[] ___challengeUnlocked, ref int[] ___slotID)
         {
-            if (totalChallenges > 0 || totalHomeRuns > 0)
+            if (totalChallenges > 0 || totalHomeRuns >= 0)
             {
                 for (int i = 0; i < ___challengeSpawnID.Length; i++)
                 {
@@ -437,7 +437,7 @@ namespace FP2Lib.Challenge
                         __instance.textRecord.textMesh.text = FPStage.TimeToString(FPSaveManager.challengeRecord[idLookup[___challengeSelection]]);
                         if (__instance.rankIcon != null)
                         {
-                            __instance.rankIcon.SetDigitValue((int)FPSaveManager.challengeRank[idLookup[___challengeSelection]]);
+                            __instance.rankIcon.SetDigitValue(FPSaveManager.challengeRank[idLookup[___challengeSelection]]);
                         }
                     }
                 }
@@ -448,6 +448,24 @@ namespace FP2Lib.Challenge
                     {
                         __instance.textRecord.textMesh.text = FPSaveManager.challengeRecord[idLookup[___challengeSelection]].ToString(); //"Total"
                         __instance.textRecordLocal.textMesh.text = FPSaveManager.challengeRecord[idLookup[___challengeSelection] + 3].ToString(); //"Best Round"
+                    }
+                }
+                else if (___challengeSelection >= 3 && __instance.name.Contains("TrainingChallengeSelect"))
+                {
+                    if (__instance.textReward.textMesh != null)
+                    {
+                        if (FPSaveManager.challengeRecord[idLookup[___challengeSelection]] == 0)
+                            __instance.textReward.textMesh.text = FPSaveManager.GetChallengeReward(idLookup[___challengeSelection]).ToString();
+                        else
+                            __instance.textReward.textMesh.text = (FPSaveManager.GetChallengeReward(idLookup[___challengeSelection]) / 4).ToString();
+                    }
+                    if (__instance.textRecord.textMesh != null)
+                    {
+                        __instance.textRecord.textMesh.text = FPStage.TimeToString(FPSaveManager.challengeRecord[idLookup[___challengeSelection]]);
+                        if (__instance.rankIcon != null)
+                        {
+                            __instance.rankIcon.SetDigitValue(FPSaveManager.challengeRank[idLookup[___challengeSelection]]);
+                        }
                     }
                 }
             }
