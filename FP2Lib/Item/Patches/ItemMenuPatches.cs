@@ -107,6 +107,35 @@ namespace FP2Lib.Item.Patches
             }
         }
 
+        //Needs to run *after* the menu is made due to Potion Seller breaking otherwise
+        [HarmonyPostfix]
+        [HarmonyAfter("com.eps.plugin.fp2.potion-seller")]
+        [HarmonyPatch(typeof(FPResultsMenu), "Start", MethodType.Normal)]
+        static void PatchMenuResultsStart(ref FPHudDigit[] ___hudItemIcon)
+        {
+            int totalItems = ItemHandler.baseItems + ItemHandler.Items.Count;
+            if (___hudItemIcon != null)
+            {
+                for (int i = 0; i < ___hudItemIcon.Length; i++)
+                {
+                    //Force early firing of Potion Seller's patch - otherwise it would run *after* we extended the array already, and not add it's own items.
+                    if (ItemHandler.isPotionSellerInstalled) ___hudItemIcon[i].GetRenderer();
+
+                    if (___hudItemIcon[i].digitFrames.Length < totalItems)
+                    {
+                        ___hudItemIcon[i].digitFrames = Utils.ExpandSpriteArray(___hudItemIcon[i].digitFrames, totalItems, ___hudItemIcon[i].digitFrames[1]);
+                    }
+                    foreach (ItemData item in ItemHandler.Items.Values)
+                    {
+                        if (item.sprite != null)
+                        {
+                            ___hudItemIcon[i].digitFrames[item.itemID] = item.sprite;
+                        }
+                    }
+                }
+            }
+        }
+
         //This might need a transpiler for CreateOverviewList() and UpdateItemList() - both use a hardcoded 50 item long array for their list creation code.
         [HarmonyPrefix]
         [HarmonyWrapSafe]

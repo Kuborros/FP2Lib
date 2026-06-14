@@ -325,7 +325,6 @@ namespace FP2Lib.Challenge
                         }
                         break;
                     case FPChallengeType.DOJO_CHALLENGE:
-                        //More work than it's worth since the menu would have to be heavily edited.
                         //It used hand-made GameObjects for the preview graphics.
                         if (__instance.name.Contains("TrainingChallengeSelect"))
                         {

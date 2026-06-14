@@ -138,6 +138,35 @@ namespace FP2Lib.Item.Patches
             }
         }
 
+        //Needs to run *after* the menu is made due to Potion Seller breaking otherwise
+        [HarmonyPostfix]
+        [HarmonyAfter("com.eps.plugin.fp2.potion-seller")]
+        [HarmonyPatch(typeof(FPResultsMenu), "Start", MethodType.Normal)]
+        static void PatchMenuResultsStart(ref FPHudDigit[] ___hudBottleSlot)
+        {
+            int totalPotions = ItemHandler.basePotions + ItemHandler.potionCount;
+            if (___hudBottleSlot != null)
+            {
+                for (int i = 0; i < ___hudBottleSlot.Length; i++)
+                {
+                    //Force early firing of Potion Seller's patch - otherwise it would run *after* we extended the array already, and not add it's own items.
+                    if (ItemHandler.isPotionSellerInstalled) ___hudBottleSlot[i].GetRenderer();
+
+                    if (___hudBottleSlot[i].digitFrames.Length < totalPotions)
+                    {
+                        ___hudBottleSlot[i].digitFrames = Utils.ExpandSpriteArray(___hudBottleSlot[i].digitFrames, totalPotions, ___hudBottleSlot[i].digitFrames[1]);
+                    }
+                    foreach (ItemData item in ItemHandler.Items.Values)
+                    {
+                        if (item.sprite != null && item.isPotion)
+                        {
+                            ___hudBottleSlot[i].digitFrames[item.potionID] = item.spriteBottleMid;
+                        }
+                    }
+                }
+            }
+        }
+
         //If a mod introduced new potion IDs outside ranges known to us and then got removed game will try to render invalid potion sprites within the save menu, resulting in an unhandled null pointer.
         //This Finalizer intercepts this exception, and restores sane defaults which lets the game proceed far enough for its own sanity checks to fire and correct the file.
         [HarmonyFinalizer]
