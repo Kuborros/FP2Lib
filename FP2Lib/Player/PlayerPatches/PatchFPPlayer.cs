@@ -339,7 +339,6 @@ namespace FP2Lib.Player.PlayerPatches
         }
 
         //Swimming disable patches
-
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPPlayer), "State_InAir", MethodType.Normal)]
         [HarmonyPatch(typeof(FPPlayer), "Action_Jump", MethodType.Normal)]
@@ -356,6 +355,8 @@ namespace FP2Lib.Player.PlayerPatches
                     HandleWaterSurface(instance,null) 
 
                 This can be done because "!= null" internally creates a call to IsEqual(Object,null)
+
+                All this Opcode checking is there to not accidentaly patch assebly already overwritten by Sonic Mod's implementation.
                 */
 
 

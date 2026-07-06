@@ -262,7 +262,10 @@ namespace FP2Lib.Player
         public float statDefaultTopSpeed = 7.5f;
 
         /// <summary>
-        /// 
+        /// Allows you to disable swimming for a character. 
+        /// This will prevent them from ever entering swimming state, instead treating the water as air. 
+        /// The <code>targetWaterSurface</code> is still set, so you can still tell if you are underwater. 
+        /// Water physics caused by <code>Action_SetWaterFlag</code> will also remain in effect, unless you disable them yourself (a short prefix will do the job).
         /// </summary>
         public bool disableSwimming = false;
 
