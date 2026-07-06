@@ -262,6 +262,11 @@ namespace FP2Lib.Player
         public float statDefaultTopSpeed = 7.5f;
 
         /// <summary>
+        /// 
+        /// </summary>
+        public bool disableSwimming = false;
+
+        /// <summary>
         /// Asset Bundle containing all the character data.
         /// Can be used to pull out any extra assets if needed.
         /// </summary>

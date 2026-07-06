@@ -34,6 +34,23 @@ namespace FP2Lib.Player.PlayerPatches
             HandleActionAirMoves();
         }
 
+        internal static bool HandleWaterSurface(FPBaseObject targetWaterSurface, object _discard)
+        {
+            if (FPSaveManager.character > FPCharacterID.NEERA && PlayerHandler.currentCharacter != null)
+            {
+                if (PlayerHandler.currentCharacter.disableSwimming)
+                {
+                    return false;
+                }
+            }
+            return targetWaterSurface != null;
+        }
+
+        internal static bool HandleWaterSurfaceInverse(FPBaseObject targetWaterSurface, object _discard)
+        {
+            return !HandleWaterSurface(targetWaterSurface, _discard);
+        }
+
         //AutoGuard
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(FPPlayer), "AutoGuard", MethodType.Normal)]
@@ -316,6 +333,59 @@ namespace FP2Lib.Player.PlayerPatches
                     //Code is identical for everyone but Neera
                     codes[i + 2].labels.Add(airStart);
                     codes[i + 1].operand = airStart;
+                }
+            }
+            return codes;
+        }
+
+        //Swimming disable patches
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(FPPlayer), "State_InAir", MethodType.Normal)]
+        [HarmonyPatch(typeof(FPPlayer), "Action_Jump", MethodType.Normal)]
+        [HarmonyPatch(typeof(FPPlayer), "Action_Guard", MethodType.Normal)]
+        static IEnumerable<CodeInstruction> PlayerStateInAirTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
+        {
+            List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+            for (var i = 1; i < codes.Count; i++)
+            {
+                /*
+                Replaces:
+                	targetWaterSurface != null
+                With:
+                    HandleWaterSurface(instance,null) 
+
+                This can be done because "!= null" internally creates a call to IsEqual(Object,null)
+                */
+
+
+                if (codes[i].opcode == OpCodes.Ldfld && codes[i + 1].opcode == OpCodes.Ldnull && codes[i - 1].opcode == OpCodes.Ldarg_0)
+                {
+                    codes[i + 2] = Transpilers.EmitDelegate(HandleWaterSurface);
+                    break;
+                }
+            }
+            return codes;
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(FPPlayer), "ReturnToGeneralState", [typeof(bool), typeof(bool)])]
+        static IEnumerable<CodeInstruction> PlayerGeneralStateTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
+        {
+            List<CodeInstruction> codes = new List<CodeInstruction>(instructions);
+            for (var i = 1; i < codes.Count; i++)
+            {
+                /*
+                Replaces:
+                	targetWaterSurface == null
+                With:
+                    HandleWaterSurfaceInverse(instance,null) 
+                */
+
+                if (codes[i].opcode == OpCodes.Ldfld && codes[i + 1].opcode == OpCodes.Ldnull && codes[i - 1].opcode == OpCodes.Ldarg_0)
+                {
+                    codes[i + 2] = Transpilers.EmitDelegate(HandleWaterSurfaceInverse);
+                    break;
                 }
             }
             return codes;
