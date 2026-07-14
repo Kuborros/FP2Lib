@@ -27,7 +27,7 @@ namespace FP2Lib.Player
         /// <summary>
         /// Tutorial scene name. Can be any of the built-in ones, but all non-Lilac ones require character-specific attacks to proceed.
         /// Can be a name of a custom scene loaded by the mod. As long as it has all the flags marking it as tutorial, all will behave as intended.
-        /// Defaults to "Tutorial1" which is Lilac's tutorial.
+        /// Defaults to "Tutorial1" which is Lilac's tutorial (it can be completed by any character).
         /// </summary>
         public string TutorialScene = "Tutorial1";
         /// <summary>
@@ -98,10 +98,11 @@ namespace FP2Lib.Player
         public Action ItemFuelPickup;
         /// <summary>
         /// Method delegate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>FPEventSequence</c> fires it's event start logic.
-        /// Use this to run your own event logic - likely by instancing your own <c>FPEventSequence</c>.
+        /// Return <c>true</c> to run this FPEventSequence, false to skip it.
+        /// You can also use this to run your own event logic - likely by gutting out it's contents and replacing them with your own version (or instancing a new one).
         /// Current instance of <c>FPEventSequence</c> the method was fired in is provided for convenienience as first method argument.
         /// </summary>
-        public Action<FPEventSequence> EventSequenceStart;
+        public Predicate<FPEventSequence> EventSequenceStart;
 
         /// <summary>
         /// ID of the *built-in* character which we should pretend to be for all of the event/cutscene/dialogue logic.

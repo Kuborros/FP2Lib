@@ -11,11 +11,14 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (PlayerHandler.currentCharacter.useOwnCutsceneActivators)
             {
-                //If using mod's own code, simply behave as we did not match. The mod will be handling it by itself.
-                //Instance of current FPEventSequence is handed over for manipulation
-                //A mod will likely just want to instance their own version, but borrow some data from the existing instance.
-                PlayerHandler.currentCharacter.EventSequenceStart?.Invoke(instance);
-                return false;
+                //Mod can define a predicate, which will run when the event sequence starts.
+                //Returning true here will behave as if we matched the character.
+                //Instance of current FPEventSequence is handed over for manipulation, or for checking if this is the one we want to run.
+                if (PlayerHandler.currentCharacter.EventSequenceStart != null)
+                {
+                    return PlayerHandler.currentCharacter.EventSequenceStart.Invoke(instance);
+                }
+                else return false;
             }
             else
             {
@@ -41,8 +44,14 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (PlayerHandler.currentCharacter.useOwnCutsceneActivators)
             {
-                //If using mod's own code, simply behave as we did not match. The mod will be handling it by itself.
-                return false;
+                //Mod can define a predicate, which will run when the event sequence steps to another part of the scene.
+                //Returning true here will behave as if we matched the character.
+                //Instance of current FPEventSequence is handed over for manipulation, or for checking if this is the one we want to run.
+                if (PlayerHandler.currentCharacter.EventSequenceStart != null)
+                {
+                    return PlayerHandler.currentCharacter.EventSequenceStart.Invoke(instance);
+                }
+                else return false;
             }
             else
             {

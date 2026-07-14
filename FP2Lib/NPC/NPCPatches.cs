@@ -220,11 +220,14 @@ namespace FP2Lib.NPC
                         if (!npc.customSpecies.IsNullOrWhiteSpace())
                         {
                             customSpeciesDisplay = npc.customSpecies;
+                            ___npcSpecies.GetComponent<TextMesh>().text = customSpeciesDisplay;
                         }
                         if (!npc.customHome.IsNullOrWhiteSpace())
                         {
                             customHomeDisplay = npc.customHome;
+                            ___npcHome.GetComponent<TextMesh>().text = customHomeDisplay;
                         }
+
                         return;
                     }
                 }

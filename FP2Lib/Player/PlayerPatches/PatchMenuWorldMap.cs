@@ -64,7 +64,7 @@ namespace FP2Lib.Player.PlayerPatches
             }
             else
             {
-                ___playerSpriteRenderer.sprite = chara.worldMapIdle[Mathf.Min((int)((___animTimer) % 12), chara.worldMapIdle.Length - 1)];
+                ___playerSpriteRenderer.sprite = chara.worldMapIdle[Mathf.Min((int)((___animTimer) % chara.worldMapIdle.Length), chara.worldMapIdle.Length - 1)];
                 ___playerShadowRenderer.sprite = null;
                 ___playerSpriteRenderer.transform.localPosition = new Vector3(0f, 0f, 0f);
             }
