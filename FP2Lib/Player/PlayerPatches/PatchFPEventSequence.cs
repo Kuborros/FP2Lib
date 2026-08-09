@@ -14,11 +14,16 @@ namespace FP2Lib.Player.PlayerPatches
                 //Mod can define a predicate, which will run when the event sequence starts.
                 //Returning true here will behave as if we matched the character.
                 //Instance of current FPEventSequence is handed over for manipulation, or for checking if this is the one we want to run.
-                if (PlayerHandler.currentCharacter.EventSequenceStart != null)
+                if (PlayerHandler.currentCharacter.EventSequenceTrigger != null)
                 {
-                    return PlayerHandler.currentCharacter.EventSequenceStart.Invoke(instance);
+                    return PlayerHandler.currentCharacter.EventSequenceTrigger.Invoke(instance);
                 }
-                else return false;
+                else
+                {
+                    //Backwards compat
+                    PlayerHandler.currentCharacter.EventSequenceStart?.Invoke(instance);
+                    return false;
+                }
             }
             else
             {
@@ -44,14 +49,19 @@ namespace FP2Lib.Player.PlayerPatches
         {
             if (PlayerHandler.currentCharacter.useOwnCutsceneActivators)
             {
-                //Mod can define a predicate, which will run when the event sequence steps to another part of the scene.
+                //Mod can define a predicate, which will run when the event sequence starts.
                 //Returning true here will behave as if we matched the character.
                 //Instance of current FPEventSequence is handed over for manipulation, or for checking if this is the one we want to run.
                 if (PlayerHandler.currentCharacter.EventSequenceStart != null)
                 {
-                    return PlayerHandler.currentCharacter.EventSequenceStart.Invoke(instance);
+                    return PlayerHandler.currentCharacter.EventSequenceTrigger.Invoke(instance);
                 }
-                else return false;
+                else
+                {
+                    //Backwards compat
+                    PlayerHandler.currentCharacter.EventSequenceStart?.Invoke(instance);
+                    return false;
+                }
             }
             else
             {

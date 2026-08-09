@@ -14,7 +14,7 @@ namespace FP2Lib.Player.PlayerPatches
                 PlayableChara character = PlayerHandler.currentCharacter;
                 if (character != null)
                 {
-                    if (!character.useOwnParentActivators && character.bfImpaleSprite != null)
+                    if (character.bfImpaleSprite != null)
                     {
                         SpriteRenderer[] sprites = ___playerBody.transform.GetComponentsInChildren<SpriteRenderer>(true);
                         foreach (SpriteRenderer spriteRenderer in sprites)
@@ -35,7 +35,7 @@ namespace FP2Lib.Player.PlayerPatches
                 PlayableChara character = PlayerHandler.currentCharacter;
                 if (character != null)
                 {
-                    if (!character.useOwnParentActivators && character.bfImpaleSprite != null)
+                    if (character.bfImpaleSprite != null)
                     {
                         SpriteRenderer[] sprites = ___players.transform.GetComponentsInChildren<SpriteRenderer>(true);
                         foreach (SpriteRenderer spriteRenderer in sprites)

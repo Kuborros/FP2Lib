@@ -62,13 +62,14 @@ namespace FP2Lib.Player
         /// <summary>
         /// Should the mod use it's own code and objects for all the cutscene and stage dialogue logic. 
         /// This includes all the cutscenes, mid-stage dialogue, and things like Sky Bridge's and Nalao Lake's special cutscenes.
-        /// Enabling this disables automatic rerouting of all these functions to character selected in <c>eventActivatorCharacter</c>
+        /// Enabling this disables automatic rerouting of all these functions to character selected in <c>eventActivatorCharacter</c>, effectively disarming the patches to allow your own code to deal with the event.
+        /// Be aware that you will need to extend some arrays to fit your character in, or instance your own activators.
         /// </summary>
         public bool useOwnCutsceneActivators = false;
         /// <summary>
         /// Should the mod use it's own code and objects for all the parent activator logic. 
         /// Unless doing major stage modifications you will likely want to use the built-in ones.
-        /// Enabling this disables automatic rerouting of all these functions to character selected in <c>eventActivatorCharacter</c>
+        /// Enabling this disables automatic rerouting of all these functions to character selected in <c>eventActivatorCharacter</c>, effectively disarming the usual to allow your own code to deal with what activators to use.
         /// </summary>
         public bool useOwnParentActivators = false;
         /// <summary>
@@ -96,13 +97,32 @@ namespace FP2Lib.Player
         /// Perform the code related to the powerup logic here.
         /// </summary>
         public Action ItemFuelPickup;
+
         /// <summary>
-        /// Method delegate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>FPEventSequence</c> fires it's event start logic.
-        /// Return <c>true</c> to run this FPEventSequence, false to skip it.
+        /// Deprecated.
+        /// Method delegate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>FPEventSequence</c> fires it's logic to check if you are playing as it's set character.
+        /// You can use this to run your own event logic, separate from the activator who just got trigerred.
+        /// Current instance of <c>FPEventSequence</c> where the method was fired in is provided for convenienience as first method argument.
+        /// </summary>
+        public Action<FPEventSequence> EventSequenceStart;
+
+        /// <summary>
+        /// Predicate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>FPEventSequence</c> fires it's logic to check if you are playing as it's set character (happens at startup, and during main loop).
+        /// Return <c>true</c> to match the object to your character.
+        /// Basically, you are answering the question - "should this sequence activate for this character".
         /// You can also use this to run your own event logic - likely by gutting out it's contents and replacing them with your own version (or instancing a new one).
         /// Current instance of <c>FPEventSequence</c> the method was fired in is provided for convenienience as first method argument.
         /// </summary>
-        public Predicate<FPEventSequence> EventSequenceStart;
+        public Predicate<FPEventSequence> EventSequenceTrigger;
+
+        /// <summary>
+        /// Predicate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>ParentActivat0r</c> fires it's event start/loop logic.
+        /// Return <c>true</c> to match the object to your character.
+        /// Basically, you are answering the question - "should this object be active for this character". Other logic like story flags remains intact.
+        /// In simplest form, you can filter out exactly what activators you want on a given stage, mixing and matching characters as needed.
+        /// Current instance of <c>ParentActivator</c> the method was fired in is provided for convenienience as first method argument.
+        /// </summary>
+        public Predicate<ParentActivator> ParentActivatorTrigger;
 
         /// <summary>
         /// ID of the *built-in* character which we should pretend to be for all of the event/cutscene/dialogue logic.

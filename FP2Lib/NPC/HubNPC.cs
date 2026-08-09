@@ -41,7 +41,7 @@ namespace FP2Lib.NPC
         /// </summary>
         public int DialogueTopics = 1;
         /// <summary>
-        /// Dictionary of Prefabs for the character. Key is the scene name, Value is the GameObject containing the prefab
+        /// Dictionary of Prefabs for the character. Key is the name of the stage (or it's scene name), Value is the GameObject containing the prefab
         /// </summary>
         public Dictionary<string, GameObject> Prefabs = [];
         /// <summary>

@@ -31,6 +31,16 @@ namespace FP2Lib.Player.PlayerPatches
                     {
                         DisableObject(__instance);
                     }
+                } 
+                else
+                {
+                    if (PlayerHandler.currentCharacter.ParentActivatorTrigger != null)
+                    {
+                        if (PlayerHandler.currentCharacter.ParentActivatorTrigger.Invoke(__instance))
+                        {
+                            DisableObject(__instance);
+                        }
+                    }
                 }
             }
         }

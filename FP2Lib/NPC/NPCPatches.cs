@@ -3,6 +3,7 @@ using HarmonyLib;
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace FP2Lib.NPC
 {
@@ -84,10 +85,17 @@ namespace FP2Lib.NPC
 
             foreach (HubNPC npc in NPCHandler.HubNPCs.Values)
             {
+                //By stage name
                 if (npc.Prefabs.ContainsKey(stageName))
                 {
                     //NPC is to be loaded in this stage, instance it and save reference to instanced object.
                     npc.RuntimeObject = GameObject.Instantiate(npc.Prefabs[stageName]);
+                }
+                //By scene name
+                else if (npc.Prefabs.ContainsKey(SceneManager.GetActiveScene().name))
+                {
+                    //NPC is to be loaded in this scene, instance it and save reference to instanced object.
+                    npc.RuntimeObject = GameObject.Instantiate(npc.Prefabs[SceneManager.GetActiveScene().name]);
                 }
                 else npc.RuntimeObject = null;
             }
