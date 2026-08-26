@@ -28,6 +28,7 @@ namespace FP2Lib
         public static ConfigEntry<bool> configSaveRedirect;
         public static ConfigEntry<bool> configSaveFancy;
         public static ConfigEntry<int> configSaveProfile;
+        public static ConfigEntry<bool> configSaveBadges;
 
         public static ConfigEntry<bool> configCowabunga;
 
@@ -43,6 +44,7 @@ namespace FP2Lib
             configSaveRedirect = Config.Bind("Save Redirection", "Enabled", false, new ConfigDescription("Enable save file redirection.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             configSaveFancy = Config.Bind("Save Redirection", "Fancy Json", false, new ConfigDescription("Makes JSON files more human-readable.", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             configSaveProfile = Config.Bind("Save Redirection", "Profile", 1, new ConfigDescription("Select save redirection profile.", new AcceptableValueRange<int>(0, 9), new ConfigurationManagerAttributes { IsAdvanced = true }));
+            configSaveBadges = Config.Bind("Save Redirection", "Copy Badges", true, new ConfigDescription("When profile has no badge data, should the global one be copied to it?"));
 
             configCowabunga = Config.Bind("Debug", "Cowabunga", false, new ConfigDescription("Engages cowabunga mode. No version checks will be run, will attempt to hook in on any FP2 version.\n" +
                 "Yes, this includes 2015 Sample Versions. Your mileage might vary and bug reports with this mode on will *not* be accepted!\n" +

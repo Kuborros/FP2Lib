@@ -173,6 +173,13 @@ namespace FP2Lib.Saves
         {
             if (!File.Exists(getSavesPath() + "/global.json"))
             {
+                if (!FP2Lib.configSaveBadges.Value)
+                {
+                    FP2Lib.logSource.LogInfo("Per-profile badge data not present, loading empty one!");
+                    ___badges = new byte[99];
+                    return false;
+                }
+
                 FP2Lib.logSource.LogInfo("Per-profile badge data not present, loading global one!");
                 if (File.Exists(Application.persistentDataPath + "/global.json"))
                 {
