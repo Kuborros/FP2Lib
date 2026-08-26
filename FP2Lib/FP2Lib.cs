@@ -144,6 +144,7 @@ namespace FP2Lib
                     playerPatches.PatchAll(typeof(PatchCutsceneDialog));
                     playerPatches.PatchAll(typeof(PatchFPResultsMenu));
                     playerPatches.PatchAll(typeof(PatchBossRushManager));
+                    playerPatches.PatchAll(typeof(PatchFPHubNPCPlayer));
                 }
                 catch (Exception ex)
                 {

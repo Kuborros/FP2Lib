@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BepInEx;
+using FP2Lib.Saves;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -60,9 +62,16 @@ namespace FP2Lib.Tools
         /// <returns>Path to current save profile path for mod config data</returns>
         public static string getProfilePath()
         {
-            Directory.CreateDirectory("Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString());
-            return "Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString();
-
+            if (!SaveRedirectHandler.CurrentModRedirectProfile.IsNullOrWhiteSpace())
+            {
+                Directory.CreateDirectory("Saves\\Profile_" + SaveRedirectHandler.CurrentModRedirectProfile);
+                return "Saves\\Profile_" + SaveRedirectHandler.CurrentModRedirectProfile;
+            }
+            else
+            {
+                Directory.CreateDirectory("Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString());
+                return "Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString();
+            }
         }
 
     }

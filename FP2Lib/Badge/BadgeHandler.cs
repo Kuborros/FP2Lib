@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using FP2Lib.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,8 +23,10 @@ namespace FP2Lib.Badge
         {
             //Load storage data
             //Badges are global, and therefore their data is stored in config directory
-            if (!File.Exists(Paths.ConfigPath + "/BadgeStore.json"))
-                File.Create(Paths.ConfigPath + "/BadgeStore.json").Close();
+            if (!File.Exists(GameInfo.getProfilePath() + "/BadgeStore.json"))
+            {
+                File.Create(GameInfo.getProfilePath() + "/BadgeStore.json").Close();
+            }
 
             //Mark first 64 badge ids as taken by base game.
             for (int i = 0; i <= 64; i++)
@@ -144,7 +147,7 @@ namespace FP2Lib.Badge
 
         private static void LoadFromStorage()
         {
-            string json = File.ReadAllText(Paths.ConfigPath + "/BadgeStore.json");
+            string json = File.ReadAllText(GameInfo.getProfilePath() + "/BadgeStore.json");
             if (json.IsNullOrWhiteSpace()) return;
 
             string[] badgeJson = json.Split(new string[] { "<sep>" }, StringSplitOptions.None);
@@ -184,7 +187,7 @@ namespace FP2Lib.Badge
                 byte[] bytes = new UTF8Encoding().GetBytes(json);
                 using FileStream fileStream = new(string.Concat(new object[]
                 {
-                    Paths.ConfigPath,
+                    GameInfo.getProfilePath(),
                     "/",
                     "BadgeStore",
                     ".json"

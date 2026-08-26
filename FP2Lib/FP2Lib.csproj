@@ -35,10 +35,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="Saves\" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
