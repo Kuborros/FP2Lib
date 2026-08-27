@@ -58,6 +58,7 @@ namespace FP2Lib
             StageHandler.InitialiseHandler();
             ItemHandler.InitialiseHandler();
             ChallengeHandler.InitialiseHandler();
+            SaveRedirectHandler.InitialiseHandler();
 
             Logger.LogMessage("Running FP2 Version: " + gameInfo.getVersionString());
             if (gameInfo.build == GameRelease.SAMPLE && !configCowabunga.Value)

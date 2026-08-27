@@ -17,7 +17,7 @@ namespace FP2Lib.Saves
     }
     internal class SavePatches
     {
-        internal static string getSavesPath()
+        internal static string GetSavesPath()
         {
             if (FP2Lib.configSaveRedirect.Value)
             {
@@ -36,7 +36,7 @@ namespace FP2Lib.Saves
         }
 
         //Modifies output of JsonUtility to switch to 'everyting is not yeeted into single line' mode.
-        static string fancifyJson(System.Object obj)
+        static string FancifyJson(System.Object obj)
         {
             if (FP2Lib.configSaveFancy.Value)
             {
@@ -56,7 +56,7 @@ namespace FP2Lib.Saves
             {
                 if (codes[i].opcode == OpCodes.Call && (codes[i - 1].opcode == OpCodes.Ldloc_0 || codes[i - 1].opcode == OpCodes.Ldloc_1) && codes[i - 2].opcode == OpCodes.Stfld)
                 {
-                    codes[i] = Transpilers.EmitDelegate(fancifyJson);
+                    codes[i] = Transpilers.EmitDelegate(FancifyJson);
                 }
             }
             return codes;
@@ -73,7 +73,7 @@ namespace FP2Lib.Saves
             {
                 if (codes[i].opcode == OpCodes.Call && codes[i - 1].opcode == OpCodes.Ldc_I4_0 && codes[i - 2].opcode == OpCodes.Dup)
                 {
-                    codes[i] = Transpilers.EmitDelegate(getSavesPath);
+                    codes[i] = Transpilers.EmitDelegate(GetSavesPath);
                 }
             }
             return codes;
@@ -90,7 +90,7 @@ namespace FP2Lib.Saves
             {
                 if (codes[i].opcode == OpCodes.Call && codes[i - 1].opcode == OpCodes.Ldc_I4_0 && codes[i - 2].opcode == OpCodes.Dup)
                 {
-                    codes[i] = Transpilers.EmitDelegate(getSavesPath);
+                    codes[i] = Transpilers.EmitDelegate(GetSavesPath);
                 }
             }
             return codes;
@@ -107,7 +107,7 @@ namespace FP2Lib.Saves
             {
                 if (codes[i].opcode == OpCodes.Call && codes[i - 1].opcode == OpCodes.Ldc_I4_0 && codes[i - 2].opcode == OpCodes.Dup)
                 {
-                    codes[i] = Transpilers.EmitDelegate(getSavesPath);
+                    codes[i] = Transpilers.EmitDelegate(GetSavesPath);
                 }
             }
             return codes;
@@ -124,7 +124,7 @@ namespace FP2Lib.Saves
             {
                 if (codes[i].opcode == OpCodes.Call && codes[i - 1].opcode == OpCodes.Ldc_I4_0 && codes[i - 2].opcode == OpCodes.Dup)
                 {
-                    codes[i] = Transpilers.EmitDelegate(getSavesPath);
+                    codes[i] = Transpilers.EmitDelegate(GetSavesPath);
                 }
             }
             return codes;
@@ -142,7 +142,7 @@ namespace FP2Lib.Saves
             {
                 if (codes[i].opcode == OpCodes.Call && codes[i - 1].opcode == OpCodes.Stloc_3 && codes[i - 2].opcode == OpCodes.Callvirt)
                 {
-                    codes[i] = Transpilers.EmitDelegate(getSavesPath);
+                    codes[i] = Transpilers.EmitDelegate(GetSavesPath);
                 }
             }
             return codes;
@@ -159,7 +159,7 @@ namespace FP2Lib.Saves
             {
                 if (codes[i].opcode == OpCodes.Call && codes[i - 1].opcode == OpCodes.Stloc_1 && codes[i - 2].opcode == OpCodes.Ldsfld)
                 {
-                    codes[i] = Transpilers.EmitDelegate(getSavesPath);
+                    codes[i] = Transpilers.EmitDelegate(GetSavesPath);
                 }
             }
             return codes;
@@ -171,7 +171,7 @@ namespace FP2Lib.Saves
         [HarmonyPatch(typeof(FPSaveManager), "LoadGlobalData", MethodType.Normal)]
         static bool PatchGlobalLoadPre(ref bool __result, ref byte[] ___badges)
         {
-            if (!File.Exists(getSavesPath() + "/global.json"))
+            if (!File.Exists(GetSavesPath() + "/global.json"))
             {
                 if (!FP2Lib.configSaveBadges.Value)
                 {

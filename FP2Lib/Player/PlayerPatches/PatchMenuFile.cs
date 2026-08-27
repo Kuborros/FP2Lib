@@ -82,9 +82,9 @@ namespace FP2Lib.Player.PlayerPatches
                 try
                 {
                     string json = string.Empty;
-                    if (File.Exists(SavePatches.getSavesPath() + "/" + fileSlot + ".json"))
+                    if (File.Exists(SavePatches.GetSavesPath() + "/" + fileSlot + ".json"))
                     {
-                        using (StreamReader streamReader = new StreamReader(SavePatches.getSavesPath() + "/" + fileSlot + ".json"))
+                        using (StreamReader streamReader = new StreamReader(SavePatches.GetSavesPath() + "/" + fileSlot + ".json"))
                         {
                             json = streamReader.ReadToEnd();
                         }
