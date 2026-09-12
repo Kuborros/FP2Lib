@@ -15,7 +15,7 @@ namespace FP2Lib.Stage
         internal static bool[] takenStageIDs = new bool[1024];
         internal static bool[] takenHubIDs = new bool[1024];
 
-        private static string storePath, ezPath;
+        private static string storePath;
         private static readonly ManualLogSource StageLogSource = FP2Lib.logSource;
 
 
@@ -23,9 +23,7 @@ namespace FP2Lib.Stage
         {
 
             storePath = Path.Combine(GameInfo.getProfilePath(), "StageDataStore");
-            ezPath = Path.Combine(Paths.ConfigPath, "FP2LibEzStage");
             Directory.CreateDirectory(storePath);
-            Directory.CreateDirectory(ezPath);
 
             //32 stages in base game.
             for (int i = 0; i <= 32; i++)
@@ -40,51 +38,7 @@ namespace FP2Lib.Stage
             //In both cases 0 is an empty slot, but it should not be touched.
 
             LoadFromStorage();
-            //LoadEzModeStages();
         }
-
-        //TODO: Make similar system to NPC loading from JSON
-        //Needs said json, scene file, and map icon (just a .png perhabs?)
-        /*
-        private static void LoadEzModeStages()
-        {
-            foreach (string js in Directory.GetFiles(ezPath))
-            {
-                if (js.EndsWith(".json"))
-                {
-
-                    //EzStageData data = EzStageData.LoadFromJson(File.ReadAllText(js));
-                    GameObject gameObject;
-                    try
-                    {
-                        gameObject = AssetBundle.LoadFromFile(data.bundlePath).LoadAllAssets<GameObject>()[0];
-                    }
-                    catch (Exception ex)
-                    {
-                        StageLogSource.LogError("Failed to load EzMode Scene! " + ex.Message);
-                        return;
-                    }
-                    //Something went wrong, abort!
-                    if (gameObject == null || data.uid == null) return;
-
-                    if (!Stages.ContainsKey(data.uid))
-                    {
-                        HubNPC npc = new HubNPC(data.uid, data.name, data.scene, gameObject, data.species, data.home, data.dialogue);
-                        Stages.Add(data.uid, npc);
-                    }
-                    else if (Stages.ContainsKey(data.uid) && HubNPCs[data.UID].Prefabs.Count == 0)
-                    {
-                        HubNPC npc = new HubNPC(data.UID, data.name, data.scene, gameObject, data.species, data.home, data.dialogue);
-                        npc.ID = HubNPCs[data.UID].ID;
-                        HubNPCs[data.UID] = npc;
-                    }
-
-                }
-            }
-        }
-        */
-
-
         public static bool RegisterStage(CustomStage stage)
         {
             if (!Stages.ContainsKey(stage.uid))
