@@ -5,7 +5,6 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchFPHudDigit
     {
-        //TODO: Make this not break!
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FPHudDigit), "SetDigitValue", MethodType.Normal)]
         static void PatchFPHudDigitValue(FPHudDigit __instance, ref Sprite[] ___digitFrames)

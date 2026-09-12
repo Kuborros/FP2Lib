@@ -7,6 +7,7 @@ namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchFPEventSequence
     {
+        //Classic Mode specific!
         private static bool HandleEventStart(FPEventSequence instance)
         {
             if (PlayerHandler.currentCharacter.useOwnCutsceneActivators)
@@ -44,7 +45,7 @@ namespace FP2Lib.Player.PlayerPatches
             return false;
         }
 
-        //This is only fired in cases where in HandleEventStart we picked built-in character.
+        //This is ran on the default loop, so don't run anything too heavy here!
         private static bool HandleEventDefault(FPEventSequence instance)
         {
             if (PlayerHandler.currentCharacter.useOwnCutsceneActivators)

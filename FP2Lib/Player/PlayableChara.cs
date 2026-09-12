@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace FP2Lib.Player
@@ -103,20 +104,24 @@ namespace FP2Lib.Player
         /// Method delegate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>FPEventSequence</c> fires it's logic to check if you are playing as it's set character.
         /// You can use this to run your own event logic, separate from the activator who just got trigerred.
         /// Current instance of <c>FPEventSequence</c> where the method was fired in is provided for convenienience as first method argument.
+        /// Considerably less advanced than EventSequenceTrigger Predicate, but can be used for similar goals.
+        /// Only called when EventSequenceTrigger Predicate is not set.
         /// </summary>
         public Action<FPEventSequence> EventSequenceStart;
 
         /// <summary>
-        /// Predicate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>FPEventSequence</c> fires it's logic to check if you are playing as it's set character (happens at startup, and during main loop).
+        /// Predicate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>FPEventSequence</c> fires it's logic to check if you are playing as it's set character.
+        /// In Classic Mode, this is checked when the object starts, and on the collision loop. In Adventure, only the collision loop is checked.
         /// Return <c>true</c> to match the object to your character.
         /// Basically, you are answering the question - "should this sequence activate for this character".
         /// You can also use this to run your own event logic - likely by gutting out it's contents and replacing them with your own version (or instancing a new one).
         /// Current instance of <c>FPEventSequence</c> the method was fired in is provided for convenienience as first method argument.
+        /// Because of this method being called quite often, avoid running too heavy code in it every time it's fired. You can cache results when needed.
         /// </summary>
         public Predicate<FPEventSequence> EventSequenceTrigger;
 
         /// <summary>
-        /// Predicate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>ParentActivat0r</c> fires it's event start/loop logic.
+        /// Predicate called when <c>useOwnCutsceneActivators</c> is enabled, and <c>ParentActivator</c> starts.
         /// Return <c>true</c> to match the object to your character.
         /// Basically, you are answering the question - "should this object be active for this character". Other logic like story flags remains intact.
         /// In simplest form, you can filter out exactly what activators you want on a given stage, mixing and matching characters as needed.
@@ -289,6 +294,13 @@ namespace FP2Lib.Player
         /// Water physics caused by <code>Action_SetWaterFlag</code> will also remain in effect, unless you disable them yourself (a short prefix will do the job).
         /// </summary>
         public bool disableSwimming = false;
+
+        /// <summary>
+        /// Lets you define a custom scene which should be played after beating the Bakunawa Fusion.
+        /// Default is "Cutscene_Ending2" which will play the usual ending sequence for you.
+        /// Yes, "Ending2". Ending1 does not exist, seemingly being cut somewhere before release.
+        /// </summary>
+        public string endingScene = "Cutscene_Ending2";
 
         /// <summary>
         /// Asset Bundle containing all the character data.

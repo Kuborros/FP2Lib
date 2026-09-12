@@ -17,6 +17,7 @@ using FP2Lib.Tools;
 using FP2Lib.Vinyl;
 using HarmonyLib;
 using System;
+using UnityEngine.Scripting;
 
 namespace FP2Lib
 {
@@ -77,6 +78,8 @@ namespace FP2Lib
 
             Logger.LogInfo("FP2Lib initialisation started!");
             SetupHarmonyPatches();
+           
+
         }
 
         private void SetupHarmonyPatches()

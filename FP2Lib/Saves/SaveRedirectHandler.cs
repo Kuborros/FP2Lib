@@ -27,6 +27,13 @@ namespace FP2Lib.Saves
         /// <returns></returns>
         public static bool RequestProfileRedirect(string profileName, int priority = 100)
         {
+            //If redirection is disabled by user, then skip this whole thing.
+            if (!FP2Lib.configSaveRedirect.Value)
+            {
+                FP2Lib.logSource.LogDebug("Profile redirect " + profileName + " ignored due to user preference.");
+                return false;
+            }
+
             modRedirects.Add(profileName, priority);
             if (currentPriority <= priority)
             {

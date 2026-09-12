@@ -317,13 +317,7 @@ namespace FP2Lib.Item
             try
             {
                 byte[] bytes = new UTF8Encoding().GetBytes(json);
-                using FileStream fileStream = new(string.Concat(new object[]
-                {
-                    GameInfo.getProfilePath(),
-                    "/",
-                    "ItemStore",
-                    ".json"
-                }), FileMode.Create, FileAccess.Write, FileShare.Read, bytes.Length, FileOptions.WriteThrough);
+                using FileStream fileStream = new(GameInfo.getProfilePath() + "/ItemStore.json", FileMode.Create, FileAccess.Write, FileShare.Read, bytes.Length, FileOptions.WriteThrough);
                 fileStream.Write(bytes, 0, bytes.Length);
                 fileStream.Flush();
             }

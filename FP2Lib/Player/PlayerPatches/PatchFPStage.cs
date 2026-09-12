@@ -42,7 +42,7 @@ namespace FP2Lib.Player.PlayerPatches
                     ___adventureCutscene = ___adventureCutscene.AddToArray(new()
                     {
                         character = (FPCharacterID)entry.id,
-                        scene = "Cutscene_Ending2",
+                        scene = entry.endingScene,
                         storyFlag = 46,
                         storyFlagValue = 1
                     });

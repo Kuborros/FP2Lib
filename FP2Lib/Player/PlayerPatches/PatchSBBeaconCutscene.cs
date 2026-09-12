@@ -1,20 +1,15 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Reflection.Emit;
 
 namespace FP2Lib.Player.PlayerPatches
 {
     internal class PatchSBBeaconCutscene
     {
-
-        private static SBBeaconCutscene instance;
-        internal static readonly MethodInfo m_SBBeaconHandler = SymbolExtensions.GetMethodInfo(() => SBBeaconCutsceneHandler());
-
-
-        private static void SBBeaconCutsceneHandler()
+        private static void SBBeaconCutsceneHandler(object instanceRef)
         {
             int character = (int)FPSaveManager.character;
+            SBBeaconCutscene instance = (SBBeaconCutscene)instanceRef;
 
             //If character has their own cutscenes, they will be added to the array and can be played. (I hope, that's the mod maker's responibility.)
             if (PlayerHandler.currentCharacter.useOwnCutsceneActivators)
@@ -47,15 +42,6 @@ namespace FP2Lib.Player.PlayerPatches
             }
         }
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(SBBeaconCutscene), "Update", MethodType.Normal)]
-        static void EventSequencePrefix(SBBeaconCutscene __instance)
-        {
-            //Dirty hack
-            instance = __instance;
-        }
-
-
         //Adding new "default:" section for the enum. All extra characters will miss the built-in sections and get forwarded to our code instead. 
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(SBBeaconCutscene), "Update", MethodType.Normal)]
@@ -76,7 +62,8 @@ namespace FP2Lib.Player.PlayerPatches
             CodeInstruction entry = new CodeInstruction(OpCodes.Ldarg_0);
             entry.labels.Add(entryLabel);
             codes.Add(entry);
-            codes.Add(new CodeInstruction(OpCodes.Callvirt, m_SBBeaconHandler));
+            codes.Add(new CodeInstruction(OpCodes.Ldarg_0));
+            codes.Add(Transpilers.EmitDelegate(SBBeaconCutsceneHandler));
             codes.Add(new CodeInstruction(OpCodes.Br, exitLabel));
             return codes;
         }

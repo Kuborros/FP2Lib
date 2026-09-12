@@ -23,13 +23,13 @@ namespace FP2Lib.Saves
             {
                 if (!SaveRedirectHandler.CurrentModRedirectProfile.IsNullOrWhiteSpace())
                 {
-                    Directory.CreateDirectory("Saves\\Profile_" + SaveRedirectHandler.CurrentModRedirectProfile);
-                    return "Saves\\Profile_" + SaveRedirectHandler.CurrentModRedirectProfile;
+                    Directory.CreateDirectory(Path.Combine("Saves", "Profile_" + SaveRedirectHandler.CurrentModRedirectProfile));
+                    return Path.Combine("Saves", "Profile_" + SaveRedirectHandler.CurrentModRedirectProfile);
                 }
                 else if (FP2Lib.configSaveProfile.Value != 0)
                 {
-                    Directory.CreateDirectory("Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString());
-                    return "Saves\\Profile" + FP2Lib.configSaveProfile.Value.ToString();
+                    Directory.CreateDirectory(Path.Combine("Saves", "Profile" + FP2Lib.configSaveProfile.Value.ToString()));
+                    return Path.Combine("Saves", "Profile" + FP2Lib.configSaveProfile.Value.ToString());
                 }
             }
             return Application.persistentDataPath;

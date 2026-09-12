@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
-using FP2Lib.Item;
 using FP2Lib.Stage;
 using HarmonyLib;
 using System;
