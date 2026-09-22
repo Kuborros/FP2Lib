@@ -17,7 +17,6 @@ using FP2Lib.Tools;
 using FP2Lib.Vinyl;
 using HarmonyLib;
 using System;
-using UnityEngine.Scripting;
 
 namespace FP2Lib
 {
