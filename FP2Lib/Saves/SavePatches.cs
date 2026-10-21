@@ -19,19 +19,19 @@ namespace FP2Lib.Saves
     {
         internal static string GetSavesPath()
         {
-            if (FP2Lib.configSaveRedirect.Value)
+            //Force a redirect if a mod requests one
+            if (!SaveRedirectHandler.CurrentModRedirectProfile.IsNullOrWhiteSpace())
             {
-                if (!SaveRedirectHandler.CurrentModRedirectProfile.IsNullOrWhiteSpace())
-                {
-                    Directory.CreateDirectory(Path.Combine("Saves", "Profile_" + SaveRedirectHandler.CurrentModRedirectProfile));
-                    return Path.Combine("Saves", "Profile_" + SaveRedirectHandler.CurrentModRedirectProfile);
-                }
-                else if (FP2Lib.configSaveProfile.Value != 0)
-                {
-                    Directory.CreateDirectory(Path.Combine("Saves", "Profile" + FP2Lib.configSaveProfile.Value.ToString()));
-                    return Path.Combine("Saves", "Profile" + FP2Lib.configSaveProfile.Value.ToString());
-                }
+                Directory.CreateDirectory(Path.Combine("Saves", "Profile_" + SaveRedirectHandler.CurrentModRedirectProfile));
+                return Path.Combine("Saves", "Profile_" + SaveRedirectHandler.CurrentModRedirectProfile);
             }
+            //Otherwise, if redirects are enabled and we are on profile other than 0, redirect to that
+            else if (FP2Lib.configSaveRedirect.Value && FP2Lib.configSaveProfile.Value != 0)
+            {
+                Directory.CreateDirectory(Path.Combine("Saves", "Profile" + FP2Lib.configSaveProfile.Value.ToString()));
+                return Path.Combine("Saves", "Profile" + FP2Lib.configSaveProfile.Value.ToString());
+            }
+            //Finally if none of these match, load the default files in appdata
             return Application.persistentDataPath;
         }
 
