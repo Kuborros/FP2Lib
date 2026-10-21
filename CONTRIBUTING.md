@@ -12,6 +12,6 @@ This includes, but isn't limited to, GitHub Copilot, Zed, Cursor, Claude and oth
 
 The generated code is not _yours_, it's an amalgamation of stolen content and i cannot accept it.
 
-Here's a fun read for you: [Why not LLMS](https://codeberg.org/small-hack/open-slopware#why-not-llms)
+Here's a fun read for you: [Why not LLMS](https://codeberg.org/ethical-foss/ai-free-foss-alternatives/src/branch/main/why_not_llms.md)
 
 Above includes every part of the project, not just commits and pull requests. If i smell a LLM use i reserve a right to close your PR on sight.
