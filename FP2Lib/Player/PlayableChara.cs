@@ -296,9 +296,10 @@ namespace FP2Lib.Player
         public bool disableSwimming = false;
 
         /// <summary>
-        /// Lets you define a custom scene which should be played after beating the Bakunawa Fusion.
+        /// Lets you define a custom scene which should be played after beating Merga (no time capsules) or Bakunawa Fusion (with time capsules).
         /// Default is "Cutscene_Ending2" which will play the usual ending sequence for you.
         /// Yes, "Ending2". Ending1 does not exist, seemingly being cut somewhere before release.
+        /// For individual controls, you can also modify this value at runtime in its respective objects.
         /// </summary>
         public string endingScene = "Cutscene_Ending2";
 
