@@ -42,6 +42,11 @@ Example config file contains following options which can be edited by hand:
 # Setting type: Boolean
 # Default value: false
 Cowabunga = false
+
+## When profile has no badge data, should the global one be copied to it?
+# Setting type: Boolean
+# Default value: true
+Copy Badges = true
 ```
 And following ones which should _not_ be touched manually, as they are managed by FP2 Mod Manager. 
 Editing _any_ of them at runtime can have **disasterous** results, and are therefore marked as Advanced Settings using Bepinex's config flags.
