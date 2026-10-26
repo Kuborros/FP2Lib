@@ -45,6 +45,10 @@ namespace FP2Lib.NPC
         /// </summary>
         public Dictionary<string, GameObject> Prefabs = [];
         /// <summary>
+        /// Is the NPC prefab wrapped in a ParentActivator.
+        /// </summary>
+        public bool HasParentActivator = false;
+        /// <summary>
         /// Instanced version of the NPC object
         /// </summary>
         public GameObject RuntimeObject { get; internal set; }

@@ -110,7 +110,17 @@ namespace FP2Lib.NPC
                 if (npc.RuntimeObject != null)
                 {
                     //If we have runtime object, it means we are loading the NPC on this level. Add it to StageList to properly initialise it within the stage.
-                    FPStage.ValidateStageListPos(npc.RuntimeObject.GetComponent<FPHubNPC>());
+                    //NPCs wrapped in a ParentActivator also need the Activator initialised.
+                    if (npc.HasParentActivator) 
+                    {
+                        FPStage.ValidateStageListPos(npc.RuntimeObject.GetComponent<ParentActivator>());
+                        if (npc.RuntimeObject.transform.childCount > 0)
+                            FPStage.ValidateStageListPos(npc.RuntimeObject.transform.GetChild(0).gameObject.GetComponent<FPHubNPC>());
+                    }
+                    else
+                    {
+                        FPStage.ValidateStageListPos(npc.RuntimeObject.GetComponent<FPHubNPC>());
+                    }
                 }
             }
         }
@@ -217,7 +227,15 @@ namespace FP2Lib.NPC
                     if (npc.ID == id)
                     {
                         //Set custom preview
-                        ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npc.Prefabs.Values.First().GetComponent<Animator>().runtimeAnimatorController;
+                        if (npc.HasParentActivator)
+                        {
+                            //Has to be done kinda blindly, but hopefully first FPHubNPC we find in the object tree is the valid one
+                            ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npc.Prefabs.Values.First().GetComponentInChildren<FPHubNPC>().gameObject.GetComponent<Animator>().runtimeAnimatorController;
+                        }
+                        else
+                        {
+                            ___npcPreviewSprite.GetComponent<Animator>().runtimeAnimatorController = npc.Prefabs.Values.First().GetComponent<Animator>().runtimeAnimatorController;
+                        }
                         //Special animation if we got one
                         if (component.HasState(0, Animator.StringToHash("Preview")))
                         {
